@@ -37,9 +37,9 @@ const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
 
   return (
-    <div className="backdrop-blur-md rounded w-full max-w-2xl animate-fade-in-up shadow-2xl bg-white/0">
+    <div className="backdrop-blur-md rounded-lg w-full max-w-2xl animate-fade-in-up shadow-2xl bg-white/0 overflow-hidden">
       {/* Header */}
-      <div className="p-6 md:p-8 pb-4 md:pb-5 px-[32px] py-[50px] bg-white/70 backdrop-blur-md">
+      <div className="px-6 md:px-8 py-[80px] bg-white/70 backdrop-blur-md">
         <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-1">
           Pretraga dijelova
         </h2>
