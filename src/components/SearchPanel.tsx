@@ -49,7 +49,7 @@ const SearchPanel = () => {
       </div>
 
       {/* Tabs - single row with dividers */}
-      <div className="mx-6 md:mx-8 grid grid-cols-2 md:grid-cols-4">
+      <div className="grid grid-cols-2 md:grid-cols-4">
         {tabs.map((tab, i) =>
         <button
           key={tab.id}
