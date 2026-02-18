@@ -75,7 +75,7 @@ const SearchPanel = () => {
       </div>
 
       {/* Form fields */}
-      <div className="px-6 md:px-8 pb-2 pt-6">
+      <div className="px-6 md:px-8 pb-2 pt-6 bg-card">
         {activeTab === "filter" && (
           <div className="space-y-4 animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
