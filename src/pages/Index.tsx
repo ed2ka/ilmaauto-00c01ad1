@@ -1,3 +1,4 @@
+import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import SearchPanel from "@/components/SearchPanel";
 import AppRatingBar from "@/components/AppRatingBar";
@@ -6,6 +7,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <TopBar />
       <Header />
 
       {/* Hero Section */}
