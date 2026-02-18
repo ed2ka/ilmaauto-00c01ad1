@@ -40,10 +40,10 @@ const SearchPanel = () => {
     <div className="backdrop-blur-md rounded w-full max-w-2xl animate-fade-in-up shadow-2xl bg-white/0">
       {/* Header */}
       <div className="p-6 md:p-8 pb-4 md:pb-5 px-[32px] py-[50px] bg-white/70 backdrop-blur-md">
-        <h2 className="font-display text-2xl md:text-3xl font-bold text-card-foreground mb-1">
+        <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-1">
           Pretraga dijelova
         </h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-white/80 text-sm">
           Najveća baza autodijelova na Balkanu
         </p>
       </div>
