@@ -49,7 +49,7 @@ const SearchPanel = () => {
       </div>
 
       {/* Tabs - single row with dividers */}
-      <div className="mx-6 md:mx-8 bg-tab-inactive rounded grid grid-cols-2 md:grid-cols-4">
+      <div className="mx-6 md:mx-8 grid grid-cols-2 md:grid-cols-4">
         {tabs.map((tab, i) => (
           <button
             key={tab.id}
@@ -57,7 +57,7 @@ const SearchPanel = () => {
             className={`relative flex flex-col items-center gap-2 py-4 px-3 text-xs font-semibold tracking-wide transition-all duration-200 ${
               activeTab === tab.id
                 ? "text-primary bg-card"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground bg-tab-inactive"
             } ${i > 0 ? "border-l border-input" : ""}`}
           >
             <div
