@@ -3,43 +3,43 @@ import { Search } from "lucide-react";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
 
-const tabs: { id: SearchTab; label: string }[] = [
-  { id: "filter", label: "FILTER PRETRAGA DIJELOVA" },
-  { id: "naziv", label: "PRETRAGA PO NAZIVU DIJELA" },
-  { id: "kataloski", label: "PRETRAGA PO KATALOŠKOM BROJU" },
-  { id: "sasija", label: "PRETRAGA PO BROJU ŠASIJE" },
-];
+const tabs: {id: SearchTab;label: string;}[] = [
+{ id: "filter", label: "FILTER PRETRAGA DIJELOVA" },
+{ id: "naziv", label: "PRETRAGA PO NAZIVU DIJELA" },
+{ id: "kataloski", label: "PRETRAGA PO KATALOŠKOM BROJU" },
+{ id: "sasija", label: "PRETRAGA PO BROJU ŠASIJE" }];
 
-const FloatingSelect = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <fieldset className="relative border border-input rounded bg-background px-3 pt-1 pb-0">
+
+const FloatingSelect = ({ label, children }: {label: string;children: React.ReactNode;}) =>
+<fieldset className="relative border border-input rounded bg-background px-3 pt-1 pb-0">
     <legend className="text-xs text-muted-foreground px-1">{label}</legend>
     <select className="w-full h-9 bg-transparent text-sm text-foreground focus:outline-none appearance-none cursor-pointer pr-6">
       {children}
     </select>
     <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/4">
-      <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"/></svg>
+      <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground" /></svg>
     </div>
-  </fieldset>
-);
+  </fieldset>;
 
-const FloatingInput = ({ label, placeholder }: { label: string; placeholder: string }) => (
-  <fieldset className="relative border border-input rounded bg-background px-3 pt-1 pb-0">
+
+const FloatingInput = ({ label, placeholder }: {label: string;placeholder: string;}) =>
+<fieldset className="relative border border-input rounded bg-background px-3 pt-1 pb-0">
     <legend className="text-xs text-muted-foreground px-1">{label}</legend>
     <input
-      type="text"
-      placeholder={placeholder}
-      className="w-full h-9 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-    />
-  </fieldset>
-);
+    type="text"
+    placeholder={placeholder}
+    className="w-full h-9 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none" />
+
+  </fieldset>;
+
 
 const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
 
   return (
-    <div className="bg-card/95 backdrop-blur-md rounded shadow-2xl w-full max-w-2xl animate-fade-in-up">
+    <div className="bg-card/95 backdrop-blur-md rounded w-full max-w-2xl animate-fade-in-up shadow-2xl">
       {/* Header */}
-      <div className="p-6 md:p-8 pb-4 md:pb-5">
+      <div className="p-6 md:p-8 pb-4 md:pb-5 px-[32px] py-[50px]">
         <h2 className="font-display text-2xl md:text-3xl font-bold text-card-foreground mb-1">
           Pretraga dijelova
         </h2>
@@ -50,34 +50,34 @@ const SearchPanel = () => {
 
       {/* Tabs - single row with dividers */}
       <div className="mx-6 md:mx-8 grid grid-cols-2 md:grid-cols-4">
-        {tabs.map((tab, i) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`relative flex flex-col items-center gap-2 py-4 px-3 text-xs font-semibold tracking-wide transition-all duration-200 ${
-              activeTab === tab.id
-                ? "text-primary bg-card"
-                : "text-muted-foreground hover:text-foreground bg-tab-inactive"
-            } ${i > 0 ? "border-l border-input" : ""}`}
-          >
+        {tabs.map((tab, i) =>
+        <button
+          key={tab.id}
+          onClick={() => setActiveTab(tab.id)}
+          className={`relative flex flex-col items-center gap-2 py-4 px-3 text-xs font-semibold tracking-wide transition-all duration-200 ${
+          activeTab === tab.id ?
+          "text-primary bg-card" :
+          "text-muted-foreground hover:text-foreground bg-tab-inactive"} ${
+          i > 0 ? "border-l border-input" : ""}`}>
+
             <div
-              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                activeTab === tab.id ? "border-primary" : "border-muted-foreground/30"
-              }`}
-            >
-              {activeTab === tab.id && (
-                <div className="w-3 h-3 rounded-full bg-primary" />
-              )}
+            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+            activeTab === tab.id ? "border-primary" : "border-muted-foreground/30"}`
+            }>
+
+              {activeTab === tab.id &&
+            <div className="w-3 h-3 rounded-full bg-primary" />
+            }
             </div>
             <span className="text-center leading-tight">{tab.label}</span>
           </button>
-        ))}
+        )}
       </div>
 
       {/* Form fields */}
       <div className="px-6 md:px-8 pb-2 pt-6 bg-card">
-        {activeTab === "filter" && (
-          <div className="space-y-4 animate-fade-in">
+        {activeTab === "filter" &&
+        <div className="space-y-4 animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FloatingSelect label="marka vozila">
                 <option value="">Izaberite marku vozila</option>
@@ -104,25 +104,25 @@ const SearchPanel = () => {
               </FloatingSelect>
             </div>
           </div>
-        )}
+        }
 
-        {activeTab === "naziv" && (
-          <div className="animate-fade-in">
+        {activeTab === "naziv" &&
+        <div className="animate-fade-in">
             <FloatingInput label="Naziv dijela" placeholder='Upišite naziv dijela, npr "prednji branik"' />
           </div>
-        )}
+        }
 
-        {activeTab === "kataloski" && (
-          <div className="animate-fade-in">
+        {activeTab === "kataloski" &&
+        <div className="animate-fade-in">
             <FloatingInput label="Kataloški broj" placeholder="Upišite kataloški broj dijela" />
           </div>
-        )}
+        }
 
-        {activeTab === "sasija" && (
-          <div className="animate-fade-in">
+        {activeTab === "sasija" &&
+        <div className="animate-fade-in">
             <FloatingInput label="Broj šasije (VIN)" placeholder="Upišite broj šasije vozila" />
           </div>
-        )}
+        }
       </div>
 
       {/* CTA */}
@@ -131,8 +131,8 @@ const SearchPanel = () => {
           Pretraži <span className="font-bold">45018</span> rezultata
         </button>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default SearchPanel;
