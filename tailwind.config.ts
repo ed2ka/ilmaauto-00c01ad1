@@ -24,10 +24,10 @@ export default {
   				'Segoe UI Symbol',
   				'Noto Color Emoji'
   			],
-  			display: [
-  				'Space Grotesk',
-  				'sans-serif'
-  			],
+			display: [
+				'Poppins',
+				'sans-serif'
+			],
   			serif: [
   				'ui-serif',
   				'Georgia',
