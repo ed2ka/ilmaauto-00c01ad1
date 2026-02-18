@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal, Type, Hash, Car } from "lucide-react";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
 
-const tabs: {id: SearchTab;label: string;}[] = [
-{ id: "filter", label: "FILTER PRETRAGA DIJELOVA" },
-{ id: "naziv", label: "PRETRAGA PO NAZIVU DIJELA" },
-{ id: "kataloski", label: "PRETRAGA PO KATALOŠKOM BROJU" },
-{ id: "sasija", label: "PRETRAGA PO BROJU ŠASIJE" }];
+const tabs: {id: SearchTab;label: string;icon: string;}[] = [
+{ id: "filter", label: "Filter pretraga dijelova", icon: "SlidersHorizontal" },
+{ id: "naziv", label: "Pretraga po nazivu dijela", icon: "Type" },
+{ id: "kataloski", label: "Pretraga po kataloškom broju", icon: "Hash" },
+{ id: "sasija", label: "Pretraga po broju šasije", icon: "Car" }];
 
 
 const FloatingSelect = ({ label, children }: {label: string;children: React.ReactNode;}) =>
@@ -60,15 +60,10 @@ const SearchPanel = () => {
           "text-muted-foreground hover:text-foreground bg-tab-inactive"} ${
           i > 0 ? "border-l border-input" : ""}`}>
 
-            <div
-            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-            activeTab === tab.id ? "border-primary" : "border-muted-foreground/30"}`
-            }>
-
-              {activeTab === tab.id &&
-            <div className="w-3 h-3 rounded-full bg-primary" />
-            }
-            </div>
+            {tab.icon === "SlidersHorizontal" && <SlidersHorizontal className="w-5 h-5" />}
+            {tab.icon === "Type" && <Type className="w-5 h-5" />}
+            {tab.icon === "Hash" && <Hash className="w-5 h-5" />}
+            {tab.icon === "Car" && <Car className="w-5 h-5" />}
             <span className="text-center leading-tight">{tab.label}</span>
           </button>
         )}
