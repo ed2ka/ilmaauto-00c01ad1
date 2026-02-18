@@ -126,7 +126,7 @@ const SearchPanel = () => {
       </div>
 
       {/* CTA */}
-      <div className="p-6 md:p-8 pt-4 md:pt-6">
+      <div className="p-6 md:p-8 pt-4 md:pt-6 bg-card">
         <button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30">
           Pretraži <span className="font-bold">45018</span> rezultata
         </button>
