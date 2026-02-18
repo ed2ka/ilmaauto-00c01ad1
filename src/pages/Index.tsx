@@ -1,12 +1,37 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Header from "@/components/Header";
+import SearchPanel from "@/components/SearchPanel";
+import AppRatingBar from "@/components/AppRatingBar";
+import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      {/* Hero Section */}
+      <main className="relative flex-1 flex flex-col">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <img
+            src={heroBg}
+            alt="Muškarac u automobilu"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
+        </div>
+
+        {/* Content */}
+        <div className="relative flex-1 flex items-center pt-20 lg:pt-24 pb-8">
+          <div className="container mx-auto px-4 lg:px-8">
+            <SearchPanel />
+          </div>
+        </div>
+
+        {/* Rating bar */}
+        <div className="relative">
+          <AppRatingBar />
+        </div>
+      </main>
     </div>
   );
 };
