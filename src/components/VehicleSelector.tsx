@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -35,6 +35,13 @@ const VehicleSelector = () => {
     setStep("brands");
   };
 
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedBrand(null);
+    setSelectedModels([]);
+    setStep("brands");
+  };
+
   const toggleModel = (model: string) => {
     setSelectedModels((prev) =>
       prev.includes(model) ? prev.filter((m) => m !== model) : [...prev, model]
@@ -66,9 +73,16 @@ const VehicleSelector = () => {
             <span className={displayValue() ? "text-foreground" : "text-muted-foreground/50"}>
               {displayValue() || "Izaberite marku i tip vozila"}
             </span>
-            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className="shrink-0 ml-2">
-              <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground" />
-            </svg>
+            <div className="flex items-center gap-1 shrink-0 ml-2">
+              {selectedBrand && (
+                <button onClick={handleClear} className="text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded-sm hover:bg-accent">
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground" />
+              </svg>
+            </div>
           </div>
         </fieldset>
       </PopoverTrigger>
