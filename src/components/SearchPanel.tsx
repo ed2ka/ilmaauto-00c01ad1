@@ -3,11 +3,11 @@ import { Search, SlidersHorizontal, Type, Hash, Car } from "lucide-react";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
 
-const tabs: {id: SearchTab;label: string;icon: string;}[] = [
-{ id: "filter", label: "Filter pretraga dijelova", icon: "SlidersHorizontal" },
-{ id: "naziv", label: "Pretraga po nazivu dijela", icon: "Type" },
-{ id: "kataloski", label: "Pretraga po kataloškom broju", icon: "Hash" },
-{ id: "sasija", label: "Pretraga po broju šasije", icon: "Car" }];
+const tabs: {id: SearchTab;label: React.ReactNode;icon: string;}[] = [
+{ id: "filter", label: <>Filter<br/>pretraga dijelova</>, icon: "SlidersHorizontal" },
+{ id: "naziv", label: <>Pretraga po<br/>nazivu dijela</>, icon: "Type" },
+{ id: "kataloski", label: <>Pretraga po<br/>kataloškom broju</>, icon: "Hash" },
+{ id: "sasija", label: <>Pretraga po<br/>broju šasije</>, icon: "Car" }];
 
 
 const FloatingSelect = ({ label, children }: {label: string;children: React.ReactNode;}) =>
