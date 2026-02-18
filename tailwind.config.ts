@@ -56,6 +56,7 @@ export default {
           foreground: "hsl(var(--header-foreground))",
         },
         rating: "hsl(var(--rating))",
+        "tab-inactive": "hsl(var(--tab-inactive))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
