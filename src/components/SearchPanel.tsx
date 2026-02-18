@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, SlidersHorizontal, Type, Hash, Car } from "lucide-react";
+import VehicleSelector from "./VehicleSelector";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
 
@@ -73,20 +74,7 @@ const SearchPanel = () => {
       <div className="px-6 md:px-8 pb-2 pt-6 bg-card">
         {activeTab === "filter" &&
         <div className="space-y-4 animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FloatingSelect label="marka vozila">
-                <option value="">Izaberite marku vozila</option>
-                <option>Audi</option>
-                <option>BMW</option>
-                <option>Mercedes</option>
-                <option>Volkswagen</option>
-                <option>Toyota</option>
-                <option>Ford</option>
-              </FloatingSelect>
-              <FloatingSelect label="tip vozila">
-                <option value="">Izaberite tip/model vozila</option>
-              </FloatingSelect>
-            </div>
+            <VehicleSelector />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FloatingInput label="Naziv dijela" placeholder='Upišite naziv modela, npr "desni far"' />
               <FloatingSelect label="Kategorija dijela">
