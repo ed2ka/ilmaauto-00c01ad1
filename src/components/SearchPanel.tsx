@@ -56,7 +56,7 @@ const SearchPanel = () => {
             onClick={() => setActiveTab(tab.id)}
             className={`relative flex flex-col items-center gap-2 py-4 px-3 text-xs font-semibold tracking-wide transition-all duration-200 ${
               activeTab === tab.id
-                ? "text-primary bg-card rounded"
+                ? "text-primary bg-card"
                 : "text-muted-foreground hover:text-foreground"
             } ${i > 0 ? "border-l border-input" : ""}`}
           >
