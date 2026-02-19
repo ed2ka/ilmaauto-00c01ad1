@@ -1,15 +1,31 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { useSearchParts } from "@/hooks/useParts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import PartCard from "@/components/PartCard";
+import PartListItem from "@/components/PartListItem";
+import SearchFilterSidebar from "@/components/SearchFilterSidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ChevronLeft, ChevronRight, LayoutGrid, List, SlidersHorizontal } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList,
+  BreadcrumbPage, BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const PAGE_SIZE = 20;
+
+type SortOption = "newest" | "az" | "za";
+type ViewMode = "grid" | "list";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const [page, setPage] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sort, setSort] = useState<SortOption>("newest");
+  const isMobile = useIsMobile();
 
   const params = {
     marka: searchParams.get("marka") || undefined,
@@ -25,106 +41,192 @@ const SearchResults = () => {
 
   useEffect(() => { setPage(0); }, [searchParams.toString()]);
 
+  const sortedParts = useMemo(() => {
+    if (!data?.parts) return [];
+    const parts = [...data.parts];
+    switch (sort) {
+      case "az": return parts.sort((a, b) => a.dio.localeCompare(b.dio));
+      case "za": return parts.sort((a, b) => b.dio.localeCompare(a.dio));
+      default: return parts;
+    }
+  }, [data?.parts, sort]);
+
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 0;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <TopBar />
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Search className="w-5 h-5 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">
-            Rezultati pretrage
-            {data && <span className="text-muted-foreground font-normal ml-2">({data.totalCount})</span>}
-          </h1>
-        </div>
 
-        {/* Active filters */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {params.marka && <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">{params.marka}</span>}
-          {params.tip && <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">{params.tip}</span>}
-          {params.dio && <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">{params.dio}</span>}
-          {params.broj && <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">{params.broj}</span>}
+      {/* Breadcrumbs */}
+      <div className="border-b bg-muted/30">
+        <div className="container mx-auto px-4 py-2.5">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild><Link to="/">Početna</Link></BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              {params.marka ? (
+                <>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild><Link to="/pretraga">Pretraga</Link></BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  {params.tip ? (
+                    <>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                          <Link to={`/pretraga?marka=${params.marka}`}>{params.marka}</Link>
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem><BreadcrumbPage>{params.tip}</BreadcrumbPage></BreadcrumbItem>
+                    </>
+                  ) : (
+                    <BreadcrumbItem><BreadcrumbPage>{params.marka}</BreadcrumbPage></BreadcrumbItem>
+                  )}
+                </>
+              ) : (
+                <BreadcrumbItem><BreadcrumbPage>Rezultati pretrage</BreadcrumbPage></BreadcrumbItem>
+              )}
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
+      </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-card rounded-lg border animate-pulse">
-                <div className="aspect-square bg-muted" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-muted rounded w-3/4" />
-                  <div className="h-3 bg-muted rounded w-1/2" />
-                </div>
-              </div>
-            ))}
+      <main className="flex-1 container mx-auto px-4 py-6">
+        {/* Toolbar */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <h1 className="text-lg font-bold text-foreground">
+              Rezultati pretrage
+              {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
+            </h1>
+
+            {isMobile && (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm hover:bg-accent transition-colors">
+                    <SlidersHorizontal className="w-4 h-4" />
+                    Filteri
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[280px] overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Filteri</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4">
+                    <SearchFilterSidebar />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
-        ) : data && data.parts.length > 0 ? (
-          <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {data.parts.map((part) => (
-                <Link
-                  key={part.id}
-                  to={`/dio/${part.id}`}
-                  className="bg-card rounded-lg border hover:shadow-lg transition-shadow group overflow-hidden"
-                >
-                  <div className="aspect-square bg-muted overflow-hidden">
-                    {part.slika1 ? (
-                      <img
-                        src={part.slika1}
-                        alt={part.dio}
-                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-                        Nema slike
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <h3 className="font-semibold text-sm text-foreground line-clamp-2">{part.dio}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{part.marka} {part.tip}</p>
-                    {part.broj && <p className="text-xs font-mono text-muted-foreground mt-0.5">{part.broj}</p>}
-                    {part.model && <p className="text-xs text-muted-foreground">{part.model}</p>}
-                  </div>
-                </Link>
-              ))}
+
+          <div className="flex items-center gap-2">
+            <div className="flex border rounded-md overflow-hidden">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+                title="Grid prikaz"
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+                title="List prikaz"
+              >
+                <List className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                <button
-                  onClick={() => setPage(p => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  className="p-2 rounded-md border hover:bg-accent disabled:opacity-50 transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="text-sm text-muted-foreground">
-                  {page + 1} / {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="p-2 rounded-md border hover:bg-accent disabled:opacity-50 transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+            <Select value={sort} onValueChange={(v) => setSort(v as SortOption)}>
+              <SelectTrigger className="w-[140px] bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50">
+                <SelectItem value="newest">Najnovije</SelectItem>
+                <SelectItem value="az">Naziv A-Z</SelectItem>
+                <SelectItem value="za">Naziv Z-A</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex gap-6">
+          {/* Desktop sidebar */}
+          {!isMobile && (
+            <aside className="w-60 flex-shrink-0">
+              <div className="sticky top-4 border rounded-lg p-4 bg-card">
+                <SearchFilterSidebar />
+              </div>
+            </aside>
+          )}
+
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            {isLoading ? (
+              <div className={viewMode === "grid" ? "grid grid-cols-2 lg:grid-cols-3 gap-4" : "space-y-3"}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className={`bg-card rounded-lg border animate-pulse ${viewMode === "list" ? "flex h-28" : ""}`}>
+                    <div className={viewMode === "grid" ? "aspect-[4/3] bg-muted" : "w-28 h-full bg-muted"} />
+                    <div className="p-3 space-y-2 flex-1">
+                      <div className="h-4 bg-muted rounded w-3/4" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : sortedParts.length > 0 ? (
+              <>
+                {viewMode === "grid" ? (
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sortedParts.map((part) => (
+                      <PartCard key={part.id} part={part} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {sortedParts.map((part) => (
+                      <PartListItem key={part.id} part={part} />
+                    ))}
+                  </div>
+                )}
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-8">
+                    <button
+                      onClick={() => setPage((p) => Math.max(0, p - 1))}
+                      disabled={page === 0}
+                      className="p-2 rounded-md border hover:bg-accent disabled:opacity-50 transition-colors"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <span className="text-sm text-muted-foreground">
+                      {page + 1} / {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                      disabled={page >= totalPages - 1}
+                      className="p-2 rounded-md border hover:bg-accent disabled:opacity-50 transition-colors"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">Nema rezultata za zadane parametre.</p>
+                <Link to="/" className="text-primary hover:underline text-sm mt-2 inline-block">
+                  Nazad na početnu
+                </Link>
               </div>
             )}
-          </>
-        ) : (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground">Nema rezultata za zadane parametre.</p>
-            <Link to="/" className="text-primary hover:underline text-sm mt-2 inline-block">
-              Nazad na početnu
-            </Link>
           </div>
-        )}
+        </div>
       </main>
     </div>
   );
