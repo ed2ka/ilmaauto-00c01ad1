@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Search, SlidersHorizontal, Type, Hash, Car, X } from "lucide-react";
+import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle } from "lucide-react";
 import VehicleSelector from "./VehicleSelector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import ChatAssistant from "./ChatAssistant";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
 
@@ -81,7 +82,7 @@ const FloatingInput = ({ label, placeholder }: {label: string;placeholder: strin
 
 const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
-
+  const [isChatOpen, setIsChatOpen] = useState(false);
   return (
     <div className="backdrop-blur-md rounded-lg w-full max-w-2xl animate-fade-in-up shadow-2xl bg-white/0 overflow-hidden">
       {/* Header */}
@@ -147,11 +148,20 @@ const SearchPanel = () => {
       </div>
 
       {/* CTA */}
-      <div className="p-6 md:p-8 pt-4 md:pt-6 bg-card">
+      <div className="p-6 md:p-8 pt-4 md:pt-6 bg-card space-y-3">
         <button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30">
           Pretraži <span className="font-bold">45018</span> rezultata
         </button>
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="w-full h-11 border-2 border-primary bg-transparent text-primary font-medium rounded transition-all duration-200 flex items-center justify-center gap-2 hover:bg-primary/5"
+        >
+          <MessageCircle className="w-4 h-4" />
+          Niste sigurni kako tražiti? Isprobajte asistenta
+        </button>
       </div>
+
+      <ChatAssistant open={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>);
 
 };
