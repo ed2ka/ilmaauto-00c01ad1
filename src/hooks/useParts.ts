@@ -12,6 +12,7 @@ export interface Part {
   slika2: string | null;
   slika3: string | null;
   is_available: boolean;
+  cijena: number | null;
   created_at: string;
 }
 

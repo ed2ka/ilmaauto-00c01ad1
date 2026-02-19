@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePartById } from "@/hooks/useParts";
-import { ArrowLeft, Check, X as XIcon } from "lucide-react";
+import { ArrowLeft, Check, X as XIcon, ShoppingCart } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import PartImageGallery from "@/components/PartImageGallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import OrderSheet from "@/components/OrderSheet";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -15,10 +18,17 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
+const ViberIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M11.4 0C9.47.03 5.33.35 3.25 2.25 1.67 3.83 1.1 6.15 1.04 9.02c-.06 2.87-.13 8.26 5.06 9.79h.01l-.01 2.24s-.06.91.56 1.09c.75.23 1.19-.48 1.91-1.25.39-.42.93-1.04 1.34-1.51 3.69.31 6.53-.4 6.85-.5.75-.24 4.98-.79 5.67-6.42.71-5.8-.34-9.47-2.2-11.12C18.68.56 14.54.02 12.14 0h-.74zM12 1.67h.63c2.09.02 5.65.43 7.24 1.84 1.74 1.47 2.46 4.7 1.85 9.72-.56 4.6-3.87 5.25-4.49 5.45-.27.09-2.77.7-5.93.48 0 0-2.35 2.84-3.08 3.57-.12.12-.26.17-.35.15-.13-.04-.17-.19-.16-.42l.02-3.87C2.8 16.97 2.67 12.36 2.72 9.1c.05-2.49.52-4.42 1.75-5.64C6.23 1.73 9.89 1.69 12 1.67zm-.37 3.6a.47.47 0 00-.47.48c0 .27.21.48.47.48 1.2 0 2.3.45 3.14 1.27a4.24 4.24 0 011.3 3.12.47.47 0 00.95 0c0-1.4-.54-2.72-1.54-3.71a5.34 5.34 0 00-3.74-1.5l-.11-.14zm.05 1.85a.47.47 0 00-.07.94c1.56.13 2.76 1.28 2.89 2.87a.47.47 0 00.94-.08c-.16-2.02-1.71-3.5-3.69-3.66a.47.47 0 00-.07-.07zm.02 1.87a.47.47 0 00-.14.92c.72.16 1.22.66 1.37 1.37a.47.47 0 00.92-.19c-.21-1.02-.94-1.75-1.97-1.96a.47.47 0 00-.18-.14zm-2.14.56c.16-.01.33.05.52.2l.05.04c.36.3.73.66 1.01 1.05.27.38.44.77.28 1.1l-.03.05-.47.67a.54.54 0 00-.05.54c.46.94 1.1 1.8 1.89 2.52a6.93 6.93 0 002.69 1.64c.2.07.42.01.56-.14l.55-.6.04-.04c.3-.28.64-.18.94-.03l2.13 1.2c.3.17.4.52.23.82a2.55 2.55 0 01-1.17 1.08 2.82 2.82 0 01-1.41.24c-1.17-.12-2.58-.82-4.12-2.07a12.09 12.09 0 01-2.35-2.54 9.07 9.07 0 01-1.35-2.88c-.19-.82-.03-1.47.48-1.93l.02-.02c.22-.2.4-.38.64-.45.07-.02.14-.03.21-.04h.1z"/>
+  </svg>
+);
+
 const PartDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: part, isLoading } = usePartById(id);
+  const [orderOpen, setOrderOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -144,6 +154,18 @@ const PartDetail = () => {
 
                 <Separator />
 
+                {/* Cijena */}
+                <div className="py-4">
+                  <span className="text-sm text-muted-foreground">Cijena</span>
+                  <p className="text-xl font-bold text-foreground mt-0.5">
+                    {part.cijena != null && part.cijena > 0
+                      ? `${Number(part.cijena).toFixed(2)} KM`
+                      : "Cijena po dogovoru"}
+                  </p>
+                </div>
+
+                <Separator />
+
                 <div className="py-4">
                   {part.is_available ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium">
@@ -156,6 +178,29 @@ const PartDetail = () => {
                   )}
                 </div>
 
+                {/* Order buttons */}
+                <div className="flex flex-col gap-2 pb-4">
+                  <Button className="w-full" onClick={() => setOrderOpen(true)}>
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Naruči
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <a
+                      href={(() => {
+                        const pageUrl = window.location.href;
+                        const partTitle = `${part.dio} – ${part.marka} ${part.tip}${part.model ? ` (${part.model})` : ""}`;
+                        const message = `Pozdrav, zanima me ovaj artikal sa vaše web stranice: ${partTitle} – ILMA AUTO | originalni autodijelovi za sve marke vozila - ${pageUrl}`;
+                        return `viber://chat?number=%2B38761454151&draft=${encodeURIComponent(message)}`;
+                      })()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ViberIcon className="w-4 h-4 mr-2" />
+                      Naruči preko Vibera
+                    </a>
+                  </Button>
+                </div>
+
                 <Separator />
 
                 <p className="text-xs text-muted-foreground pt-4">ID: {part.id}</p>
@@ -163,6 +208,20 @@ const PartDetail = () => {
             </Card>
           </div>
         </div>
+
+        {/* Order Sheet */}
+        <OrderSheet
+          open={orderOpen}
+          onOpenChange={setOrderOpen}
+          part={{
+            id: part.id,
+            dio: part.dio,
+            marka: part.marka,
+            tip: part.tip,
+            model: part.model,
+            cijena: part.cijena,
+          }}
+        />
       </main>
     </div>
   );

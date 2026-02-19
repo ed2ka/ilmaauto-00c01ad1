@@ -14,9 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      orders: {
+        Row: {
+          created_at: string
+          customer_address: string
+          customer_name: string
+          customer_phone: string
+          id: number
+          part_id: number
+          part_name: string
+          part_price: number | null
+          shipping_price: number
+          status: string
+          total_price: number | null
+        }
+        Insert: {
+          created_at?: string
+          customer_address: string
+          customer_name: string
+          customer_phone: string
+          id?: never
+          part_id: number
+          part_name: string
+          part_price?: number | null
+          shipping_price?: number
+          status?: string
+          total_price?: number | null
+        }
+        Update: {
+          created_at?: string
+          customer_address?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: never
+          part_id?: number
+          part_name?: string
+          part_price?: number | null
+          shipping_price?: number
+          status?: string
+          total_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_part_id_fkey"
+            columns: ["part_id"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parts: {
         Row: {
           broj: string
+          cijena: number | null
           created_at: string
           dio: string
           id: number
@@ -30,6 +81,7 @@ export type Database = {
         }
         Insert: {
           broj?: string
+          cijena?: number | null
           created_at?: string
           dio: string
           id: number
@@ -43,6 +95,7 @@ export type Database = {
         }
         Update: {
           broj?: string
+          cijena?: number | null
           created_at?: string
           dio?: string
           id?: number
