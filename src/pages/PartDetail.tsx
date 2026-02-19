@@ -32,7 +32,7 @@ const PartDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px]">
         <TopBar />
         <Header />
         <div className="flex-1 flex items-center justify-center">
@@ -44,7 +44,7 @@ const PartDetail = () => {
 
   if (!part) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px]">
         <TopBar />
         <Header />
         <div className="flex-1 flex items-center justify-center">
@@ -57,7 +57,7 @@ const PartDetail = () => {
   const images = [part.slika1, part.slika2, part.slika3].filter(Boolean) as string[];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
       <TopBar />
       <Header />
 

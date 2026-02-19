@@ -54,7 +54,7 @@ const SearchResults = () => {
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 0;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
       <TopBar />
       <Header />
 
