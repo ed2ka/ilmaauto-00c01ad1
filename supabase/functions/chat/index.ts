@@ -89,6 +89,8 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    console.log("Sending request with", messages.length, "messages");
+
     // First call - may request tool use
     let response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -97,7 +99,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5-mini",
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
         tools,
         stream: false,
@@ -114,8 +116,8 @@ serve(async (req) => {
       }
       const t = await response.text();
       console.error("AI error:", status, t);
-      return new Response(JSON.stringify({ error: "AI error" }), {
-        status: 500,
+      return new Response(JSON.stringify({ error: "AI error", status, details: t }), {
+        status: status === 429 ? 429 : status === 402 ? 402 : 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -152,7 +154,7 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "openai/gpt-5-mini",
           messages: toolMessages,
           stream: true,
         }),
