@@ -4,6 +4,16 @@ import { ArrowLeft, Check, X as XIcon } from "lucide-react";
 import { useState } from "react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const PartDetail = () => {
   const { id } = useParams();
@@ -41,79 +51,129 @@ const PartDetail = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <TopBar />
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
+
+      <main className="flex-1 container mx-auto px-4 py-6 max-w-3xl">
+        {/* Breadcrumbs */}
+        <Breadcrumb className="mb-4">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="cursor-pointer">Početna</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                href={`/pretraga?marka=${encodeURIComponent(part.marka)}`}
+                className="cursor-pointer"
+              >
+                {part.marka}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                href={`/pretraga?marka=${encodeURIComponent(part.marka)}&tip=${encodeURIComponent(part.tip)}`}
+                className="cursor-pointer"
+              >
+                {part.tip}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{part.dio}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        {/* Back button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Nazad
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Images */}
-          <div className="space-y-3">
-            {images.length > 0 ? (
-              <>
-                <div className="aspect-square bg-muted rounded-lg overflow-hidden border">
-                  <img
-                    src={images[activeImg]}
-                    alt={part.dio}
-                    className="w-full h-full object-contain"
-                  />
+        {/* Images - full width */}
+        <div className="mb-6">
+          {images.length > 0 ? (
+            <div className="space-y-3">
+              <div className="aspect-[16/9] bg-muted rounded-lg overflow-hidden border">
+                <img
+                  src={images[activeImg]}
+                  alt={part.dio}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {images.length > 1 && (
+                <div className="flex gap-2">
+                  {images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImg(i)}
+                      className={`w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
+                        i === activeImg ? "border-primary" : "border-transparent"
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
                 </div>
-                {images.length > 1 && (
-                  <div className="flex gap-2">
-                    {images.map((img, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActiveImg(i)}
-                        className={`w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
-                          i === activeImg ? "border-primary" : "border-transparent"
-                        }`}
-                      >
-                        <img src={img} alt="" className="w-full h-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="aspect-square bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
-                Nema slike
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <div className="aspect-[16/9] bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+              Nema slike
+            </div>
+          )}
+        </div>
 
-          {/* Details */}
-          <div className="space-y-4">
+        {/* Details card */}
+        <Card>
+          <CardContent className="p-6 space-y-0">
+            {/* Title */}
             <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
+            <p className="text-muted-foreground mt-1">
+              {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
+            </p>
 
+            <Separator className="my-4" />
+
+            {/* Catalog number */}
             {part.broj && (
-              <div>
-                <span className="text-sm text-muted-foreground">Kataloški broj</span>
-                <p className="font-mono text-foreground">{part.broj}</p>
-              </div>
+              <>
+                <div>
+                  <span className="text-sm text-muted-foreground">Kataloški broj</span>
+                  <p className="font-mono text-foreground mt-0.5">{part.broj}</p>
+                </div>
+                <Separator className="my-4" />
+              </>
             )}
 
+            {/* Brand / Model */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span className="text-sm text-muted-foreground">Marka</span>
-                <p className="font-semibold text-foreground">{part.marka}</p>
+                <p className="font-semibold text-foreground mt-0.5">{part.marka}</p>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Model</span>
-                <p className="font-semibold text-foreground">{part.tip}</p>
+                <p className="font-semibold text-foreground mt-0.5">{part.tip}</p>
               </div>
             </div>
 
             {part.model && (
-              <div>
-                <span className="text-sm text-muted-foreground">Generacija / Godište</span>
-                <p className="text-foreground">{part.model}</p>
-              </div>
+              <>
+                <Separator className="my-4" />
+                <div>
+                  <span className="text-sm text-muted-foreground">Generacija / Godište</span>
+                  <p className="text-foreground mt-0.5">{part.model}</p>
+                </div>
+              </>
             )}
 
-            <div className="flex items-center gap-2 pt-2">
+            <Separator className="my-4" />
+
+            {/* Availability */}
+            <div>
               {part.is_available ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium">
                   <Check className="w-4 h-4" /> Dostupan
@@ -125,9 +185,12 @@ const PartDetail = () => {
               )}
             </div>
 
-            <p className="text-xs text-muted-foreground pt-4">ID: {part.id}</p>
-          </div>
-        </div>
+            <Separator className="my-4" />
+
+            {/* ID */}
+            <p className="text-xs text-muted-foreground">ID: {part.id}</p>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
