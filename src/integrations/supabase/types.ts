@@ -126,6 +126,7 @@ export type Database = {
         }
         Returns: {
           broj: string
+          cijena: number
           created_at: string
           dio: string
           id: number
