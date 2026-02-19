@@ -36,6 +36,22 @@ const PartImageGallery = ({ images, alt }: PartImageGalleryProps) => {
     touchStartX.current = null;
   };
 
+  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    if (ratio < 0.33) goPrev();
+    else if (ratio > 0.66) goNext();
+    else setIsFullscreen(true);
+  };
+
+  const handleFullscreenImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    if (ratio < 0.33) goPrev();
+    else if (ratio > 0.66) goNext();
+    else setIsFullscreen(false);
+  };
+
   useEffect(() => {
     if (!isFullscreen) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -93,7 +109,7 @@ const PartImageGallery = ({ images, alt }: PartImageGalleryProps) => {
       {/* Main image */}
       <div
         className="relative aspect-[4/3] bg-muted rounded-lg overflow-hidden border cursor-pointer select-none"
-        onClick={() => setIsFullscreen(true)}
+        onClick={handleImageClick}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -176,7 +192,7 @@ const PartImageGallery = ({ images, alt }: PartImageGalleryProps) => {
               src={images[activeImg]}
               alt={alt}
               className="max-h-[90vh] max-w-[90vw] object-contain cursor-pointer"
-              onClick={() => setIsFullscreen(false)}
+              onClick={handleFullscreenImageClick}
               draggable={false}
             />
           </div>,
