@@ -1,70 +1,75 @@
 
+## Klik na sliku: zone za navigaciju vs fullscreen
 
-## Napredna fotogalerija za stranicu detalja dijela
+Trenutno cijela slika otvara fullscreen pri kliku, a strelice su jedini nacin za navigaciju. Korisnik zeli da klik na lijevu/desnu stranu slike lista slike, a klik na sredinu otvara fullscreen.
 
-Kreiranje profesionalne fotogalerije inspirisane referencom (OLX/auto oglasi stil) sa svim trazenim funkcionalnostima.
+### Kako ce raditi
 
-### Funkcionalnosti
+Slika se dijeli na 3 nevidljive zone:
+- **Lijeva trecina (0-33%)**: klik = prethodna slika
+- **Sredina (33-66%)**: klik = otvori fullscreen
+- **Desna trecina (66-100%)**: klik = sljedeca slika
 
-**1. Brojac slika (1/3)**
-- U donjem lijevom uglu glavne slike prikazan overlay badge sa trenutnom pozicijom: "1 / 3"
-- Azurira se automatski pri promjeni slike
+Isto ponasanje vazi i u fullscreen modu:
+- Lijeva/desna trecina = navigacija
+- Sredina = zatvori fullscreen
 
-**2. Strelice lijevo/desno na glavnoj slici**
-- Poluprozirna dugmad sa ChevronLeft/ChevronRight ikonama
-- Pozicionirana na sredini lijeve i desne strane slike
-- Sakrivaju se ako nema prethodne/sljedece slike
+### Tehnicke promjene
 
-**3. Fullscreen dugme**
-- Ikona Maximize u donjem desnom uglu glavne slike
-- Klikom otvara fullscreen overlay (tamna pozadina, slika na sredini)
+**Fajl:** `src/components/PartImageGallery.tsx`
 
-**4. Fullscreen overlay**
-- Crna pozadina (bg-black/90) sa slikom centriranom na ekranu
-- Strelice lijevo/desno za navigaciju
-- Brojac slika (1/3) prikazan i u fullscreenu
-- X dugme za zatvaranje u gornjem desnom uglu
-- Klik na samu sliku takodjer zatvara fullscreen
-- ESC tipka zatvara fullscreen
+**1. Zamjena onClick handlera na glavnom kontejneru slike**
 
-**5. Swipe podrska (touch)**
-- Na mobilnom/touchscreenu: swipe lijevo/desno mijenja sliku
-- Radi i na glavnoj slici i u fullscreen modu
-- Implementacija preko touch event handlera (touchstart/touchend)
+Umjesto `onClick={() => setIsFullscreen(true)}`, novi handler racuna gdje je korisnik kliknuo:
 
-**6. Klik na glavnu sliku otvara fullscreen**
-- Klik na veliku sliku = otvara fullscreen prikaz
+```typescript
+const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const width = rect.width;
+  const ratio = clickX / width;
 
-**7. Thumbnailovi se sinhronizuju**
-- Aktivni thumbnail ima border oznaku
-- Pri navigaciji strelicama ili swipeom, thumbnail se automatski azurira
+  if (ratio < 0.33) {
+    goPrev();
+  } else if (ratio > 0.66) {
+    goNext();
+  } else {
+    setIsFullscreen(true);
+  }
+};
+```
 
-### Tehnicke napomene
+**2. Isti princip u fullscreen overlayju**
 
-**Novi fajl:**
-- `src/components/PartImageGallery.tsx` -- samostalni komponent sa svom logikom galerije
+Fullscreen slika dobija slican handler -- klik na lijevu/desnu trecinu lista, klik na sredinu zatvara fullscreen:
 
-**Fajl koji se mijenja:**
-- `src/pages/PartDetail.tsx` -- zamjena trenutne sekcije slika sa novim `PartImageGallery` komponentom
+```typescript
+const handleFullscreenImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const width = rect.width;
+  const ratio = clickX / width;
 
-**State management:**
-- `activeImg` (number) -- indeks trenutne slike
-- `isFullscreen` (boolean) -- da li je fullscreen otvoren
-- `touchStartX` (ref) -- za detekciju swipe smjera
+  if (ratio < 0.33) {
+    goPrev();
+  } else if (ratio > 0.66) {
+    goNext();
+  } else {
+    setIsFullscreen(false);
+  }
+};
+```
 
-**Touch/Swipe implementacija:**
-- `onTouchStart` bilježi pocetnu X poziciju
-- `onTouchEnd` racuna razliku -- ako je > 50px, mijenja sliku
-- Radi i na glavnoj slici i u fullscreen overlayju
+**3. Strelice ostaju kao vizualni indikator**
 
-**Fullscreen overlay:**
-- Fixed pozicija (fixed inset-0 z-50)
-- Portal renderovanje za izbjegavanje z-index problema
-- Keyboard listener za ESC (useEffect sa document.addEventListener)
-- Klik na sliku zatvara fullscreen (onClick na img elementu)
+Arrow dugmad i dalje postoje sa `e.stopPropagation()` tako da ne interferiraju sa zone-based klikom. Sluze kao vizualni hint korisniku da moze listati.
 
-**Koristene ikone (lucide-react):**
-- `ChevronLeft`, `ChevronRight` -- strelice za navigaciju
-- `Maximize` -- fullscreen dugme
-- `X` -- zatvaranje fullscreena
+**4. Kursor se mijenja po zonama (opciono poboljsanje)**
 
+Sredina slike zadrzava `cursor-pointer`, a lijeva/desna zona mogu imati odgovarajuci kursor, ali ovo se moze ostaviti jednostavno sa jednim kursorom za cijelu sliku.
+
+### Rezime promjena
+- Jedan fajl: `src/components/PartImageGallery.tsx`
+- Dodaju se 2 nove funkcije (`handleImageClick`, `handleFullscreenImageClick`)
+- Mijenja se `onClick` na glavnom image kontejneru i fullscreen img elementu
+- Swipe, strelice, thumbnailovi, keyboard navigacija -- sve ostaje isto
