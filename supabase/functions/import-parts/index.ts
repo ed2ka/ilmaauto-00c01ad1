@@ -20,14 +20,25 @@ serve(async (req) => {
 
     const body = await req.json();
     
-    // Accept either: full phpMyAdmin format, or direct array of items
+    // Accept either: full phpMyAdmin format, direct array of items, or { url: "..." }
     let items: any[] = [];
-    if (Array.isArray(body)) {
+    if (body && body.url) {
+      // Fetch JSON from URL
+      const res = await fetch(body.url);
+      const fetched = await res.json();
+      if (Array.isArray(fetched)) {
+        const rawEntry = fetched.find((e: any) => e.type === "raw");
+        if (rawEntry?.data) {
+          items = rawEntry.data;
+        } else {
+          items = fetched;
+        }
+      }
+    } else if (Array.isArray(body)) {
       const rawEntry = body.find((e: any) => e.type === "raw");
       if (rawEntry?.data) {
         items = rawEntry.data;
       } else {
-        // Direct array of items
         items = body;
       }
     }
