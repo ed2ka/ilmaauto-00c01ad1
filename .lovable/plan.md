@@ -1,59 +1,70 @@
 
 
-## Redizajn PartDetail stranice: side-by-side layout na desktopu
+## Napredna fotogalerija za stranicu detalja dijela
 
-Trenutno su slike i detalji poslagani jedno ispod drugog na svim velicinama ekrana. Na desktopu to ostavlja previse praznog prostora. Cilj je napraviti klasican OLX-stil layout: slika lijevo, detalji desno.
+Kreiranje profesionalne fotogalerije inspirisane referencom (OLX/auto oglasi stil) sa svim trazenim funkcionalnostima.
 
-### Sta se mijenja
+### Funkcionalnosti
 
-**Layout na desktopu (>=768px): dva stupca**
-- Lijeva strana (~55%): glavna slika + thumbnailovi
-- Desna strana (~45%): Card sa svim detaljima (naslov, kataloski broj, marka/model, dostupnost, ID)
+**1. Brojac slika (1/3)**
+- U donjem lijevom uglu glavne slike prikazan overlay badge sa trenutnom pozicijom: "1 / 3"
+- Azurira se automatski pri promjeni slike
 
-**Layout na mobilnom (<768px): ostaje vertikalan**
-- Slika gore na punoj sirini
-- Detalji ispod -- kao sto je sada
+**2. Strelice lijevo/desno na glavnoj slici**
+- Poluprozirna dugmad sa ChevronLeft/ChevronRight ikonama
+- Pozicionirana na sredini lijeve i desne strane slike
+- Sakrivaju se ako nema prethodne/sljedece slike
 
-**Max-width se povecava na 5xl** da bi side-by-side layout imao dovoljno prostora.
+**3. Fullscreen dugme**
+- Ikona Maximize u donjem desnom uglu glavne slike
+- Klikom otvara fullscreen overlay (tamna pozadina, slika na sredini)
 
-### Layout struktura (desktop)
+**4. Fullscreen overlay**
+- Crna pozadina (bg-black/90) sa slikom centriranom na ekranu
+- Strelice lijevo/desno za navigaciju
+- Brojac slika (1/3) prikazan i u fullscreenu
+- X dugme za zatvaranje u gornjem desnom uglu
+- Klik na samu sliku takodjer zatvara fullscreen
+- ESC tipka zatvara fullscreen
 
-```text
-+--------------------------------------------------+
-| TopBar                                           |
-| Header                                           |
-+--------------------------------------------------+
-| Breadcrumbs: Pocetna > AUDI > A3 > EGR          |
-| < Nazad                                          |
-+-------------------------+------------------------+
-| [Slika - aspect 4/3]   | Naziv dijela (h1)      |
-|                         | AUDI A3 | 8P 2003-2008 |
-| [Thumb] [Thumb] [Thumb] | ---------------------- |
-|                         | Kataloski broj         |
-|                         | 03G131512AE            |
-|                         | ---------------------- |
-|                         | Marka       Model      |
-|                         | AUDI        A3         |
-|                         | ---------------------- |
-|                         | Generacija / Godiste   |
-|                         | 8P 2003-2008           |
-|                         | ---------------------- |
-|                         | [Dostupan] badge       |
-|                         | ---------------------- |
-|                         | ID: 736882             |
-+-------------------------+------------------------+
-```
+**5. Swipe podrska (touch)**
+- Na mobilnom/touchscreenu: swipe lijevo/desno mijenja sliku
+- Radi i na glavnoj slici i u fullscreen modu
+- Implementacija preko touch event handlera (touchstart/touchend)
+
+**6. Klik na glavnu sliku otvara fullscreen**
+- Klik na veliku sliku = otvara fullscreen prikaz
+
+**7. Thumbnailovi se sinhronizuju**
+- Aktivni thumbnail ima border oznaku
+- Pri navigaciji strelicama ili swipeom, thumbnail se automatski azurira
 
 ### Tehnicke napomene
 
-**Fajl koji se mijenja:**
-- `src/pages/PartDetail.tsx`
+**Novi fajl:**
+- `src/components/PartImageGallery.tsx` -- samostalni komponent sa svom logikom galerije
 
-**Promjene:**
-- `max-w-3xl` se mijenja u `max-w-5xl` za vise prostora
-- Sekcija sa slikama i Card se omotavaju u `flex flex-col md:flex-row md:gap-8` kontejner
-- Slika dobija `md:w-[55%]` i `md:sticky md:top-6` da ostane vidljiva dok korisnik skroluje detalje
-- Card sa detaljima dobija `md:w-[45%]`
-- Na mobilnom (<md) ostaje vertikalan layout kao dosad
-- Aspect ratio slike se mijenja na `aspect-[4/3]` za bolji vizuelni balans u side-by-side layoutu
+**Fajl koji se mijenja:**
+- `src/pages/PartDetail.tsx` -- zamjena trenutne sekcije slika sa novim `PartImageGallery` komponentom
+
+**State management:**
+- `activeImg` (number) -- indeks trenutne slike
+- `isFullscreen` (boolean) -- da li je fullscreen otvoren
+- `touchStartX` (ref) -- za detekciju swipe smjera
+
+**Touch/Swipe implementacija:**
+- `onTouchStart` bilježi pocetnu X poziciju
+- `onTouchEnd` racuna razliku -- ako je > 50px, mijenja sliku
+- Radi i na glavnoj slici i u fullscreen overlayju
+
+**Fullscreen overlay:**
+- Fixed pozicija (fixed inset-0 z-50)
+- Portal renderovanje za izbjegavanje z-index problema
+- Keyboard listener za ESC (useEffect sa document.addEventListener)
+- Klik na sliku zatvara fullscreen (onClick na img elementu)
+
+**Koristene ikone (lucide-react):**
+- `ChevronLeft`, `ChevronRight` -- strelice za navigaciju
+- `Maximize` -- fullscreen dugme
+- `X` -- zatvaranje fullscreena
 
