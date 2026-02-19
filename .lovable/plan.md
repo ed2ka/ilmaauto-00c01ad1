@@ -1,26 +1,84 @@
 
 
-## Unos 150 artikala u bazu podataka
+## Kompletni redizajn stranice rezultata pretrage
 
-Procitao sam kompletan JSON fajl sa 150 artikala (IDs 736911-736762).
+Inspirisano screenshotom koji si podijelio (OLX stil), stranica pretrage ce dobiti profesionalan izgled sa sidebar filterima, grid/list toggleom, breadcrumbovima i slikama koje popunjavaju cijeli prostor.
 
-### Plan
+### Sta se mijenja
 
-Unijet cu svih 150 artikala direktno u bazu koristeci SQL INSERT naredbe u 3 batcha po 50 artikala.
+**1. Slike popunjavaju cijeli prostor kartice**
+- Zamjena `object-contain` sa `object-cover` -- slike ce uvijek popuniti kontejner bez praznog prostora
+- Aspect ratio ostaje konzistentan (4:3 umjesto 1:1 za realističniji prikaz)
 
-### Koraci
+**2. Breadcrumb navigacija**
+- Pocetna > Rezultati pretrage > [Marka] > [Model]
+- Koristi postojeci Breadcrumb komponent iz `src/components/ui/breadcrumb.tsx`
+- Prikazuje se ispod headera kao tanka traka
 
-1. **Batch 1** (artikli 1-50): IDs 736911-736862 -- Mercedes, VW, Ford, Audi, Renault, KIA, SKODA, SEAT, OPEL, SMART, BMW, Dacia, FIAT, IVECO, Land Rover, Hyundai
-2. **Batch 2** (artikli 51-100): IDs 736861-736812 -- Mercedes, Hyundai, IVECO, BMW, VW, SKODA, Citroen, Ford, Renault, Volvo, AUDI, PEUGEOT, KIA
-3. **Batch 3** (artikli 101-150): IDs 736811-736762 -- Renault, VW, Ford, KIA, AUDI, OPEL, SEAT, Mercedes, PEUGEOT, FIAT, IVECO, Hyundai, BMW
+**3. Toolbar sa prikazom i sortiranjem**
+- "Prikaz" toggle sa Grid i List ikonom (LayoutGrid, List iz lucide-react)
+- "Sortiraj" dropdown (desno) -- Najnovije, Naziv A-Z, Naziv Z-A
+- Broj rezultata prikazan u naslovu
+
+**4. Lijevi sidebar sa filterima**
+- Naslov "FILTERI" sa "Resetuj" dugmetom
+- Aktivni filteri prikazani kao badge-ovi sa X za uklanjanje
+- Filter za marku (dropdown sa svim markama iz baze)
+- Filter za model/tip (dropdown zavisan od odabrane marke)
+- Filter za naziv dijela (tekstualni input)
+- Na mobilnom: sidebar se sakriva, pristupa se preko "Filteri" dugmeta
+
+**5. Dva nacina prikaza**
+- Grid: kartice u 3 kolone (sa slikom gore, info dole) -- slicno screenshotu
+- List: horizontalni redovi (slika lijevo 100px, detalji desno)
+
+**6. Poboljsane kartice**
+- Slika 4:3 aspect ratio sa `object-cover`
+- Naziv dijela (bold), marka + tip, kataloski broj, model/godina
+
+### Layout struktura
+
+```text
++------------------------------------------+
+| TopBar                                   |
+| Header                                   |
++------------------------------------------+
+| Breadcrumbs: Pocetna > Pretraga > AUDI   |
++------------------------------------------+
+| Prikaz: [Grid][List]    Sortiraj: [v]    |
++----------+-------------------------------+
+| FILTERI  |                               |
+| [Resetuj]|  Grid/List rezultata          |
+|          |                               |
+| Marka  v |  [Card] [Card] [Card]         |
+| Model  v |  [Card] [Card] [Card]         |
+| Naziv  _ |                               |
+|          |  Paginacija                    |
++----------+-------------------------------+
+```
 
 ### Tehnicke napomene
 
-- Koristim `INSERT INTO public.parts (...) VALUES (...) ON CONFLICT (id) DO UPDATE SET ...`
-- Mapiranje polja: `marka1` -> `marka`, `tip1` -> `tip`, `model1` -> `model`
-- Slike koje su `null` ostaju null
-- Svi artikli dobijaju `is_available = true`
-- 9 postojecih artikala ce se azurirati ako se poklapaju ID-ovi
-- Proces zahtijeva 3 odobrenja (jedno po batch-u) jer je ogranicenje alata 50 redova po upitu
-- Specijalni karakteri u vrijednostima (apostrofi) ce biti escapovani
+**Fajlovi koji se kreiraju:**
+- `src/components/SearchFilterSidebar.tsx` -- sidebar sa filterima, koristi `useBrands()` i `useModels()` hookove, azurira URL parametre preko `useSearchParams`
+- `src/components/PartCard.tsx` -- kartica za grid prikaz sa `object-cover` slikama
+- `src/components/PartListItem.tsx` -- red za list prikaz
+
+**Fajlovi koji se mijenjaju:**
+- `src/pages/SearchResults.tsx` -- kompletni redizajn: dodavanje breadcrumbova, sidebara, toolbara, grid/list toglea, sortiranja
+
+**Koristeni postojeci komponenti:**
+- `Breadcrumb` iz `src/components/ui/breadcrumb.tsx`
+- `useBrands()` i `useModels()` iz `src/hooks/useParts.ts`
+- `Select` iz `src/components/ui/select.tsx` za sort dropdown
+- Ikone iz lucide-react: `LayoutGrid`, `List`, `SlidersHorizontal`, `RotateCcw`, `X`
+
+**Sidebar na mobilnom:**
+- Na ekranima < 768px sidebar se sakriva
+- Prikazuje se "Filteri" dugme koje otvara Sheet (slide-in panel) sa filterima
+- Na desktopu sidebar je uvijek vidljiv (w-64, lijevo)
+
+**Sortiranje:**
+- Lokalno sortiranje rezultata (client-side) po: najnovije, naziv A-Z, naziv Z-A
+- Ne zahtijeva izmjene u bazi
 
