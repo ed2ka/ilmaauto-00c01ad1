@@ -52,7 +52,7 @@ const PartDetail = () => {
       <TopBar />
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-6 max-w-3xl">
+      <main className="flex-1 container mx-auto px-4 py-6 max-w-5xl">
         {/* Breadcrumbs */}
         <Breadcrumb className="mb-4">
           <BreadcrumbList>
@@ -92,105 +92,105 @@ const PartDetail = () => {
           <ArrowLeft className="w-4 h-4" /> Nazad
         </button>
 
-        {/* Images - full width */}
-        <div className="mb-6">
-          {images.length > 0 ? (
-            <div className="space-y-3">
-              <div className="aspect-[16/9] bg-muted rounded-lg overflow-hidden border">
-                <img
-                  src={images[activeImg]}
-                  alt={part.dio}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {images.length > 1 && (
-                <div className="flex gap-2">
-                  {images.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveImg(i)}
-                      className={`w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
-                        i === activeImg ? "border-primary" : "border-transparent"
-                      }`}
-                    >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
+        {/* Side-by-side on desktop, stacked on mobile */}
+        <div className="flex flex-col md:flex-row md:gap-8">
+          {/* Images - left side */}
+          <div className="w-full md:w-[55%] md:sticky md:top-6 self-start mb-6 md:mb-0">
+            {images.length > 0 ? (
+              <div className="space-y-3">
+                <div className="aspect-[4/3] bg-muted rounded-lg overflow-hidden border">
+                  <img
+                    src={images[activeImg]}
+                    alt={part.dio}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="aspect-[16/9] bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
-              Nema slike
-            </div>
-          )}
+                {images.length > 1 && (
+                  <div className="flex gap-2">
+                    {images.map((img, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveImg(i)}
+                        className={`w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
+                          i === activeImg ? "border-primary" : "border-transparent"
+                        }`}
+                      >
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+                Nema slike
+              </div>
+            )}
+          </div>
+
+          {/* Details card - right side */}
+          <div className="w-full md:w-[45%]">
+            <Card>
+              <CardContent className="p-6 space-y-0">
+                <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
+                <p className="text-muted-foreground mt-1">
+                  {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
+                </p>
+
+                <Separator className="my-4" />
+
+                {part.broj && (
+                  <>
+                    <div>
+                      <span className="text-sm text-muted-foreground">Kataloški broj</span>
+                      <p className="font-mono text-foreground mt-0.5">{part.broj}</p>
+                    </div>
+                    <Separator className="my-4" />
+                  </>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-sm text-muted-foreground">Marka</span>
+                    <p className="font-semibold text-foreground mt-0.5">{part.marka}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm text-muted-foreground">Model</span>
+                    <p className="font-semibold text-foreground mt-0.5">{part.tip}</p>
+                  </div>
+                </div>
+
+                {part.model && (
+                  <>
+                    <Separator className="my-4" />
+                    <div>
+                      <span className="text-sm text-muted-foreground">Generacija / Godište</span>
+                      <p className="text-foreground mt-0.5">{part.model}</p>
+                    </div>
+                  </>
+                )}
+
+                <Separator className="my-4" />
+
+                <div>
+                  {part.is_available ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                      <Check className="w-4 h-4" /> Dostupan
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-700 text-sm font-medium">
+                      <XIcon className="w-4 h-4" /> Nije dostupan
+                    </span>
+                  )}
+                </div>
+
+                <Separator className="my-4" />
+
+                <p className="text-xs text-muted-foreground">ID: {part.id}</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-
-        {/* Details card */}
-        <Card>
-          <CardContent className="p-6 space-y-0">
-            {/* Title */}
-            <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
-            <p className="text-muted-foreground mt-1">
-              {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
-            </p>
-
-            <Separator className="my-4" />
-
-            {/* Catalog number */}
-            {part.broj && (
-              <>
-                <div>
-                  <span className="text-sm text-muted-foreground">Kataloški broj</span>
-                  <p className="font-mono text-foreground mt-0.5">{part.broj}</p>
-                </div>
-                <Separator className="my-4" />
-              </>
-            )}
-
-            {/* Brand / Model */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <span className="text-sm text-muted-foreground">Marka</span>
-                <p className="font-semibold text-foreground mt-0.5">{part.marka}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Model</span>
-                <p className="font-semibold text-foreground mt-0.5">{part.tip}</p>
-              </div>
-            </div>
-
-            {part.model && (
-              <>
-                <Separator className="my-4" />
-                <div>
-                  <span className="text-sm text-muted-foreground">Generacija / Godište</span>
-                  <p className="text-foreground mt-0.5">{part.model}</p>
-                </div>
-              </>
-            )}
-
-            <Separator className="my-4" />
-
-            {/* Availability */}
-            <div>
-              {part.is_available ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                  <Check className="w-4 h-4" /> Dostupan
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-700 text-sm font-medium">
-                  <XIcon className="w-4 h-4" /> Nije dostupan
-                </span>
-              )}
-            </div>
-
-            <Separator className="my-4" />
-
-            {/* ID */}
-            <p className="text-xs text-muted-foreground">ID: {part.id}</p>
-          </CardContent>
-        </Card>
       </main>
     </div>
   );
