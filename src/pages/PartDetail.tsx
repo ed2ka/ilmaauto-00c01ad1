@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { usePartById } from "@/hooks/useParts";
 import { ArrowLeft, Check, X as XIcon } from "lucide-react";
-import { useState } from "react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
+import PartImageGallery from "@/components/PartImageGallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -19,7 +19,6 @@ const PartDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: part, isLoading } = usePartById(id);
-  const [activeImg, setActiveImg] = useState(0);
 
   if (isLoading) {
     return (
@@ -96,36 +95,7 @@ const PartDetail = () => {
         <div className="flex flex-col md:flex-row md:gap-8">
           {/* Images - left side */}
           <div className="w-full md:w-[55%] md:sticky md:top-6 self-start mb-6 md:mb-0">
-            {images.length > 0 ? (
-              <div className="space-y-3">
-                <div className="aspect-[4/3] bg-muted rounded-lg overflow-hidden border">
-                  <img
-                    src={images[activeImg]}
-                    alt={part.dio}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                {images.length > 1 && (
-                  <div className="flex gap-2">
-                    {images.map((img, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActiveImg(i)}
-                        className={`w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
-                          i === activeImg ? "border-primary" : "border-transparent"
-                        }`}
-                      >
-                        <img src={img} alt="" className="w-full h-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
-                Nema slike
-              </div>
-            )}
+            <PartImageGallery images={images} alt={part.dio} />
           </div>
 
           {/* Details card - right side */}
