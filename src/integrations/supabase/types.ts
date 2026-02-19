@@ -14,13 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      parts: {
+        Row: {
+          broj: string
+          created_at: string
+          dio: string
+          id: number
+          is_available: boolean
+          marka: string
+          model: string
+          slika1: string | null
+          slika2: string | null
+          slika3: string | null
+          tip: string
+        }
+        Insert: {
+          broj?: string
+          created_at?: string
+          dio: string
+          id: number
+          is_available?: boolean
+          marka: string
+          model?: string
+          slika1?: string | null
+          slika2?: string | null
+          slika3?: string | null
+          tip: string
+        }
+        Update: {
+          broj?: string
+          created_at?: string
+          dio?: string
+          id?: number
+          is_available?: boolean
+          marka?: string
+          model?: string
+          slika1?: string | null
+          slika2?: string | null
+          slika3?: string | null
+          tip?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_parts: {
+        Args: {
+          p_broj?: string
+          p_dio?: string
+          p_limit?: number
+          p_marka?: string
+          p_offset?: number
+          p_query?: string
+          p_tip?: string
+        }
+        Returns: {
+          broj: string
+          created_at: string
+          dio: string
+          id: number
+          is_available: boolean
+          marka: string
+          model: string
+          slika1: string
+          slika2: string
+          slika3: string
+          tip: string
+          total_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,27 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useBrands, useModels } from "@/hooks/useParts";
 
-const vehicleData: Record<string, string[]> = {
-  Audi: ["A1", "A3", "A4", "A5", "A6", "A8", "Q3", "Q5", "Q7", "TT"],
-  BMW: ["Serija 1", "Serija 3", "Serija 5", "Serija 7", "X1", "X3", "X5", "X6"],
-  Mercedes: ["A klasa", "B klasa", "C klasa", "E klasa", "S klasa", "GLA", "GLC", "GLE"],
-  Volkswagen: ["Golf", "Passat", "Polo", "Tiguan", "Touareg", "T-Roc", "Arteon"],
-  Toyota: ["Corolla", "Yaris", "RAV4", "Camry", "Land Cruiser", "C-HR", "Hilux"],
-  Ford: ["Focus", "Fiesta", "Mondeo", "Kuga", "Puma", "Mustang", "Ranger"],
-};
+interface VehicleSelectorProps {
+  onSelectionChange?: (brand: string | null, models: string[]) => void;
+}
 
-const brands = Object.keys(vehicleData);
-
-const VehicleSelector = () => {
+const VehicleSelector = ({ onSelectionChange }: VehicleSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<"brands" | "models">("brands");
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
-  const models = selectedBrand ? vehicleData[selectedBrand] : [];
-  const allSelected = models.length > 0 && models.every((m) => selectedModels.includes(m));
+  const { data: brands = [] } = useBrands();
+  const { data: modelOptions = [] } = useModels(selectedBrand);
+
+  const allSelected = modelOptions.length > 0 && modelOptions.every((m) => selectedModels.includes(m));
+
+  useEffect(() => {
+    onSelectionChange?.(selectedBrand, selectedModels);
+  }, [selectedBrand, selectedModels]);
 
   const handleBrandClick = (brand: string) => {
     if (brand !== selectedBrand) {
@@ -31,9 +31,7 @@ const VehicleSelector = () => {
     setStep("models");
   };
 
-  const handleBack = () => {
-    setStep("brands");
-  };
+  const handleBack = () => setStep("brands");
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -49,11 +47,7 @@ const VehicleSelector = () => {
   };
 
   const toggleAll = () => {
-    if (allSelected) {
-      setSelectedModels([]);
-    } else {
-      setSelectedModels([...models]);
-    }
+    setSelectedModels(allSelected ? [] : [...modelOptions]);
   };
 
   const displayValue = () => {
@@ -94,7 +88,9 @@ const VehicleSelector = () => {
       >
         {step === "brands" && (
           <div className="max-h-64 overflow-y-auto">
-            {brands.map((brand) => (
+            {brands.length === 0 ? (
+              <div className="px-4 py-3 text-sm text-muted-foreground">Učitavanje...</div>
+            ) : brands.map((brand) => (
               <button
                 key={brand}
                 onClick={() => handleBrandClick(brand)}
@@ -111,36 +107,26 @@ const VehicleSelector = () => {
 
         {step === "models" && selectedBrand && (
           <div>
-            {/* Header */}
             <div className="flex items-center gap-2 px-4 py-2.5 border-b border-input">
               <button onClick={handleBack} className="text-muted-foreground hover:text-foreground transition-colors">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm font-semibold tracking-wide uppercase text-foreground">
-                {selectedBrand}
-              </span>
+              <span className="text-sm font-semibold tracking-wide uppercase text-foreground">{selectedBrand}</span>
             </div>
 
-            {/* Select all */}
-            <label className="flex items-center gap-3 px-4 py-2.5 border-b border-input cursor-pointer hover:bg-accent transition-colors">
-              <Checkbox
-                checked={allSelected}
-                onCheckedChange={toggleAll}
-              />
-              <span className="text-sm font-medium text-foreground">Odaberi sve</span>
-            </label>
+            {modelOptions.length > 0 && (
+              <label className="flex items-center gap-3 px-4 py-2.5 border-b border-input cursor-pointer hover:bg-accent transition-colors">
+                <Checkbox checked={allSelected} onCheckedChange={toggleAll} />
+                <span className="text-sm font-medium text-foreground">Odaberi sve</span>
+              </label>
+            )}
 
-            {/* Models list */}
             <div className="max-h-52 overflow-y-auto">
-              {models.map((model) => (
-                <label
-                  key={model}
-                  className="flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-accent transition-colors"
-                >
-                  <Checkbox
-                    checked={selectedModels.includes(model)}
-                    onCheckedChange={() => toggleModel(model)}
-                  />
+              {modelOptions.length === 0 ? (
+                <div className="px-4 py-3 text-sm text-muted-foreground">Učitavanje...</div>
+              ) : modelOptions.map((model) => (
+                <label key={model} className="flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-accent transition-colors">
+                  <Checkbox checked={selectedModels.includes(model)} onCheckedChange={() => toggleModel(model)} />
                   <span className="text-sm text-foreground">{model}</span>
                 </label>
               ))}
