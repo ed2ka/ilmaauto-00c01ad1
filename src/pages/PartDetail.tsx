@@ -101,25 +101,27 @@ const PartDetail = () => {
           {/* Details card - right side */}
           <div className="w-full md:w-[45%]">
             <Card>
-              <CardContent className="p-6 space-y-0">
-                <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
-                <p className="text-muted-foreground mt-1">
-                  {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
-                </p>
+              <CardContent className="p-6">
+                <div className="py-2">
+                  <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
+                  <p className="text-muted-foreground mt-1">
+                    {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
+                  </p>
+                </div>
 
-                <Separator className="my-4" />
+                <Separator />
 
                 {part.broj && (
                   <>
-                    <div>
+                    <div className="py-4">
                       <span className="text-sm text-muted-foreground">Kataloški broj</span>
                       <p className="font-mono text-foreground mt-0.5">{part.broj}</p>
                     </div>
-                    <Separator className="my-4" />
+                    <Separator />
                   </>
                 )}
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 py-4">
                   <div>
                     <span className="text-sm text-muted-foreground">Marka</span>
                     <p className="font-semibold text-foreground mt-0.5">{part.marka}</p>
@@ -132,17 +134,17 @@ const PartDetail = () => {
 
                 {part.model && (
                   <>
-                    <Separator className="my-4" />
-                    <div>
+                    <Separator />
+                    <div className="py-4">
                       <span className="text-sm text-muted-foreground">Generacija / Godište</span>
                       <p className="text-foreground mt-0.5">{part.model}</p>
                     </div>
                   </>
                 )}
 
-                <Separator className="my-4" />
+                <Separator />
 
-                <div>
+                <div className="py-4">
                   {part.is_available ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium">
                       <Check className="w-4 h-4" /> Dostupan
@@ -154,9 +156,9 @@ const PartDetail = () => {
                   )}
                 </div>
 
-                <Separator className="my-4" />
+                <Separator />
 
-                <p className="text-xs text-muted-foreground">ID: {part.id}</p>
+                <p className="text-xs text-muted-foreground pt-4">ID: {part.id}</p>
               </CardContent>
             </Card>
           </div>
