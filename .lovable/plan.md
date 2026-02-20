@@ -1,56 +1,58 @@
 
 
-## Dodavanje tabova ispod galerije slika na /dio/:id
+## Dodavanje stranice "Korisnička podrška" i link u header
 
-### Opis
+### 1. Nova stranica `src/pages/Support.tsx`
 
-Ispod galerije slika (lijeva kolona) dodati Tabs komponentu sa dva taba:
+Kreirati stranicu inspirisanu priloženom slikom (GoDaddy stil) ali prilagođenu za Ilma Auto Dijelove. Stranica će sadržavati:
 
-**Tab 1: "Napomena o fotografijama"**
-Informativni tekst o tome da su fotografije informativnog karaktera.
+**Hero sekcija:**
+- Naslov: "Tu smo za vas"
+- Podnaslov: kratki tekst o dostupnosti podrške
+- Svijetla pozadinska boja (npr. muted/accent ton)
 
-**Tab 2: "Kupovina dijelova"**
-Tekst o savjetima prije kupovine, sa dva linka ("uslovi prodaje" i "politika povrata i garancije") koji ce za sada voditi na `#` dok se ne kreiraju te stranice.
+**Kartica za kontakt (umjesto chata):**
+- Naslov: "Kontaktirajte nas"
+- Opis: "Za brzu pomoć oko narudžbi, dijelova ili bilo kakvih pitanja."
+- Tri dugmeta u redu:
+  - **Viber** -- otvara Viber link (`viber://chat?number=...` ili placeholder `#`)
+  - **WhatsApp** -- otvara WhatsApp link (`https://wa.me/...` ili placeholder `#`)
+  - **Poziv** -- otvara tel link (`tel:...` ili placeholder `#`)
+- Ikone: koristiti `MessageCircle` (Viber), `MessageSquare` (WhatsApp), `Phone` (Poziv) iz lucide-react
+- Radno vrijeme ispod dugmića
 
-### Tehnicke promjene
+Stranica koristi Header i footer layout kao ostale stranice.
 
-**Fajl: `src/pages/PartDetail.tsx`**
+### 2. Ruta u `src/App.tsx`
 
-- Importovati `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` iz `@/components/ui/tabs`
-- Ispod `<PartImageGallery />` komponente (unutar lijeve kolone, linija ~117), dodati Tabs sekciju:
-
+Dodati novu rutu:
 ```
-<PartImageGallery images={images} alt={part.dio} />
-
-<Tabs defaultValue="photos" className="mt-4">
-  <TabsList className="w-full">
-    <TabsTrigger value="photos" className="flex-1 text-xs">
-      Napomena o fotografijama
-    </TabsTrigger>
-    <TabsTrigger value="purchase" className="flex-1 text-xs">
-      Kupovina dijelova
-    </TabsTrigger>
-  </TabsList>
-  <TabsContent value="photos">
-    <p className="text-sm text-muted-foreground leading-relaxed">
-      Prikazane fotografije proizvoda su informativnog karaktera...
-    </p>
-  </TabsContent>
-  <TabsContent value="purchase">
-    <p className="text-sm text-muted-foreground leading-relaxed">
-      Prije narucivanja savjetujemo... sa linkovima
-      <a href="#">uslovima prodaje</a> i
-      <a href="#">politikom povrata i garancije</a>.
-    </p>
-  </TabsContent>
-</Tabs>
+<Route path="/podrska" element={<Support />} />
 ```
 
-Tabovi ce biti kompaktni, sa punom sirinom TabsList-a i manjim fontom (`text-xs`) kako bi se oba naziva ugodno smjestila. Linkovi u drugom tabu ce biti stilizovani kao `text-primary underline`.
+### 3. Link u `src/components/Header.tsx`
 
-### Rezime
+Dodati "KORISNIČKA PODRŠKA" link pored "PRETRAŽI" u desktop navigaciji i u mobilnom meniju:
 
-| Fajl | Izmjena |
+**Desktop (linija 22-27):**
+```
+<Link to="/pretraga">PRETRAŽI</Link>
+<Link to="/podrska">KORISNIČKA PODRŠKA</Link>
+<a href="#">NOVOSTI</a>
+```
+
+**Mobilni meni (linija 84-85):**
+```
+<Link to="/pretraga">PRETRAŽI</Link>
+<Link to="/podrska">KORISNIČKA PODRŠKA</Link>
+<a href="#">NOVOSTI</a>
+```
+
+### Rezime izmjena
+
+| Fajl | Akcija |
 |------|---------|
-| `src/pages/PartDetail.tsx` | Dodati Tabs komponentu ispod galerije slika |
+| `src/pages/Support.tsx` | Kreirati -- nova stranica korisničke podrške |
+| `src/App.tsx` | Izmjena -- dodati rutu `/podrska` |
+| `src/components/Header.tsx` | Izmjena -- dodati link u navigaciju |
 
