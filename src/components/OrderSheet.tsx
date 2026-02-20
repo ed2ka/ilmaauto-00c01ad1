@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -54,6 +56,7 @@ const SHIPPING_PRICE = 10;
 
 const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
   const [submitting, setSubmitting] = useState(false);
+  const { user, profile } = useAuth();
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
@@ -63,6 +66,15 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
       customer_address: "",
     },
   });
+
+  // Auto-fill from profile
+  useEffect(() => {
+    if (open && profile) {
+      if (profile.full_name) form.setValue("customer_name", profile.full_name);
+      if (profile.phone) form.setValue("customer_phone", profile.phone);
+      if (profile.address) form.setValue("customer_address", profile.address);
+    }
+  }, [open, profile]);
 
   const hasPrice = part.cijena != null && part.cijena > 0;
   const partPrice = hasPrice ? Number(part.cijena) : null;
@@ -80,6 +92,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
         part_price: partPrice,
         shipping_price: SHIPPING_PRICE,
         total_price: totalPrice,
+        ...(user ? { user_id: user.id } : {}),
       });
 
       if (error) throw error;
@@ -104,6 +117,20 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
             Unesite podatke za dostavu i potvrdite narudžbu.
           </SheetDescription>
         </SheetHeader>
+
+        {!user && (
+          <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-3 text-center text-sm">
+            <span className="text-muted-foreground">Imate račun? </span>
+            <Link to="/prijava" className="text-primary font-medium hover:underline">
+              Prijavite se
+            </Link>
+            <span className="text-muted-foreground"> ili </span>
+            <Link to="/prijava" className="text-primary font-medium hover:underline">
+              napravite račun
+            </Link>
+            <span className="text-muted-foreground"> za brže naručivanje.</span>
+          </div>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-6">

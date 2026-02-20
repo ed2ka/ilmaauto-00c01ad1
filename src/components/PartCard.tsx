@@ -1,16 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
 import type { Part } from "@/hooks/useParts";
+import { useAuth } from "@/hooks/useAuth";
+import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
 
 interface PartCardProps {
   part: Part;
 }
 
 const PartCard = ({ part }: PartCardProps) => {
+  const { user } = useAuth();
+  const { data: wishlistIds } = useWishlistIds();
+  const toggleWishlist = useToggleWishlist();
+  const navigate = useNavigate();
+  const isInWishlist = wishlistIds?.has(part.id) ?? false;
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      navigate("/prijava");
+      return;
+    }
+    toggleWishlist.mutate({ partId: part.id, isInWishlist });
+  };
+
   return (
     <Link
       to={`/dio/${part.id}`}
-      className="bg-card rounded-lg border hover:shadow-lg transition-shadow group overflow-hidden flex flex-col"
+      className="bg-card rounded-lg border hover:shadow-lg transition-shadow group overflow-hidden flex flex-col relative"
     >
+      <button
+        onClick={handleWishlist}
+        className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-background/80 hover:bg-background transition-colors"
+      >
+        <Heart className={`w-4 h-4 ${isInWishlist ? "fill-primary text-primary" : "text-muted-foreground"}`} />
+      </button>
       <div className="aspect-[4/3] bg-muted overflow-hidden">
         {part.slika1 ? (
           <img

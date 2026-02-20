@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePartById } from "@/hooks/useParts";
-import { ArrowLeft, Check, X as XIcon, ShoppingCart } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
+import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import PartImageGallery from "@/components/PartImageGallery";
@@ -29,6 +31,9 @@ const PartDetail = () => {
   const navigate = useNavigate();
   const { data: part, isLoading } = usePartById(id);
   const [orderOpen, setOrderOpen] = useState(false);
+  const { user } = useAuth();
+  const { data: wishlistIds } = useWishlistIds();
+  const toggleWishlist = useToggleWishlist();
 
   if (isLoading) {
     return (
@@ -55,6 +60,15 @@ const PartDetail = () => {
   }
 
   const images = [part.slika1, part.slika2, part.slika3].filter(Boolean) as string[];
+  const isInWishlist = wishlistIds?.has(part.id) ?? false;
+
+  const handleWishlist = () => {
+    if (!user) {
+      navigate("/prijava");
+      return;
+    }
+    toggleWishlist.mutate({ partId: part.id, isInWishlist });
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
@@ -112,11 +126,19 @@ const PartDetail = () => {
           <div className="w-full md:w-[45%]">
             <Card>
               <CardContent className="p-6">
-                <div className="py-2">
-                  <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
-                  <p className="text-muted-foreground mt-1">
-                    {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
-                  </p>
+                <div className="py-2 flex items-start justify-between gap-2">
+                  <div>
+                    <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
+                    <p className="text-muted-foreground mt-1">
+                      {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleWishlist}
+                    className="p-2 rounded-full hover:bg-muted transition-colors flex-shrink-0"
+                  >
+                    <Heart className={`w-5 h-5 ${isInWishlist ? "fill-primary text-primary" : "text-muted-foreground"}`} />
+                  </button>
                 </div>
 
                 <Separator />
