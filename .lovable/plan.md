@@ -1,33 +1,56 @@
 
 
-## Popravke na Filter sidebar-u
+## Dodavanje tabova ispod galerije slika na /dio/:id
 
-### 1. Sticky pozicija sidebar-a
+### Opis
 
-Sidebar koristi `sticky top-4` sto je preblizu vrhu. Posto stranica ima fiksni header (~108px na desktopu), treba promijeniti na `top-[120px]` kako bi sidebar bio ispod headera sa malo razmaka.
+Ispod galerije slika (lijeva kolona) dodati Tabs komponentu sa dva taba:
 
-**Fajl: `src/pages/SearchResults.tsx` (linija 169)**
-- Promijeniti `sticky top-4` u `sticky top-[120px]`
+**Tab 1: "Napomena o fotografijama"**
+Informativni tekst o tome da su fotografije informativnog karaktera.
 
-### 2. X dugme za ponistavanje svakog filtera pojedinacno
+**Tab 2: "Kupovina dijelova"**
+Tekst o savjetima prije kupovine, sa dva linka ("uslovi prodaje" i "politika povrata i garancije") koji ce za sada voditi na `#` dok se ne kreiraju te stranice.
 
-Svako polje (Marka, Model/Tip, Naziv dijela, Kataloški broj) dobija malo X dugme koje se prikazuje samo kada to polje ima aktivnu vrijednost. Klikom se brise taj filter.
+### Tehnicke promjene
 
-**Fajl: `src/components/SearchFilterSidebar.tsx`**
+**Fajl: `src/pages/PartDetail.tsx`**
 
-Za Select polja (Marka, Model/Tip):
-- Omotati Select i X dugme u `relative` wrapper
-- X dugme se pozicionira desno od Select trigger-a (ili unutar wrappera)
-- Prikazuje se samo kad je vrijednost odabrana
+- Importovati `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` iz `@/components/ui/tabs`
+- Ispod `<PartImageGallery />` komponente (unutar lijeve kolone, linija ~117), dodati Tabs sekciju:
 
-Za Input polja (Naziv dijela, Kataloški broj):
-- Dodati X dugme unutar wrappera, vidljivo samo kad polje ima tekst
-- Klikom na X poziva `removeParam("dio")` odnosno `removeParam("broj")`
+```
+<PartImageGallery images={images} alt={part.dio} />
 
-### Rezime izmjena
+<Tabs defaultValue="photos" className="mt-4">
+  <TabsList className="w-full">
+    <TabsTrigger value="photos" className="flex-1 text-xs">
+      Napomena o fotografijama
+    </TabsTrigger>
+    <TabsTrigger value="purchase" className="flex-1 text-xs">
+      Kupovina dijelova
+    </TabsTrigger>
+  </TabsList>
+  <TabsContent value="photos">
+    <p className="text-sm text-muted-foreground leading-relaxed">
+      Prikazane fotografije proizvoda su informativnog karaktera...
+    </p>
+  </TabsContent>
+  <TabsContent value="purchase">
+    <p className="text-sm text-muted-foreground leading-relaxed">
+      Prije narucivanja savjetujemo... sa linkovima
+      <a href="#">uslovima prodaje</a> i
+      <a href="#">politikom povrata i garancije</a>.
+    </p>
+  </TabsContent>
+</Tabs>
+```
+
+Tabovi ce biti kompaktni, sa punom sirinom TabsList-a i manjim fontom (`text-xs`) kako bi se oba naziva ugodno smjestila. Linkovi u drugom tabu ce biti stilizovani kao `text-primary underline`.
+
+### Rezime
 
 | Fajl | Izmjena |
 |------|---------|
-| `src/pages/SearchResults.tsx` | Sticky pozicija: `top-4` -> `top-[120px]` |
-| `src/components/SearchFilterSidebar.tsx` | X dugme za resetovanje na svakom polju |
+| `src/pages/PartDetail.tsx` | Dodati Tabs komponentu ispod galerije slika |
 
