@@ -2,6 +2,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import SearchPanel from "@/components/SearchPanel";
 import AppRatingBar from "@/components/AppRatingBar";
+import BrandGrid from "@/components/BrandGrid";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
@@ -34,6 +35,14 @@ const Index = () => {
           <AppRatingBar />
         </div>
       </main>
+
+      {/* Brands section */}
+      <section className="bg-background py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-8">Pretražite po marki</h2>
+          <BrandGrid />
+        </div>
+      </section>
     </div>
   );
 };
