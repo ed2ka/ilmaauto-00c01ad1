@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import type { Part } from "@/hooks/useParts";
 import { useAuth } from "@/hooks/useAuth";
 import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
+import { getBrandLogo } from "@/lib/brandLogos";
 
 interface PartListItemProps {
   part: Part;
@@ -14,6 +15,7 @@ const PartListItem = ({ part }: PartListItemProps) => {
   const toggleWishlist = useToggleWishlist();
   const navigate = useNavigate();
   const isInWishlist = wishlistIds?.has(part.id) ?? false;
+  const logoUrl = getBrandLogo(part.marka);
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,7 +32,14 @@ const PartListItem = ({ part }: PartListItemProps) => {
       to={`/dio/${part.id}`}
       className="bg-card rounded-lg border hover:shadow-md transition-shadow flex overflow-hidden relative"
     >
-      <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 bg-muted overflow-hidden">
+      <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 bg-muted overflow-hidden relative">
+        <div className="absolute top-1.5 left-1.5 z-10 bg-white/90 rounded p-1 shadow-sm backdrop-blur-sm">
+          {logoUrl ? (
+            <img src={logoUrl} alt={part.marka} className="w-5 h-5 object-contain" />
+          ) : (
+            <span className="text-[9px] font-bold px-0.5 text-foreground uppercase leading-none">{part.marka}</span>
+          )}
+        </div>
         {part.slika1 ? (
           <img
             src={part.slika1}
