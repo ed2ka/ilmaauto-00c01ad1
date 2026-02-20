@@ -1,41 +1,52 @@
 
 
-## Pametna narudzba: auto-popunjavanje za prijavljene korisnike
+## "PRETRAZI" link u headeru + Kategorije dijelova na stranici pretrage
 
-### Problem
+### Promjene
 
-Kod vec ima `useEffect` koji pokusava popuniti formu iz profila (linija 71-77 u OrderSheet.tsx), ali korisnik i dalje vidi prazna polja. Moguc uzrok: profil nema sacuvane podatke, ili se `profile` ucitava nakon sto se sheet otvori.
+### 1. Header.tsx -- "PRETRAZI" postaje Link na /pretraga
 
-### Rjesenje
+Umjesto `<button>` sa `<ChevronDown>`, "PRETRAZI" postaje obican `<Link to="/pretraga">` bez dropdown-a. Isto vazi za mobilni meni.
 
-Kada je korisnik prijavljen i ima popunjen profil (ime, telefon, adresa), OrderSheet ce:
-- Prikazati podatke za dostavu kao **pregledni blok** (ne editabilna forma) sa linkom "Uredi" koji prebacuje na formu
-- Odmah ponuditi "Potvrdi narudzbu" dugme -- bez ponovnog unosa
+- Ukloniti `ChevronDown` ikonu
+- Zamijeniti `<button>` sa `<Link to="/pretraga">`
+- U mobilnom meniju: `<a href="#">` zamijeniti sa `<Link to="/pretraga">`
 
-Kada je korisnik prijavljen ali profil je nepotpun:
-- Prikazati formu pre-filled sa onim sto postoji
-- Poruka: "Popunite podatke koji nedostaju"
+### 2. SearchResults.tsx -- Kategorije dijelova (kockice sa ikonama)
 
-Kada je gost (nije prijavljen):
-- Prikazati praznu formu kao i do sada
-- Poruka: "Prijavite se ili napravite racun za brze narucivanje"
+Dodati sekciju "Kategorije dijelova" iznad listinga rezultata (ispod breadcrumbs, iznad toolbar-a). Horizontalni scroll na mobilnom, grid na desktopu.
+
+**Kategorije sa Lucide ikonama:**
+
+| Kategorija | Ikona (lucide-react) |
+|---|---|
+| Motor | `Cog` |
+| Karoserija | `Car` |
+| Elektrika | `Zap` |
+| Ovjes | `ArrowUpDown` |
+| Kocnice | `Disc3` |
+| Svjetla | `Lightbulb` |
+| Stakla | `Square` |
+| Unutrasnjost | `Armchair` |
+
+Svaka kategorija je kockica (kartica) sa ikonom i nazivom. Klikom na kategoriju postavlja se URL parametar `kategorija=...` koji filtrira rezultate. Aktivna kategorija je vizualno oznacena (primary boja).
+
+**Dizajn kockice:**
+- Zaobljeni uglovi, border, hover efekat
+- Ikona centrirana iznad naziva
+- Grid: 4 kolone na desktopu, horizontalni scroll na mobilnom
+- Visina kartice: kompaktna (~80px)
+
+### 3. Sortiranje -- default "najstarije prvo"
+
+Kad korisnik dodje na /pretraga bez parametara, default sort je "oldest" (najstarije dodani do najsvjezije). Dodati novu sort opciju "oldest" i postaviti je kao default.
 
 ### Tehnicke promjene
 
-**Fajl: `src/components/OrderSheet.tsx`**
+**Fajlovi:**
 
-1. Dodati stanje `editMode` (boolean, default false za prijavljene sa kompletnim profilom, true za goste i nepotpune profile)
-2. Provjeriti da li profil ima sva 3 polja popunjena (`full_name`, `phone`, `address`)
-3. Ako je profil kompletan i korisnik je prijavljen:
-   - Prikazati podatke za dostavu kao tekst (ime, telefon, adresa) u summary kartici
-   - Dugme "Uredi podatke" postavlja `editMode = true` i prikazuje formu
-4. Ako profil nije kompletan ili je gost:
-   - Prikazati formu (pre-filled ako postoje parcijalni podaci)
-5. `useEffect` za auto-fill ostaje isti ali se pokrece i kad se `editMode` ukljuci
-
-| Stanje | Prikaz |
-|--------|--------|
-| Prijavljen + kompletan profil | Summary podataka + "Uredi" link + "Potvrdi narudzbu" |
-| Prijavljen + nepotpun profil | Forma pre-filled + poruka da popuni sto nedostaje |
-| Gost | Prazna forma + "Prijavite se / Napravite racun" |
+| Fajl | Akcija |
+|---|---|
+| `src/components/Header.tsx` | Izmjena -- PRETRAZI postaje Link |
+| `src/pages/SearchResults.tsx` | Izmjena -- dodati kategorije sekciju, novi default sort |
 
