@@ -1,27 +1,42 @@
 
 
-## Promjena hero slike i boje headera
+## Bottom footer na /prijava stranici
 
-### 1. Nova hero slika
+### Izmjena u `src/pages/Auth.tsx`
 
-Kopirati uploadovanu sliku (`Untitled-1.jpg`) u `src/assets/hero-bg.jpg` (zamjena postojece). Import u `Index.tsx` ostaje isti jer se fajl zove isto.
+Ispod `</main>` taga (linija 168), dodati bottom footer sa tri reda:
 
-### 2. Boja headera i top bara: #1b2835
+**1. Gornja tanka linija** -- `border-t border-white/20`
 
-Azurirati CSS varijable u `src/index.css`:
+**2. Sadrzaj footera** -- flex layout sa tri sekcije:
+- **Lijeva strana**: linkovi "Politika privatnosti", "Politika kolacica", "Opci uslovi poslovanja", "Uslovi prodaje i garancija povrata" (horizontalno, razdvojeni separatorima)
+- **Centar**: copyright tekst
+- **Desna strana**: social media ikone (Facebook, Instagram, Viber, WhatsApp) -- iste ikone kao u TopBar-u
 
-- `--header-bg` sa `220 20% 10%` na `207 32% 16%` (HSL ekvivalent za #1b2835)
-- `--foreground` ostaje nepromijenjen -- top bar koristi `bg-foreground`, pa cemo i njega prebaciti na novu boju
+**3. Responsive ponasanje**: Na mobilnim uredjajima, linkovi, copyright i ikone ce biti u koloni (vertikalno centrirani).
 
-Posto TopBar koristi `bg-foreground` a Header koristi `bg-header`, treba:
-- Promijeniti `--header-bg` na `207 32% 16%`
-- U `TopBar.tsx` zamijeniti `bg-foreground` sa `bg-header` tako da oba dijela koriste istu boju
+### Struktura koda
 
-### Rezime izmjena
+```text
+<footer className="relative z-10 border-t border-white/20 py-4 px-4">
+  <div className="container mx-auto">
+    <!-- Desktop: flex row, Mobile: flex col -->
+    
+    Lijevo: 4 linka (text-white/60, hover:text-white/90)
+    Centar: Copyright tekst (text-white/70)  
+    Desno: Social ikone (Facebook, Instagram, Viber, WhatsApp)
+  </div>
+</footer>
+```
+
+### Detalji
+
+- Ikone Viber i WhatsApp su vec definisane kao komponente u `TopBar.tsx` -- izvuci ih u zasebne fajlove ili duplicirati unutar Auth.tsx (dupliciranje je jednostavnije za sada)
+- Linkovi koriste `href="#"` kao placeholder dok se ne kreiraju te stranice
+- Footer ostaje unutar pozadinske slike jer je `relative z-10`
+- Boja teksta: `text-white/60` za linkove, `text-white/70` za copyright, ikone bijele sa opacity
 
 | Fajl | Akcija |
 |------|---------|
-| `src/assets/hero-bg.jpg` | Zamijeniti novom uploadovanom slikom |
-| `src/index.css` | Azurirati `--header-bg` na `207 32% 16%` |
-| `src/components/TopBar.tsx` | Zamijeniti `bg-foreground` sa `bg-header` |
+| `src/pages/Auth.tsx` | Dodati footer sekciju ispod `</main>`, ukljucujuci linkove, copyright i social ikone |
 
