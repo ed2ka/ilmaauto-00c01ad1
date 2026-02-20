@@ -1,4 +1,4 @@
-import { Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react";
+import { Heart, User, Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,10 +19,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Left nav */}
           <nav className="hidden lg:flex items-center gap-6">
-            <button className="flex items-center gap-1 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
+            <Link to="/pretraga" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
               PRETRAŽI
-              <ChevronDown className="w-4 h-4" />
-            </button>
+            </Link>
             <a href="#" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
               NOVOSTI
             </a>
@@ -82,7 +81,7 @@ const Header = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-header border-t border-header-foreground/10 animate-fade-in">
           <div className="container mx-auto px-4 py-4 space-y-3">
-            <a href="#" className="block text-sm font-medium text-header-foreground/90 py-2">PRETRAŽI</a>
+            <Link to="/pretraga" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>PRETRAŽI</Link>
             <a href="#" className="block text-sm font-medium text-header-foreground/90 py-2">NOVOSTI</a>
             {user ? (
               <>
