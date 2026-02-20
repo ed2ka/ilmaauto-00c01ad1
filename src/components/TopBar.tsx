@@ -15,7 +15,7 @@ const WhatsAppIcon = () => (
 
 const TopBar = () => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-foreground text-background/70 text-xs">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-header text-header-foreground/70 text-xs">
       <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between h-9">
         {/* Left text */}
         <p className="hidden md:block text-[11px] tracking-wide">
