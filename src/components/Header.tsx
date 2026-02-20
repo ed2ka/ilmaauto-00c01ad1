@@ -1,4 +1,4 @@
-import { Heart, User, Menu, X, LogOut } from "lucide-react";
+import { Heart, User, Menu, X, LogOut, Search, Headset } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,15 +19,14 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Left nav */}
           <nav className="hidden lg:flex items-center gap-6">
-            <Link to="/pretraga" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
-              PRETRAŽI
+            <Link to="/pretraga" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+              <Search className="w-4 h-4" />
+              Pretraži
             </Link>
-            <Link to="/podrska" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
-              KORISNIČKA PODRŠKA
+            <Link to="/podrska" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+              <Headset className="w-4 h-4" />
+              Korisnička podrška
             </Link>
-            <a href="#" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
-              NOVOSTI
-            </a>
           </nav>
 
           {/* Mobile menu button */}
@@ -84,9 +83,8 @@ const Header = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-header border-t border-header-foreground/10 animate-fade-in">
           <div className="container mx-auto px-4 py-4 space-y-3">
-            <Link to="/pretraga" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>PRETRAŽI</Link>
-            <Link to="/podrska" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>KORISNIČKA PODRŠKA</Link>
-            <a href="#" className="block text-sm font-medium text-header-foreground/90 py-2">NOVOSTI</a>
+            <Link to="/pretraga" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Search className="w-4 h-4" /> Pretraži</Link>
+            <Link to="/podrska" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Headset className="w-4 h-4" /> Korisnička podrška</Link>
             {user ? (
               <>
                 <Link to="/profil" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>Moj profil</Link>
