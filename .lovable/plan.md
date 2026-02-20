@@ -1,60 +1,108 @@
 
 
-## Dodavanje logotipa marke na kartice autodijela
+## Logotipi marki automobila -- lokalne slike + homepage sekcija
 
-### Opis
+### 1. Kopiranje uploadovanih logotipa u projekat
 
-U gornji lijevi ugao svake kartice (PartCard) i liste (PartListItem) dodati mali badge sa logotipom marke automobila. Logotipi ce se ucitavati sa javno dostupnog CDN-a za automobilske brendove, a za brendove koji nemaju logo prikazat ce se tekstualna oznaka.
+Kopirati 9 uploadovanih webp fajlova u `src/assets/brands/`:
+- alfa-romeo.webp, audi.webp, bmw.webp, citroen.webp, fiat.webp, ford.webp, hyundai.webp, mazda.webp, mercedes-benz.webp
 
-### Marke u bazi
+Napomena: Alfa Romeo i Mazda nisu trenutno u bazi, ali ce biti dostupni za buducu upotrebu.
 
-Trenutno postoji 19 marki: AUDI, BMW, Citroen, Dacia, FIAT, FORD, HYUNDAI, IVECO, KIA, LAND ROVER, MERCEDES, OPEL, PEUGEOT, Renault, SEAT, SKODA, SMART, Volkswagen, Volvo.
+### 2. Azuriranje `src/lib/brandLogos.ts`
 
-### Tehnicke promjene
-
-**1. Novi fajl: `src/lib/brandLogos.ts`**
-
-Utility fajl sa mapom koja povezuje naziv marke sa URL-om logotipa. Koristit cemo besplatne SVG logotipe sa `cdn.worldvectorlogo.com` ili slicnog izvora. Fallback za nepoznate marke: prikazati ime marke u malom badge-u.
+Zamijeniti vanjske URL-ove sa lokalnim importima:
 
 ```typescript
+import audiLogo from "@/assets/brands/audi.webp";
+import bmwLogo from "@/assets/brands/bmw.webp";
+// ... za svih 9 uploadovanih
+
 const brandLogoMap: Record<string, string> = {
-  "AUDI": "https://...",
-  "BMW": "https://...",
-  "MERCEDES": "https://...",
-  // ... za svih 19 marki
+  "AUDI": audiLogo,
+  "BMW": bmwLogo,
+  "CITROEN": citroenLogo,
+  "FIAT": fiatLogo,
+  "FORD": fordLogo,
+  "HYUNDAI": hyundaiLogo,
+  "MERCEDES": mercedesLogo,
+  // Ostale marke (DACIA, IVECO, KIA, LAND ROVER, OPEL, PEUGEOT, RENAULT, SEAT, SKODA, SMART, VOLKSWAGEN, VOLVO) -- tekstualni fallback dok se ne dodaju logotipi
 };
-
-export function getBrandLogo(marka: string): string | null { ... }
-export function getBrandName(marka: string): string { ... }
 ```
 
-**2. Izmjena: `src/components/PartCard.tsx`**
+Dodati novu exportovanu listu svih brendova za homepage grid:
 
-Dodati badge u gornji lijevi ugao slike (pored postojeceg Heart dugmeta u gornjem desnom uglu):
-
+```typescript
+export const allBrands = [
+  { name: "AUDI", logo: audiLogo },
+  { name: "BMW", logo: bmwLogo },
+  // ... sve marke iz baze sa logotipom ili null
+];
 ```
-<div className="absolute top-2 left-2 z-10 bg-white rounded p-1 shadow-sm">
-  <img src={logoUrl} alt={part.marka} className="w-6 h-6 object-contain" />
-  // ili tekstualni fallback ako nema loga
+
+### 3. Dodavanje logotipa na stranicu detalja dijela (`src/pages/PartDetail.tsx`)
+
+U desnoj kartici, pored naslova dijela i oznake marke, dodati logotip:
+
+```tsx
+<div className="py-2 flex items-start justify-between gap-2">
+  <div className="flex items-start gap-3">
+    {logoUrl && (
+      <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
+        <img src={logoUrl} alt={part.marka} className="w-8 h-8 object-contain" />
+      </div>
+    )}
+    <div>
+      <h1 className="text-2xl font-bold">{part.dio}</h1>
+      <p className="text-muted-foreground mt-1">{part.marka} {part.tip} ...</p>
+    </div>
+  </div>
+  ...
 </div>
 ```
 
-**3. Izmjena: `src/components/PartListItem.tsx`**
+### 4. Nova komponenta `src/components/BrandGrid.tsx`
 
-Isti badge dodan u gornji lijevi ugao slike u list prikazu.
+Grid sekcija sa svim markama u kockicama. Klikom na marku otvara se pretraga sa filterom:
 
-### Vizuelni izgled
+```tsx
+// Responsive grid: 4 kolone mobile, 5 tablet, 6+ desktop
+// Svaka kockica: bijela kartica sa logotipom + ime marke ispod
+// Link: /pretraga?marka=MERCEDES
+```
 
-- Bijela kockica (rounded, shadow) u gornjem lijevom uglu slike
-- Logotip dimenzija priblizno 24x24px, object-contain
-- Fallback: ime marke u malom fontu unutar bijele kockice
-- Ne prekriva se sa Heart dugmetom (koji je u gornjem desnom uglu)
+Svaka kockica sadrzi:
+- Logotip marke (ili inicijal za marke bez logotipa)
+- Ime marke ispod logotipa
+- Hover efekat (shadow, scale)
+- Klik vodi na `/pretraga?marka=IME_MARKE`
+
+### 5. Azuriranje homepage-a (`src/pages/Index.tsx`)
+
+Dodati BrandGrid sekciju ispod hero dijela, iznad AppRatingBar:
+
+```tsx
+{/* Brands section */}
+<section className="relative bg-background py-12">
+  <div className="container mx-auto px-4">
+    <h2 className="text-2xl font-bold text-center mb-8">Pretrazite po marki</h2>
+    <BrandGrid />
+  </div>
+</section>
+```
 
 ### Rezime izmjena
 
 | Fajl | Akcija |
 |------|---------|
-| `src/lib/brandLogos.ts` | Kreirati -- mapa marki i URL-ova logotipa |
-| `src/components/PartCard.tsx` | Izmjena -- dodati brand badge |
-| `src/components/PartListItem.tsx` | Izmjena -- dodati brand badge |
+| `src/assets/brands/*.webp` | Kopirati 9 logotipa |
+| `src/lib/brandLogos.ts` | Lokalni importi umjesto URL-ova, dodati allBrands listu |
+| `src/components/PartCard.tsx` | Bez promjena (vec koristi getBrandLogo) |
+| `src/components/PartListItem.tsx` | Bez promjena (vec koristi getBrandLogo) |
+| `src/pages/PartDetail.tsx` | Dodati logotip pored naslova dijela |
+| `src/components/BrandGrid.tsx` | Nova komponenta -- grid logotipa sa linkovima |
+| `src/pages/Index.tsx` | Dodati BrandGrid sekciju |
 
+### Nedostajuci logotipi
+
+Za 10 marki iz baze nema uploadovanih logotipa: **Dacia, Iveco, Kia, Land Rover, Opel, Peugeot, Renault, Seat, Skoda, Smart, Volkswagen, Volvo**. Za njih ce se prikazivati tekstualni fallback (ime marke u badge-u) dok ne budu dodani.
