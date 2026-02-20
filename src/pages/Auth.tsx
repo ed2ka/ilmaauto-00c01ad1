@@ -124,8 +124,11 @@ const Auth = () => {
       <Header />
       <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-header/70" />
-      <main className="flex-1 relative z-10 flex items-center justify-center px-4 py-8">
-        <Card className="w-full max-w-md relative">
+      <main className="flex-1 relative z-10 flex flex-col items-center px-4 py-8 pt-[12vh]">
+        <div className="w-full max-w-md flex flex-col items-center">
+          <h1 className="text-3xl font-bold text-white mb-2 text-center">Pristup korisničkom nalogu</h1>
+          <p className="text-white/70 text-center mb-6">Upravljajte narudžbama, adresama i podacima na jednostavan način.</p>
+        <Card className="w-full relative">
           <Tabs defaultValue="login">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2">
@@ -178,6 +181,7 @@ const Auth = () => {
             </CardContent>
           </Tabs>
         </Card>
+        </div>
       </main>
       <footer className="relative z-10 py-4 px-4">
         <div className="container mx-auto border-t border-[#ffffff33] pt-4 flex flex-col md:flex-row items-center justify-between gap-3">
