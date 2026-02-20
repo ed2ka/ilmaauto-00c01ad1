@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Truck, CreditCard, Headphones, ShieldCheck, RotateCcw, ChevronUp, MapPin, Phone, Mail } from "lucide-react";
+import { Truck, CreditCard, Headphones, ShieldCheck, RotateCcw, ChevronUp } from "lucide-react";
 import ilmaLogo from "@/assets/ilma-logo.svg";
 import viberIcon from "@/assets/viber-icon.svg";
 import instagramIcon from "@/assets/instagram-icon.svg";
@@ -77,36 +77,10 @@ const Footer = () => {
       {/* Main Footer */}
       <div className="bg-header text-header-foreground py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             {/* Logo */}
             <div className="flex justify-center md:justify-start">
-              <img src={ilmaLogo} alt="ILMA AUTO" className="h-24 w-auto" />
-            </div>
-
-            {/* Info */}
-            <div className="space-y-4 text-center md:text-left">
-              <p className="text-sm text-header-foreground/80 leading-relaxed">
-                Mi smo prodavnica originalnih auto dijelova sa dugogodišnjim iskustvom. 
-                Nudimo širok asortiman dijelova za sve marke i modele vozila po najpovoljnijim cijenama.
-              </p>
-              <div className="space-y-2 text-sm">
-                <p className="flex items-center gap-2 justify-center md:justify-start">
-                  <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  Ljetinić 8, 74264 Jelah-Tešanj, BiH
-                </p>
-                <p className="flex items-center gap-2 justify-center md:justify-start">
-                  <Phone className="w-4 h-4 text-primary shrink-0" />
-                  +387 32 667 700
-                </p>
-                <p className="flex items-center gap-2 justify-center md:justify-start">
-                  <Phone className="w-4 h-4 text-primary shrink-0" />
-                  +387 62 667 700
-                </p>
-                <p className="flex items-center gap-2 justify-center md:justify-start">
-                  <Mail className="w-4 h-4 text-primary shrink-0" />
-                  info@ilmaauto.com
-                </p>
-              </div>
+              <img src={ilmaLogo} alt="ILMA AUTO" className="h-32 w-auto" />
             </div>
 
             {/* Scroll to top + Social */}
