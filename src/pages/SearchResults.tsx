@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import PartCard from "@/components/PartCard";
+import CategoryGrid from "@/components/CategoryGrid";
 import PartListItem from "@/components/PartListItem";
 import SearchFilterSidebar from "@/components/SearchFilterSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -17,14 +18,14 @@ import {
 
 const PAGE_SIZE = 20;
 
-type SortOption = "newest" | "az" | "za";
+type SortOption = "newest" | "oldest" | "az" | "za";
 type ViewMode = "grid" | "list";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const [page, setPage] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [sort, setSort] = useState<SortOption>("newest");
+  const [sort, setSort] = useState<SortOption>("oldest");
   const isMobile = useIsMobile();
 
   const params = {
@@ -47,7 +48,9 @@ const SearchResults = () => {
     switch (sort) {
       case "az": return parts.sort((a, b) => a.dio.localeCompare(b.dio));
       case "za": return parts.sort((a, b) => b.dio.localeCompare(a.dio));
-      default: return parts;
+      case "newest": return parts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      case "oldest":
+      default: return parts.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     }
   }, [data?.parts, sort]);
 
@@ -96,6 +99,9 @@ const SearchResults = () => {
       </div>
 
       <main className="flex-1 container mx-auto px-4 py-6">
+        {/* Category grid */}
+        <CategoryGrid />
+
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
@@ -147,6 +153,7 @@ const SearchResults = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-background z-50">
+                <SelectItem value="oldest">Najstarije</SelectItem>
                 <SelectItem value="newest">Najnovije</SelectItem>
                 <SelectItem value="az">Naziv A-Z</SelectItem>
                 <SelectItem value="za">Naziv Z-A</SelectItem>
