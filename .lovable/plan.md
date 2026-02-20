@@ -1,42 +1,46 @@
 
 
-## Bottom footer na /prijava stranici
+## Naslov i podnaslov iznad modala na /prijava stranici
 
-### Izmjena u `src/pages/Auth.tsx`
+### Izmjene u `src/pages/Auth.tsx`
 
-Ispod `</main>` taga (linija 168), dodati bottom footer sa tri reda:
+**1. Dodati naslov i podnaslov iznad Card komponente (linija 127-128)**
 
-**1. Gornja tanka linija** -- `border-t border-white/20`
+Iznad `<Card>` dodati:
+- Naslov: "Pristup korisnickom nalogu" -- bijeli tekst, veci font, bold
+- Podnaslov: "Upravljajte narudzbama, adresama i podacima na jednostavan nacin." -- bijeli tekst, manji, priguseni
 
-**2. Sadrzaj footera** -- flex layout sa tri sekcije:
-- **Lijeva strana**: linkovi "Politika privatnosti", "Politika kolacica", "Opci uslovi poslovanja", "Uslovi prodaje i garancija povrata" (horizontalno, razdvojeni separatorima)
-- **Centar**: copyright tekst
-- **Desna strana**: social media ikone (Facebook, Instagram, Viber, WhatsApp) -- iste ikone kao u TopBar-u
+**2. Promjena layouta da modal raste prema dole**
 
-**3. Responsive ponasanje**: Na mobilnim uredjajima, linkovi, copyright i ikone ce biti u koloni (vertikalno centrirani).
+Trenutno `main` koristi `items-center` sto centrira Card vertikalno. Kada se prebaci na registraciju (vise polja), modal se pomjera gore-dole jer se recentrira.
 
-### Struktura koda
+Rjesenje:
+- Zamijeniti `items-center` sa `items-start` i dodati `pt-[15vh]` ili slicno da se naslov pozicionira na fiksnom mjestu od vrha
+- Alternativno, koristiti `justify-start` sa paddingom, tako da naslov i modal uvijek krecu od iste tacke, a modal raste samo prema dole
+
+Konkretno:
+- `main` klasa: zamijeniti `items-center` sa `items-start justify-center` i dodati gornji padding
+- Omotati naslov + Card u `div` sa fiksnom pozicijom od vrha
+
+### Struktura
 
 ```text
-<footer className="relative z-10 border-t border-white/20 py-4 px-4">
-  <div className="container mx-auto">
-    <!-- Desktop: flex row, Mobile: flex col -->
-    
-    Lijevo: 4 linka (text-white/60, hover:text-white/90)
-    Centar: Copyright tekst (text-white/70)  
-    Desno: Social ikone (Facebook, Instagram, Viber, WhatsApp)
+<main className="flex-1 relative z-10 flex flex-col items-center justify-center px-4 py-8">
+  <div className="w-full max-w-md flex flex-col items-center">
+    <h1>Pristup korisnickom nalogu</h1>
+    <p>Upravljajte narudzbama, adresama i podacima...</p>
+    <Card className="w-full">
+      ...
+    </Card>
   </div>
-</footer>
+</main>
 ```
 
-### Detalji
+Koristeci `flex-col` i `items-center` sa wrapper divom, naslov ostaje fiksiran na vrhu wrappera, a Card raste prema dole kada se prebaci na registraciju.
 
-- Ikone Viber i WhatsApp su vec definisane kao komponente u `TopBar.tsx` -- izvuci ih u zasebne fajlove ili duplicirati unutar Auth.tsx (dupliciranje je jednostavnije za sada)
-- Linkovi koriste `href="#"` kao placeholder dok se ne kreiraju te stranice
-- Footer ostaje unutar pozadinske slike jer je `relative z-10`
-- Boja teksta: `text-white/60` za linkove, `text-white/70` za copyright, ikone bijele sa opacity
+### Rezime
 
 | Fajl | Akcija |
 |------|---------|
-| `src/pages/Auth.tsx` | Dodati footer sekciju ispod `</main>`, ukljucujuci linkove, copyright i social ikone |
+| `src/pages/Auth.tsx` | Dodati naslov/podnaslov iznad Card-a, promijeniti layout na flex-col da modal raste prema dole |
 
