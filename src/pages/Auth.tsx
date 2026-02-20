@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { lovable } from "@/integrations/lovable/index";
 import authBg from "@/assets/auth-bg.jpg";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
@@ -8,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Facebook, Instagram } from "lucide-react";
@@ -34,12 +37,26 @@ const Auth = () => {
   const [regEmail, setRegEmail] = useState("");
   const [regPass, setRegPass] = useState("");
   const [regPassConfirm, setRegPassConfirm] = useState("");
+  const [regAddress, setRegAddress] = useState("");
+  const [regPhone, setRegPhone] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+  const [acceptData, setAcceptData] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
 
+  const allChecked = acceptTerms && acceptPrivacy && acceptData;
+
   if (loading) return null;
   if (user) return <Navigate to="/profil" replace />;
+
+  const handleGoogleLogin = async () => {
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (error) toast.error("Greška pri Google prijavi.");
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +82,7 @@ const Auth = () => {
       return;
     }
     setSubmitting(true);
-    const { error } = await signUp(regEmail, regPass, regName);
+    const { error } = await signUp(regEmail, regPass, regName, regPhone, regAddress);
     setSubmitting(false);
     if (error) {
       toast.error(error.message);
@@ -138,45 +155,93 @@ const Auth = () => {
             </CardHeader>
             <CardContent>
               <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <Input id="login-email" type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="login-pass">Lozinka</Label>
-                    <Input id="login-pass" type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)} required />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={submitting}>
-                    {submitting ? "Prijava..." : "Prijavi se"}
+                <div className="space-y-4">
+                  <Button type="button" variant="outline" className="w-full flex items-center gap-2" onClick={handleGoogleLogin}>
+                    <svg viewBox="0 0 24 24" className="w-5 h-5"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    Prijavi se putem Google-a
                   </Button>
-                  <button type="button" className="text-sm text-primary hover:underline w-full text-center" onClick={() => setShowForgot(true)}>
-                    Zaboravljena lozinka?
-                  </button>
-                </form>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center"><Separator /></div>
+                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">ili</span></div>
+                  </div>
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email">Email</Label>
+                      <Input id="login-email" type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-pass">Lozinka</Label>
+                      <Input id="login-pass" type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)} required />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={submitting}>
+                      {submitting ? "Prijava..." : "Prijavi se"}
+                    </Button>
+                    <button type="button" className="text-sm text-primary hover:underline w-full text-center" onClick={() => setShowForgot(true)}>
+                      Zaboravljena lozinka?
+                    </button>
+                  </form>
+                </div>
               </TabsContent>
               <TabsContent value="register">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-name">Ime i prezime</Label>
-                    <Input id="reg-name" value={regName} onChange={e => setRegName(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-email">Email</Label>
-                    <Input id="reg-email" type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-pass">Lozinka</Label>
-                    <Input id="reg-pass" type="password" value={regPass} onChange={e => setRegPass(e.target.value)} required minLength={6} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-pass-confirm">Potvrdi lozinku</Label>
-                    <Input id="reg-pass-confirm" type="password" value={regPassConfirm} onChange={e => setRegPassConfirm(e.target.value)} required minLength={6} />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={submitting}>
-                    {submitting ? "Registracija..." : "Registruj se"}
+                <div className="space-y-4">
+                  <Button type="button" variant="outline" className="w-full flex items-center gap-2" onClick={handleGoogleLogin}>
+                    <svg viewBox="0 0 24 24" className="w-5 h-5"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    Registruj se putem Google-a
                   </Button>
-                </form>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center"><Separator /></div>
+                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">ili</span></div>
+                  </div>
+                  <form onSubmit={handleRegister} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reg-name">Ime i prezime</Label>
+                      <Input id="reg-name" value={regName} onChange={e => setRegName(e.target.value)} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="reg-email">Email</Label>
+                      <Input id="reg-email" type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="reg-pass">Lozinka</Label>
+                      <Input id="reg-pass" type="password" value={regPass} onChange={e => setRegPass(e.target.value)} required minLength={6} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="reg-pass-confirm">Potvrdi lozinku</Label>
+                      <Input id="reg-pass-confirm" type="password" value={regPassConfirm} onChange={e => setRegPassConfirm(e.target.value)} required minLength={6} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="reg-address">Adresa</Label>
+                      <Input id="reg-address" value={regAddress} onChange={e => setRegAddress(e.target.value)} required placeholder="Vaša adresa za dostavu" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="reg-phone">Broj telefona</Label>
+                      <Input id="reg-phone" type="tel" value={regPhone} onChange={e => setRegPhone(e.target.value)} required placeholder="+387 6x xxx xxx" />
+                    </div>
+                    <div className="space-y-3 pt-2">
+                      <div className="flex items-start gap-2">
+                        <Checkbox id="terms" checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} />
+                        <label htmlFor="terms" className="text-xs leading-tight cursor-pointer">
+                          Prihvatam <a href="#" className="text-primary hover:underline">uslove korištenja</a>
+                        </label>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Checkbox id="privacy" checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} />
+                        <label htmlFor="privacy" className="text-xs leading-tight cursor-pointer">
+                          Slažem se sa <a href="#" className="text-primary hover:underline">politikom privatnosti</a>
+                        </label>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Checkbox id="data" checked={acceptData} onCheckedChange={(v) => setAcceptData(v === true)} />
+                        <label htmlFor="data" className="text-xs leading-tight cursor-pointer">
+                          Saglasan/na sam da se moji podaci koriste za registraciju na ovaj servis
+                        </label>
+                      </div>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={submitting || !allChecked}>
+                      {submitting ? "Registracija..." : "Registruj se"}
+                    </Button>
+                  </form>
+                </div>
               </TabsContent>
             </CardContent>
           </Tabs>
