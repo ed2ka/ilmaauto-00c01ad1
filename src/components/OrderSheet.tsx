@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { Pencil, User, Phone, MapPin } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -56,7 +57,16 @@ const SHIPPING_PRICE = 10;
 
 const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
   const [submitting, setSubmitting] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const { user, profile } = useAuth();
+
+  const isProfileComplete = !!(
+    profile?.full_name &&
+    profile?.phone &&
+    profile?.address
+  );
+
+  const showSummary = !!user && isProfileComplete && !editMode;
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
@@ -67,20 +77,25 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
     },
   });
 
-  // Auto-fill from profile
+  // Auto-fill from profile when sheet opens or editMode activates
   useEffect(() => {
     if (open && profile) {
       if (profile.full_name) form.setValue("customer_name", profile.full_name);
       if (profile.phone) form.setValue("customer_phone", profile.phone);
       if (profile.address) form.setValue("customer_address", profile.address);
     }
-  }, [open, profile]);
+  }, [open, profile, editMode]);
+
+  // Reset editMode when sheet closes
+  useEffect(() => {
+    if (!open) setEditMode(false);
+  }, [open]);
 
   const hasPrice = part.cijena != null && part.cijena > 0;
   const partPrice = hasPrice ? Number(part.cijena) : null;
   const totalPrice = partPrice != null ? partPrice + SHIPPING_PRICE : null;
 
-  const onSubmit = async (values: OrderFormValues) => {
+  const handleSubmitOrder = async (values: OrderFormValues) => {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("orders").insert({
@@ -108,16 +123,28 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
     }
   };
 
+  const handleQuickOrder = async () => {
+    if (!profile) return;
+    await handleSubmitOrder({
+      customer_name: profile.full_name,
+      customer_phone: profile.phone,
+      customer_address: profile.address,
+    });
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Naručite artikal</SheetTitle>
           <SheetDescription>
-            Unesite podatke za dostavu i potvrdite narudžbu.
+            {showSummary
+              ? "Provjerite podatke i potvrdite narudžbu."
+              : "Unesite podatke za dostavu i potvrdite narudžbu."}
           </SheetDescription>
         </SheetHeader>
 
+        {/* Guest prompt */}
         {!user && (
           <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-3 text-center text-sm">
             <span className="text-muted-foreground">Imate račun? </span>
@@ -132,95 +159,153 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
           </div>
         )}
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-6">
-            <FormField
-              control={form.control}
-              name="customer_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ime i prezime</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ime Prezime" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        {/* Logged in but incomplete profile */}
+        {user && !isProfileComplete && (
+          <div className="mt-4 rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-center text-sm text-muted-foreground">
+            Popunite podatke koji nedostaju za dostavu.
+          </div>
+        )}
 
-            <FormField
-              control={form.control}
-              name="customer_phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Broj telefona</FormLabel>
-                  <FormControl>
-                    <Input placeholder="+387 6x xxx xxx" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="customer_address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adresa za dostavu</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Ulica, broj, grad, poštanski broj" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Separator className="my-4" />
-
-            {/* Summary */}
-            <div className="rounded-lg border bg-muted/50 p-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Artikal</span>
-                <span className="font-medium text-foreground text-right max-w-[60%] truncate">
-                  {part.dio}
-                </span>
+        {/* Summary view for complete profile */}
+        {showSummary ? (
+          <div className="mt-6 space-y-4">
+            <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-foreground">Podaci za dostavu</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-1 text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => setEditMode(true)}
+                >
+                  <Pencil className="h-3 w-3 mr-1" />
+                  Uredi
+                </Button>
               </div>
-              <div className="flex justify-between text-muted-foreground text-xs">
-                <span>{part.marka} {part.tip} {part.model || ""}</span>
-              </div>
-
-              <Separator className="my-2" />
-
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Cijena dijela</span>
-                <span className="font-medium text-foreground">
-                  {partPrice != null ? `${partPrice.toFixed(2)} KM` : "Po dogovoru"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Dostava</span>
-                <span className="font-medium text-foreground">{SHIPPING_PRICE.toFixed(2)} KM</span>
-              </div>
-
-              <Separator className="my-2" />
-
-              <div className="flex justify-between font-bold text-base">
-                <span>UKUPNO</span>
-                <span>
-                  {totalPrice != null ? `${totalPrice.toFixed(2)} KM` : "Po dogovoru"}
-                </span>
+              <Separator />
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <span>{profile!.full_name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <span>{profile!.phone}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <span>{profile!.address}</span>
+                </div>
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={submitting}>
+            <OrderSummary part={part} partPrice={partPrice} totalPrice={totalPrice} />
+
+            <Button className="w-full" disabled={submitting} onClick={handleQuickOrder}>
               {submitting ? "Šaljem..." : "Potvrdi narudžbu"}
             </Button>
-          </form>
-        </Form>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmitOrder)} className="space-y-4 mt-6">
+              <FormField
+                control={form.control}
+                name="customer_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ime i prezime</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ime Prezime" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="customer_phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Broj telefona</FormLabel>
+                    <FormControl>
+                      <Input placeholder="+387 6x xxx xxx" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="customer_address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresa za dostavu</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Ulica, broj, grad, poštanski broj" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Separator className="my-4" />
+
+              <OrderSummary part={part} partPrice={partPrice} totalPrice={totalPrice} />
+
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? "Šaljem..." : "Potvrdi narudžbu"}
+              </Button>
+            </form>
+          </Form>
+        )}
       </SheetContent>
     </Sheet>
   );
 };
+
+/* Extracted order summary to avoid duplication */
+function OrderSummary({
+  part,
+  partPrice,
+  totalPrice,
+}: {
+  part: { dio: string; marka: string; tip: string; model: string };
+  partPrice: number | null;
+  totalPrice: number | null;
+}) {
+  return (
+    <div className="rounded-lg border bg-muted/50 p-4 space-y-2 text-sm">
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Artikal</span>
+        <span className="font-medium text-foreground text-right max-w-[60%] truncate">
+          {part.dio}
+        </span>
+      </div>
+      <div className="flex justify-between text-muted-foreground text-xs">
+        <span>{part.marka} {part.tip} {part.model || ""}</span>
+      </div>
+      <Separator className="my-2" />
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Cijena dijela</span>
+        <span className="font-medium text-foreground">
+          {partPrice != null ? `${partPrice.toFixed(2)} KM` : "Po dogovoru"}
+        </span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Dostava</span>
+        <span className="font-medium text-foreground">{SHIPPING_PRICE.toFixed(2)} KM</span>
+      </div>
+      <Separator className="my-2" />
+      <div className="flex justify-between font-bold text-base">
+        <span>UKUPNO</span>
+        <span>
+          {totalPrice != null ? `${totalPrice.toFixed(2)} KM` : "Po dogovoru"}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default OrderSheet;
