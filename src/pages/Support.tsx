@@ -3,6 +3,7 @@ import TopBar from "@/components/TopBar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, MessageSquare, Phone, Clock } from "lucide-react";
+import Footer from "@/components/Footer";
 
 const Support = () => {
   return (
@@ -60,6 +61,7 @@ const Support = () => {
           </CardContent>
         </Card>
       </section>
+      <Footer />
     </div>
   );
 };

@@ -21,6 +21,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import Footer from "@/components/Footer";
 
 const ViberIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -278,6 +279,7 @@ const PartDetail = () => {
           }}
         />
       </main>
+      <Footer />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ const ResetPassword = () => {
           </CardContent>
         </Card>
       </main>
+      <Footer />
     </div>
   );
 };

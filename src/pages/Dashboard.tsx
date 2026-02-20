@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Trash2, Package, Heart, UserIcon } from "lucide-react";
 import { useToggleWishlist } from "@/hooks/useWishlist";
+import Footer from "@/components/Footer";
 
 const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   nova: { label: "Nova", variant: "default" },
@@ -194,6 +195,7 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+      <Footer />
     </div>
   );
 };
