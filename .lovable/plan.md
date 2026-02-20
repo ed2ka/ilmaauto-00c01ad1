@@ -1,27 +1,27 @@
 
 
-## Dodavanje novih logotipa marki
+## Promjena hero slike i boje headera
 
-### Promjene
+### 1. Nova hero slika
 
-**1. Kopiranje 9 novih logotipa u `src/assets/brands/`**
+Kopirati uploadovanu sliku (`Untitled-1.jpg`) u `src/assets/hero-bg.jpg` (zamjena postojece). Import u `Index.tsx` ostaje isti jer se fajl zove isto.
 
-Fajlovi: nissan.webp, opel.webp, peugeot.webp, renault.webp, seat.webp, skoda.webp, toyota.webp, volkswagen.webp, volvo.webp
+### 2. Boja headera i top bara: #1b2835
 
-**2. Azuriranje `src/lib/brandLogos.ts`**
+Azurirati CSS varijable u `src/index.css`:
 
-- Dodati 9 novih importa za uploadovane logotipe
-- Prosiriti `brandLogoMap` sa novim markama: NISSAN, OPEL, PEUGEOT, RENAULT, SEAT, SKODA, TOYOTA, VOLKSWAGEN, VOLVO
-- Azurirati `allBrands` listu -- dodati NISSAN i TOYOTA kao nove marke, a za OPEL, PEUGEOT, RENAULT, SEAT, SKODA, VOLKSWAGEN, VOLVO zamijeniti `null` sa odgovarajucim logotipom
+- `--header-bg` sa `220 20% 10%` na `207 32% 16%` (HSL ekvivalent za #1b2835)
+- `--foreground` ostaje nepromijenjen -- top bar koristi `bg-foreground`, pa cemo i njega prebaciti na novu boju
 
-Nakon ove izmjene, samo 4 marke ostaju bez logotipa: **Dacia, Iveco, Kia, Land Rover, Smart**.
+Posto TopBar koristi `bg-foreground` a Header koristi `bg-header`, treba:
+- Promijeniti `--header-bg` na `207 32% 16%`
+- U `TopBar.tsx` zamijeniti `bg-foreground` sa `bg-header` tako da oba dijela koriste istu boju
 
-### Rezime
+### Rezime izmjena
 
 | Fajl | Akcija |
 |------|---------|
-| `src/assets/brands/*.webp` | Kopirati 9 novih logotipa |
-| `src/lib/brandLogos.ts` | Dodati importe i azurirati mapu i allBrands listu |
-
-Sve ostale komponente (PartCard, PartListItem, PartDetail, BrandGrid) automatski koriste `getBrandLogo()` i `allBrands` pa ce odmah prikazivati nove logotipe bez dodatnih izmjena.
+| `src/assets/hero-bg.jpg` | Zamijeniti novom uploadovanom slikom |
+| `src/index.css` | Azurirati `--header-bg` na `207 32% 16%` |
+| `src/components/TopBar.tsx` | Zamijeniti `bg-foreground` sa `bg-header` |
 
