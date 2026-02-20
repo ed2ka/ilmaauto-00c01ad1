@@ -119,13 +119,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px]">
+    <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px] relative">
       <TopBar />
       <Header />
-      <main className="flex-1 relative flex items-center justify-center px-4 py-8">
-        <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-header/70" />
-        <Card className="w-full max-w-md relative z-10">
+      <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-header/70" />
+      <main className="flex-1 relative z-10 flex items-center justify-center px-4 py-8">
+        <Card className="w-full max-w-md relative">
           <Tabs defaultValue="login">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2">
@@ -179,8 +179,8 @@ const Auth = () => {
           </Tabs>
         </Card>
       </main>
-      <footer className="relative z-10 border-t border-white/20 py-4 px-4">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <footer className="relative z-10 py-4 px-4">
+        <div className="container mx-auto border-t border-[#ffffff33] pt-4 flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-1 text-[11px] text-white/60">
             <a href="#" className="hover:text-white/90 transition-colors">Politika privatnosti</a>
             <a href="#" className="hover:text-white/90 transition-colors">Politika kolačića</a>
