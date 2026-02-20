@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import OrderSheet from "@/components/OrderSheet";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -120,6 +121,29 @@ const PartDetail = () => {
           {/* Images - left side */}
           <div className="w-full md:w-[55%] md:sticky md:top-6 self-start mb-6 md:mb-0">
             <PartImageGallery images={images} alt={part.dio} />
+
+            <Tabs defaultValue="photos" className="mt-4">
+              <TabsList className="w-full">
+                <TabsTrigger value="photos" className="flex-1 text-xs">
+                  Napomena o fotografijama
+                </TabsTrigger>
+                <TabsTrigger value="purchase" className="flex-1 text-xs">
+                  Kupovina dijelova
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="photos">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Prikazane fotografije proizvoda su informativnog karaktera i mogu se razlikovati od stvarnog izgleda dijela. Preporučujemo da prije kupovine provjerite tačne specifikacije i kompatibilnost proizvoda. Ako imate pitanja, kontaktirajte nas za dodatne informacije ili dodatne slike.
+                </p>
+              </TabsContent>
+              <TabsContent value="purchase">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Prije naručivanja savjetujemo da provjerite da li dio odgovara modelu i godini proizvodnje vašeg vozila. U slučaju nejasnoća ili potrebe za stručnim savjetom, naš tim stoji na raspolaganju. Svi dijelovi se isporučuju uz prethodnu provjeru ispravnosti. Kupovinom potvrđujete da ste upoznati sa{" "}
+                  <a href="#" className="text-primary underline">uslovima prodaje</a> i{" "}
+                  <a href="#" className="text-primary underline">politikom povrata i garancije</a>.
+                </p>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Details card - right side */}
