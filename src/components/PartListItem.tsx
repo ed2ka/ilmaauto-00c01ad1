@@ -1,15 +1,34 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
 import type { Part } from "@/hooks/useParts";
+import { useAuth } from "@/hooks/useAuth";
+import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
 
 interface PartListItemProps {
   part: Part;
 }
 
 const PartListItem = ({ part }: PartListItemProps) => {
+  const { user } = useAuth();
+  const { data: wishlistIds } = useWishlistIds();
+  const toggleWishlist = useToggleWishlist();
+  const navigate = useNavigate();
+  const isInWishlist = wishlistIds?.has(part.id) ?? false;
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      navigate("/prijava");
+      return;
+    }
+    toggleWishlist.mutate({ partId: part.id, isInWishlist });
+  };
+
   return (
     <Link
       to={`/dio/${part.id}`}
-      className="bg-card rounded-lg border hover:shadow-md transition-shadow flex overflow-hidden"
+      className="bg-card rounded-lg border hover:shadow-md transition-shadow flex overflow-hidden relative"
     >
       <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 bg-muted overflow-hidden">
         {part.slika1 ? (
@@ -25,12 +44,18 @@ const PartListItem = ({ part }: PartListItemProps) => {
           </div>
         )}
       </div>
-      <div className="p-3 flex flex-col justify-center gap-0.5 min-w-0">
+      <div className="p-3 flex flex-col justify-center gap-0.5 min-w-0 flex-1">
         <h3 className="font-semibold text-sm text-foreground line-clamp-2">{part.dio}</h3>
         <p className="text-xs text-muted-foreground">{part.marka} {part.tip}</p>
         {part.broj && <p className="text-xs font-mono text-muted-foreground">{part.broj}</p>}
         {part.model && <p className="text-xs text-muted-foreground">{part.model}</p>}
       </div>
+      <button
+        onClick={handleWishlist}
+        className="absolute top-2 right-2 p-1.5 rounded-full bg-background/80 hover:bg-background transition-colors"
+      >
+        <Heart className={`w-4 h-4 ${isInWishlist ? "fill-primary text-primary" : "text-muted-foreground"}`} />
+      </button>
     </Link>
   );
 };

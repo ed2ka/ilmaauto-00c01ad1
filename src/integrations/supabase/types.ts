@@ -27,6 +27,7 @@ export type Database = {
           shipping_price: number
           status: string
           total_price: number | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -40,6 +41,7 @@ export type Database = {
           shipping_price?: number
           status?: string
           total_price?: number | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -53,6 +55,7 @@ export type Database = {
           shipping_price?: number
           status?: string
           total_price?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -108,6 +111,59 @@ export type Database = {
           tip?: string
         }
         Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      wishlist: {
+        Row: {
+          created_at: string
+          id: number
+          part_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          part_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          part_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_part_id_fkey"
+            columns: ["part_id"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
