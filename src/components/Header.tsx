@@ -22,6 +22,9 @@ const Header = () => {
             <Link to="/pretraga" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
               PRETRAŽI
             </Link>
+            <Link to="/podrska" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
+              KORISNIČKA PODRŠKA
+            </Link>
             <a href="#" className="text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors">
               NOVOSTI
             </a>
@@ -82,6 +85,7 @@ const Header = () => {
         <div className="lg:hidden bg-header border-t border-header-foreground/10 animate-fade-in">
           <div className="container mx-auto px-4 py-4 space-y-3">
             <Link to="/pretraga" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>PRETRAŽI</Link>
+            <Link to="/podrska" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>KORISNIČKA PODRŠKA</Link>
             <a href="#" className="block text-sm font-medium text-header-foreground/90 py-2">NOVOSTI</a>
             {user ? (
               <>

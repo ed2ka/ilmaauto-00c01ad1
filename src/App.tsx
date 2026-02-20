@@ -11,6 +11,7 @@ import PartDetail from "./pages/PartDetail";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/prijava" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/profil" element={<Dashboard />} />
+            <Route path="/podrska" element={<Support />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
