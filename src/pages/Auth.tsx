@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import authBg from "@/assets/auth-bg.jpg";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -105,11 +106,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+    <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px]">
       <TopBar />
       <Header />
-      <main className="flex-1 flex items-center justify-center px-4 py-8">
-        <Card className="w-full max-w-md">
+      <main className="flex-1 relative flex items-center justify-center px-4 py-8">
+        <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-header/70" />
+        <Card className="w-full max-w-md relative z-10">
           <Tabs defaultValue="login">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2">
