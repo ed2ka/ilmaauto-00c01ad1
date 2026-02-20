@@ -1,42 +1,60 @@
 
 
-## Izmjene u Header navigaciji
+## Dodavanje logotipa marke na kartice autodijela
 
-### 1. Tekst stavki -- veliko pocetno slovo
+### Opis
 
-Trenutno su linkovi pisani velikim slovima ("PRETRAŽI", "KORISNIČKA PODRŠKA"). Promijenit ce se u:
-- "Pretraži"
-- "Korisnička podrška"
+U gornji lijevi ugao svake kartice (PartCard) i liste (PartListItem) dodati mali badge sa logotipom marke automobila. Logotipi ce se ucitavati sa javno dostupnog CDN-a za automobilske brendove, a za brendove koji nemaju logo prikazat ce se tekstualna oznaka.
 
-### 2. Ikone uz stavke
+### Marke u bazi
 
-Dodati Lucide ikone ispred teksta:
-- **Pretraži**: `Search` ikona
-- **Korisnička podrška**: `Headset` ikona
+Trenutno postoji 19 marki: AUDI, BMW, Citroen, Dacia, FIAT, FORD, HYUNDAI, IVECO, KIA, LAND ROVER, MERCEDES, OPEL, PEUGEOT, Renault, SEAT, SKODA, SMART, Volkswagen, Volvo.
 
-### 3. Hover animacija -- crvena linija ispod
+### Tehnicke promjene
 
-Svaki nav link dobija custom underline animaciju pomocu `after` pseudo-elementa:
-- Linija se pojavljuje s lijeva na desno pri hoveru
-- Boja linije: crvena (`bg-red-500`)
-- Tekst hover efekat: blagi prelaz boje
+**1. Novi fajl: `src/lib/brandLogos.ts`**
 
-CSS klase (Tailwind):
-```
-relative inline-flex items-center gap-1.5 
-after:content-[''] after:absolute after:w-full after:scale-x-0 
-after:h-0.5 after:bottom-0 after:left-0 after:bg-red-500 
-after:origin-bottom-right after:transition-transform after:duration-300 
-hover:after:scale-x-100 hover:after:origin-bottom-left
+Utility fajl sa mapom koja povezuje naziv marke sa URL-om logotipa. Koristit cemo besplatne SVG logotipe sa `cdn.worldvectorlogo.com` ili slicnog izvora. Fallback za nepoznate marke: prikazati ime marke u malom badge-u.
+
+```typescript
+const brandLogoMap: Record<string, string> = {
+  "AUDI": "https://...",
+  "BMW": "https://...",
+  "MERCEDES": "https://...",
+  // ... za svih 19 marki
+};
+
+export function getBrandLogo(marka: string): string | null { ... }
+export function getBrandName(marka: string): string { ... }
 ```
 
-### 4. Uklanjanje "Novosti"
+**2. Izmjena: `src/components/PartCard.tsx`**
 
-Obrisati stavku "NOVOSTI" iz desktop navigacije (linija 28-30) i mobilnog menija (linija 89).
+Dodati badge u gornji lijevi ugao slike (pored postojeceg Heart dugmeta u gornjem desnom uglu):
+
+```
+<div className="absolute top-2 left-2 z-10 bg-white rounded p-1 shadow-sm">
+  <img src={logoUrl} alt={part.marka} className="w-6 h-6 object-contain" />
+  // ili tekstualni fallback ako nema loga
+</div>
+```
+
+**3. Izmjena: `src/components/PartListItem.tsx`**
+
+Isti badge dodan u gornji lijevi ugao slike u list prikazu.
+
+### Vizuelni izgled
+
+- Bijela kockica (rounded, shadow) u gornjem lijevom uglu slike
+- Logotip dimenzija priblizno 24x24px, object-contain
+- Fallback: ime marke u malom fontu unutar bijele kockice
+- Ne prekriva se sa Heart dugmetom (koji je u gornjem desnom uglu)
 
 ### Rezime izmjena
 
-| Fajl | Izmjena |
+| Fajl | Akcija |
 |------|---------|
-| `src/components/Header.tsx` | Veliko pocetno slovo, ikone, hover animacija, uklanjanje Novosti |
+| `src/lib/brandLogos.ts` | Kreirati -- mapa marki i URL-ova logotipa |
+| `src/components/PartCard.tsx` | Izmjena -- dodati brand badge |
+| `src/components/PartListItem.tsx` | Izmjena -- dodati brand badge |
 
