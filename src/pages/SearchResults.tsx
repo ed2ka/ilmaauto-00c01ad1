@@ -15,6 +15,7 @@ import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList,
   BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import Footer from "@/components/Footer";
 
 const PAGE_SIZE = 20;
 
@@ -235,6 +236,7 @@ const SearchResults = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

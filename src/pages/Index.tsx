@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import SearchPanel from "@/components/SearchPanel";
 import AppRatingBar from "@/components/AppRatingBar";
 import BrandGrid from "@/components/BrandGrid";
+import Footer from "@/components/Footer";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
@@ -43,6 +44,8 @@ const Index = () => {
           <BrandGrid />
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };
