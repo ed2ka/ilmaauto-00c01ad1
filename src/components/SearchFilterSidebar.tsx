@@ -67,54 +67,82 @@ const SearchFilterSidebar = () => {
       <div className="space-y-3">
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Marka</label>
-          <Select value={marka || undefined} onValueChange={(v) => updateParam("marka", v)}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Sve marke" />
-            </SelectTrigger>
-            <SelectContent className="bg-background z-50">
-              {brands.map((b) => (
-                <SelectItem key={b} value={b}>{b}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-1">
+            <Select value={marka || undefined} onValueChange={(v) => updateParam("marka", v)}>
+              <SelectTrigger className="bg-background flex-1">
+                <SelectValue placeholder="Sve marke" />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50">
+                {brands.map((b) => (
+                  <SelectItem key={b} value={b}>{b}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {marka && (
+              <button onClick={() => removeParam("marka")} className="p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Model / Tip</label>
-          <Select
-            value={tip || undefined}
-            onValueChange={(v) => updateParam("tip", v)}
-            disabled={!marka}
-          >
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder={marka ? "Svi modeli" : "Odaberi marku"} />
-            </SelectTrigger>
-            <SelectContent className="bg-background z-50">
-              {models.map((m) => (
-                <SelectItem key={m} value={m}>{m}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-1">
+            <Select
+              value={tip || undefined}
+              onValueChange={(v) => updateParam("tip", v)}
+              disabled={!marka}
+            >
+              <SelectTrigger className="bg-background flex-1">
+                <SelectValue placeholder={marka ? "Svi modeli" : "Odaberi marku"} />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50">
+                {models.map((m) => (
+                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {tip && (
+              <button onClick={() => removeParam("tip")} className="p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Naziv dijela</label>
-          <Input
-            placeholder="npr. far, branik..."
-            value={dio}
-            onChange={(e) => updateParam("dio", e.target.value)}
-            className="bg-background"
-          />
+          <div className="relative">
+            <Input
+              placeholder="npr. far, branik..."
+              value={dio}
+              onChange={(e) => updateParam("dio", e.target.value)}
+              className="bg-background pr-8"
+            />
+            {dio && (
+              <button onClick={() => removeParam("dio")} className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Kataloški broj</label>
-          <Input
-            placeholder="npr. 1K0941..."
-            value={broj}
-            onChange={(e) => updateParam("broj", e.target.value)}
-            className="bg-background"
-          />
+          <div className="relative">
+            <Input
+              placeholder="npr. 1K0941..."
+              value={broj}
+              onChange={(e) => updateParam("broj", e.target.value)}
+              className="bg-background pr-8"
+            />
+            {broj && (
+              <button onClick={() => removeParam("broj")} className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
