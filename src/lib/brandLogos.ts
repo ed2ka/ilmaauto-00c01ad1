@@ -1,23 +1,23 @@
+import alfaRomeoLogo from "@/assets/brands/alfa-romeo.webp";
+import audiLogo from "@/assets/brands/audi.webp";
+import bmwLogo from "@/assets/brands/bmw.webp";
+import citroenLogo from "@/assets/brands/citroen.webp";
+import fiatLogo from "@/assets/brands/fiat.webp";
+import fordLogo from "@/assets/brands/ford.webp";
+import hyundaiLogo from "@/assets/brands/hyundai.webp";
+import mazdaLogo from "@/assets/brands/mazda.webp";
+import mercedesLogo from "@/assets/brands/mercedes-benz.webp";
+
 const brandLogoMap: Record<string, string> = {
-  "AUDI": "https://www.carlogos.org/car-logos/audi-logo-2016.png",
-  "BMW": "https://www.carlogos.org/car-logos/bmw-logo-2020.png",
-  "CITROEN": "https://www.carlogos.org/car-logos/citroen-logo-2022.png",
-  "DACIA": "https://www.carlogos.org/car-logos/dacia-logo-2021.png",
-  "FIAT": "https://www.carlogos.org/car-logos/fiat-logo-2020.png",
-  "FORD": "https://www.carlogos.org/car-logos/ford-logo-2017.png",
-  "HYUNDAI": "https://www.carlogos.org/car-logos/hyundai-logo-2011.png",
-  "IVECO": "https://www.carlogos.org/car-logos/iveco-logo.png",
-  "KIA": "https://www.carlogos.org/car-logos/kia-logo-2021.png",
-  "LAND ROVER": "https://www.carlogos.org/car-logos/land-rover-logo.png",
-  "MERCEDES": "https://www.carlogos.org/car-logos/mercedes-benz-logo-2011.png",
-  "OPEL": "https://www.carlogos.org/car-logos/opel-logo-2020.png",
-  "PEUGEOT": "https://www.carlogos.org/car-logos/peugeot-logo-2021.png",
-  "RENAULT": "https://www.carlogos.org/car-logos/renault-logo-2021.png",
-  "SEAT": "https://www.carlogos.org/car-logos/seat-logo-2017.png",
-  "SKODA": "https://www.carlogos.org/car-logos/skoda-logo-2022.png",
-  "SMART": "https://www.carlogos.org/car-logos/smart-logo.png",
-  "VOLKSWAGEN": "https://www.carlogos.org/car-logos/volkswagen-logo-2019.png",
-  "VOLVO": "https://www.carlogos.org/car-logos/volvo-logo-2014.png",
+  "ALFA ROMEO": alfaRomeoLogo,
+  "AUDI": audiLogo,
+  "BMW": bmwLogo,
+  "CITROEN": citroenLogo,
+  "FIAT": fiatLogo,
+  "FORD": fordLogo,
+  "HYUNDAI": hyundaiLogo,
+  "MAZDA": mazdaLogo,
+  "MERCEDES": mercedesLogo,
 };
 
 export function getBrandLogo(marka: string): string | null {
@@ -29,3 +29,32 @@ export function getBrandName(marka: string): string {
   if (!marka) return "";
   return marka.charAt(0).toUpperCase() + marka.slice(1).toLowerCase();
 }
+
+export interface BrandInfo {
+  name: string;
+  logo: string | null;
+}
+
+export const allBrands: BrandInfo[] = [
+  { name: "ALFA ROMEO", logo: alfaRomeoLogo },
+  { name: "AUDI", logo: audiLogo },
+  { name: "BMW", logo: bmwLogo },
+  { name: "CITROEN", logo: citroenLogo },
+  { name: "DACIA", logo: null },
+  { name: "FIAT", logo: fiatLogo },
+  { name: "FORD", logo: fordLogo },
+  { name: "HYUNDAI", logo: hyundaiLogo },
+  { name: "IVECO", logo: null },
+  { name: "KIA", logo: null },
+  { name: "LAND ROVER", logo: null },
+  { name: "MAZDA", logo: mazdaLogo },
+  { name: "MERCEDES", logo: mercedesLogo },
+  { name: "OPEL", logo: null },
+  { name: "PEUGEOT", logo: null },
+  { name: "RENAULT", logo: null },
+  { name: "SEAT", logo: null },
+  { name: "SKODA", logo: null },
+  { name: "SMART", logo: null },
+  { name: "VOLKSWAGEN", logo: null },
+  { name: "VOLVO", logo: null },
+];

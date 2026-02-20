@@ -4,6 +4,7 @@ import { usePartById } from "@/hooks/useParts";
 import { useAuth } from "@/hooks/useAuth";
 import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
 import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart } from "lucide-react";
+import { getBrandLogo } from "@/lib/brandLogos";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import PartImageGallery from "@/components/PartImageGallery";
@@ -62,6 +63,7 @@ const PartDetail = () => {
 
   const images = [part.slika1, part.slika2, part.slika3].filter(Boolean) as string[];
   const isInWishlist = wishlistIds?.has(part.id) ?? false;
+  const brandLogo = getBrandLogo(part.marka);
 
   const handleWishlist = () => {
     if (!user) {
@@ -151,11 +153,18 @@ const PartDetail = () => {
             <Card>
               <CardContent className="p-6">
                 <div className="py-2 flex items-start justify-between gap-2">
-                  <div>
-                    <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
-                    <p className="text-muted-foreground mt-1">
-                      {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
-                    </p>
+                  <div className="flex items-start gap-3">
+                    {brandLogo && (
+                      <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center mt-1">
+                        <img src={brandLogo} alt={part.marka} className="w-8 h-8 object-contain" />
+                      </div>
+                    )}
+                    <div>
+                      <h1 className="text-2xl font-bold text-foreground">{part.dio}</h1>
+                      <p className="text-muted-foreground mt-1">
+                        {part.marka} {part.tip} {part.model ? `| ${part.model}` : ""}
+                      </p>
+                    </div>
                   </div>
                   <button
                     onClick={handleWishlist}
