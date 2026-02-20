@@ -1,58 +1,42 @@
 
 
-## Dodavanje stranice "Korisnička podrška" i link u header
+## Izmjene u Header navigaciji
 
-### 1. Nova stranica `src/pages/Support.tsx`
+### 1. Tekst stavki -- veliko pocetno slovo
 
-Kreirati stranicu inspirisanu priloženom slikom (GoDaddy stil) ali prilagođenu za Ilma Auto Dijelove. Stranica će sadržavati:
+Trenutno su linkovi pisani velikim slovima ("PRETRAŽI", "KORISNIČKA PODRŠKA"). Promijenit ce se u:
+- "Pretraži"
+- "Korisnička podrška"
 
-**Hero sekcija:**
-- Naslov: "Tu smo za vas"
-- Podnaslov: kratki tekst o dostupnosti podrške
-- Svijetla pozadinska boja (npr. muted/accent ton)
+### 2. Ikone uz stavke
 
-**Kartica za kontakt (umjesto chata):**
-- Naslov: "Kontaktirajte nas"
-- Opis: "Za brzu pomoć oko narudžbi, dijelova ili bilo kakvih pitanja."
-- Tri dugmeta u redu:
-  - **Viber** -- otvara Viber link (`viber://chat?number=...` ili placeholder `#`)
-  - **WhatsApp** -- otvara WhatsApp link (`https://wa.me/...` ili placeholder `#`)
-  - **Poziv** -- otvara tel link (`tel:...` ili placeholder `#`)
-- Ikone: koristiti `MessageCircle` (Viber), `MessageSquare` (WhatsApp), `Phone` (Poziv) iz lucide-react
-- Radno vrijeme ispod dugmića
+Dodati Lucide ikone ispred teksta:
+- **Pretraži**: `Search` ikona
+- **Korisnička podrška**: `Headset` ikona
 
-Stranica koristi Header i footer layout kao ostale stranice.
+### 3. Hover animacija -- crvena linija ispod
 
-### 2. Ruta u `src/App.tsx`
+Svaki nav link dobija custom underline animaciju pomocu `after` pseudo-elementa:
+- Linija se pojavljuje s lijeva na desno pri hoveru
+- Boja linije: crvena (`bg-red-500`)
+- Tekst hover efekat: blagi prelaz boje
 
-Dodati novu rutu:
+CSS klase (Tailwind):
 ```
-<Route path="/podrska" element={<Support />} />
-```
-
-### 3. Link u `src/components/Header.tsx`
-
-Dodati "KORISNIČKA PODRŠKA" link pored "PRETRAŽI" u desktop navigaciji i u mobilnom meniju:
-
-**Desktop (linija 22-27):**
-```
-<Link to="/pretraga">PRETRAŽI</Link>
-<Link to="/podrska">KORISNIČKA PODRŠKA</Link>
-<a href="#">NOVOSTI</a>
+relative inline-flex items-center gap-1.5 
+after:content-[''] after:absolute after:w-full after:scale-x-0 
+after:h-0.5 after:bottom-0 after:left-0 after:bg-red-500 
+after:origin-bottom-right after:transition-transform after:duration-300 
+hover:after:scale-x-100 hover:after:origin-bottom-left
 ```
 
-**Mobilni meni (linija 84-85):**
-```
-<Link to="/pretraga">PRETRAŽI</Link>
-<Link to="/podrska">KORISNIČKA PODRŠKA</Link>
-<a href="#">NOVOSTI</a>
-```
+### 4. Uklanjanje "Novosti"
+
+Obrisati stavku "NOVOSTI" iz desktop navigacije (linija 28-30) i mobilnog menija (linija 89).
 
 ### Rezime izmjena
 
-| Fajl | Akcija |
+| Fajl | Izmjena |
 |------|---------|
-| `src/pages/Support.tsx` | Kreirati -- nova stranica korisničke podrške |
-| `src/App.tsx` | Izmjena -- dodati rutu `/podrska` |
-| `src/components/Header.tsx` | Izmjena -- dodati link u navigaciju |
+| `src/components/Header.tsx` | Veliko pocetno slovo, ikone, hover animacija, uklanjanje Novosti |
 
