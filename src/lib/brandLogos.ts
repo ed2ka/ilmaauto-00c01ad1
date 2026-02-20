@@ -7,6 +7,15 @@ import fordLogo from "@/assets/brands/ford.webp";
 import hyundaiLogo from "@/assets/brands/hyundai.webp";
 import mazdaLogo from "@/assets/brands/mazda.webp";
 import mercedesLogo from "@/assets/brands/mercedes-benz.webp";
+import nissanLogo from "@/assets/brands/nissan.webp";
+import opelLogo from "@/assets/brands/opel.webp";
+import peugeotLogo from "@/assets/brands/peugeot.webp";
+import renaultLogo from "@/assets/brands/renault.webp";
+import seatLogo from "@/assets/brands/seat.webp";
+import skodaLogo from "@/assets/brands/skoda.webp";
+import toyotaLogo from "@/assets/brands/toyota.webp";
+import volkswagenLogo from "@/assets/brands/volkswagen.webp";
+import volvoLogo from "@/assets/brands/volvo.webp";
 
 const brandLogoMap: Record<string, string> = {
   "ALFA ROMEO": alfaRomeoLogo,
@@ -18,6 +27,15 @@ const brandLogoMap: Record<string, string> = {
   "HYUNDAI": hyundaiLogo,
   "MAZDA": mazdaLogo,
   "MERCEDES": mercedesLogo,
+  "NISSAN": nissanLogo,
+  "OPEL": opelLogo,
+  "PEUGEOT": peugeotLogo,
+  "RENAULT": renaultLogo,
+  "SEAT": seatLogo,
+  "SKODA": skodaLogo,
+  "TOYOTA": toyotaLogo,
+  "VOLKSWAGEN": volkswagenLogo,
+  "VOLVO": volvoLogo,
 };
 
 export function getBrandLogo(marka: string): string | null {
@@ -49,12 +67,14 @@ export const allBrands: BrandInfo[] = [
   { name: "LAND ROVER", logo: null },
   { name: "MAZDA", logo: mazdaLogo },
   { name: "MERCEDES", logo: mercedesLogo },
-  { name: "OPEL", logo: null },
-  { name: "PEUGEOT", logo: null },
-  { name: "RENAULT", logo: null },
-  { name: "SEAT", logo: null },
-  { name: "SKODA", logo: null },
+  { name: "NISSAN", logo: nissanLogo },
+  { name: "OPEL", logo: opelLogo },
+  { name: "PEUGEOT", logo: peugeotLogo },
+  { name: "RENAULT", logo: renaultLogo },
+  { name: "SEAT", logo: seatLogo },
+  { name: "SKODA", logo: skodaLogo },
   { name: "SMART", logo: null },
-  { name: "VOLKSWAGEN", logo: null },
-  { name: "VOLVO", logo: null },
+  { name: "TOYOTA", logo: toyotaLogo },
+  { name: "VOLKSWAGEN", logo: volkswagenLogo },
+  { name: "VOLVO", logo: volvoLogo },
 ];
