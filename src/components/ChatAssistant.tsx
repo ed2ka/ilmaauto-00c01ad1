@@ -1,13 +1,30 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, Send, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { MessageCircle, Send, X, Minus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const WELCOME_MSG = "Ja sam ILMA asistent! 🚗 Kako ti mogu pomoći? Koji dio tražiš?";
+const WELCOME_MSG = `Pozdrav, ja sam ILMA AI, Izvolite? Kako mogu pomoći? Koji dio tražite?
+
+Napomena: ILMA AI nikada od vas neće tražiti bilo kakve lične podatke, niti ih prikuplja u svoju bazu, sav razgovor i podaci koji se razmjenjuju se koriste isključivo u svrhu pretrage i lakšeg pronalaženja dijelova.`;
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+const STORAGE_KEY = "ilma-ai-messages";
+
+function loadMessages(): Msg[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return [{ role: "assistant", content: WELCOME_MSG }];
+}
+
+function saveMessages(msgs: Msg[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
+  } catch {}
+}
 
 // Parse [PART:id:name:number:brand:model:image] tags from assistant text
 function parsePartCards(text: string) {
@@ -70,11 +87,6 @@ async function streamChat({
   onDone();
 }
 
-interface ChatAssistantProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
 const PartCard = ({ part }: { part: { id: string; dio: string; broj: string; marka: string; tip: string; slika: string } }) => (
   <Link
     to={`/dio/${part.id}`}
@@ -134,14 +146,16 @@ const TypingIndicator = () => (
   </div>
 );
 
-const ChatAssistant = ({ open, onOpenChange }: ChatAssistantProps) => {
-  const [messages, setMessages] = useState<Msg[]>([]);
+const ChatAssistant = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Msg[]>(loadMessages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showTyping, setShowTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const hasInitialized = useRef(false);
+
+  // Persist messages
+  useEffect(() => { saveMessages(messages); }, [messages]);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -149,21 +163,11 @@ const ChatAssistant = ({ open, onOpenChange }: ChatAssistantProps) => {
     }, 50);
   }, []);
 
-  useEffect(() => { scrollToBottom(); }, [messages, showTyping, scrollToBottom]);
+  useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
 
-  // Typing animation on first open
   useEffect(() => {
-    if (open && !hasInitialized.current) {
-      hasInitialized.current = true;
-      setShowTyping(true);
-      const timer = setTimeout(() => {
-        setShowTyping(false);
-        setMessages([{ role: "assistant", content: WELCOME_MSG }]);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-    if (open) setTimeout(() => inputRef.current?.focus(), 200);
-  }, [open]);
+    if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
+  }, [isOpen]);
 
   const send = async () => {
     const text = input.trim();
@@ -213,41 +217,70 @@ const ChatAssistant = ({ open, onOpenChange }: ChatAssistantProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden max-h-[85vh] flex flex-col">
-        <div className="flex items-center gap-2 px-4 py-3 border-b bg-primary text-primary-foreground">
-          <MessageCircle className="w-5 h-5" />
-          <DialogTitle className="text-base font-semibold text-primary-foreground">ILMA Asistent</DialogTitle>
-          <button onClick={() => onOpenChange(false)} className="ml-auto p-1 rounded hover:bg-primary-foreground/10 transition-colors">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+    <>
+      {/* Floating trigger button */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full border border-border bg-background text-foreground shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+        >
+          <MessageCircle className="w-5 h-5 text-primary" />
+          <span className="text-sm font-semibold">AI Pretraga dijelova</span>
+        </button>
+      )}
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] max-h-[50vh]">
-          {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
-          {(showTyping || (isLoading && messages[messages.length - 1]?.role !== "assistant")) && <TypingIndicator />}
-        </div>
+      {/* Chat panel */}
+      {isOpen && (
+        <div className="fixed bottom-6 right-6 z-50 w-[380px] h-[500px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] flex flex-col rounded-xl border border-border bg-background shadow-2xl overflow-hidden sm:w-[380px] sm:h-[500px]
+          max-[480px]:w-full max-[480px]:h-full max-[480px]:bottom-0 max-[480px]:right-0 max-[480px]:rounded-none max-[480px]:max-w-none max-[480px]:max-h-none">
+          {/* Header */}
+          <div className="flex items-center gap-2 px-4 py-3 border-b bg-primary text-primary-foreground shrink-0">
+            <MessageCircle className="w-5 h-5" />
+            <span className="text-base font-semibold flex-1">ILMA AI</span>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1 rounded hover:bg-primary-foreground/10 transition-colors"
+              aria-label="Minimiziraj"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1 rounded hover:bg-primary-foreground/10 transition-colors"
+              aria-label="Zatvori"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-        <div className="border-t p-3 flex gap-2">
-          <input
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Upišite poruku..."
-            disabled={isLoading || showTyping}
-            className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
-          />
-          <button
-            onClick={send}
-            disabled={isLoading || !input.trim() || showTyping}
-            className="h-10 w-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 disabled:opacity-50 transition-colors"
-          >
-            <Send className="w-4 h-4" />
-          </button>
+          {/* Messages */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+            {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
+            {isLoading && messages[messages.length - 1]?.role !== "assistant" && <TypingIndicator />}
+          </div>
+
+          {/* Input */}
+          <div className="border-t p-3 flex gap-2 shrink-0">
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Upišite poruku..."
+              disabled={isLoading}
+              className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            />
+            <button
+              onClick={send}
+              disabled={isLoading || !input.trim()}
+              className="h-10 w-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </>
   );
 };
 
