@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle } from "lucide-react";
+import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import VehicleSelector from "./VehicleSelector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -172,15 +172,27 @@ const SearchPanel = () => {
           onClick={handleSearch}
           className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30">
 
-          Pretraži <span className="font-bold">{totalCount ?? "..."}</span> rezultata
+          <Search className="w-4 h-4" />
+          Pretraži
         </button>
         <button
           onClick={() => setIsChatOpen(true)}
           className="w-full h-11 border-2 border-primary bg-transparent text-primary font-medium rounded transition-all duration-200 flex items-center justify-center gap-2 hover:bg-primary/5">
-
           <MessageCircle className="w-4 h-4" />
-          Niste sigurni kako tražiti? Isprobajte asistenta
+          Traži uz asistenta
         </button>
+
+        {/* Trust indicators */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2 pb-1">
+          <span className="text-muted-foreground text-xs">Preko 700.000 dostupnih dijelova</span>
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4].map((i) => (
+              <Star key={i} className="w-3.5 h-3.5 fill-rating text-rating" />
+            ))}
+            <Star className="w-3.5 h-3.5 text-rating fill-rating/80" />
+            <span className="text-xs font-semibold text-muted-foreground ml-0.5">4.8</span>
+          </div>
+        </div>
       </div>
 
       <ChatAssistant open={isChatOpen} onOpenChange={setIsChatOpen} />
