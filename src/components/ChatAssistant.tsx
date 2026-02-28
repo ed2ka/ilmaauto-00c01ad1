@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, Send, X, Minus, ExternalLink } from "lucide-react";
+import { MessageCircle, Send, X, Minus, ExternalLink, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -240,6 +240,14 @@ const ChatAssistant = () => {
           <div className="flex items-center gap-2 px-4 py-3 border-b bg-primary text-primary-foreground shrink-0">
             <MessageCircle className="w-5 h-5" />
             <span className="text-base font-semibold flex-1">ILMA AI</span>
+            <button
+              onClick={() => setMessages([{ role: "assistant", content: WELCOME_MSG }])}
+              className="p-1 rounded hover:bg-primary-foreground/10 transition-colors"
+              aria-label="Obriši chat"
+              title="Obriši chat"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
             <button
               onClick={() => setIsOpen(false)}
               className="p-1 rounded hover:bg-primary-foreground/10 transition-colors"
