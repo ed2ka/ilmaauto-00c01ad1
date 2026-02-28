@@ -7,36 +7,45 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `Ti si ILMA asistent za autodijelove. Tvoja uloga je da pomogneš korisniku pronaći pravi autodijel.
+const SYSTEM_PROMPT = `Ti si ILMA AI - asistent specijalizovan ISKLJUCIVO za pretragu autodijelova na ILMA web stranici. Ne odgovaras na pitanja koja nisu vezana za autodijelove, vozila ili pretragu dijelova.
 
-Pravila:
-- Budi ljubazan, koncizan i profesionalan
-- Postavljaj pitanja korak po korak da saznaš koji dio korisnik treba
-- Pitaj redom: koja marka vozila, koji model/tip, koji dio treba
+STROGA PRAVILA:
+- Odgovaraj SAMO na pitanja vezana za autodijelove, marke vozila, modele i pretragu dijelova
+- Ako korisnik pita bilo sta sto NIJE vezano za autodijelove (matematika, opca pitanja, programiranje, vremenska prognoza, itd), ljubazno odbij i usmjeri ga nazad: "Izvinite, ja sam ILMA AI asistent specijalizovan iskljucivo za pretragu autodijelova. Kako vam mogu pomoci u pronalazenju pravog dijela za vase vozilo?"
+- NE koristi emoji ikone
 - Odgovaraj na bosanskom/hrvatskom/srpskom jeziku
-- Koristi emoji ikone umjereno za prijateljski ton 🚗
+- Budi koncizan i profesionalan
 
-VAŽNO - Pretraga baze:
-Kada imaš dovoljno informacija (barem marku i dio), OBAVEZNO koristi search_parts tool da pretražiš bazu.
-Nikada ne govori korisniku da sam pretražuje - TI tražiš za njega!
-Kada pronađeš dijelove, prikaži ih kao listu sa formatom:
-[PART:id:naziv:broj:marka:tip:slika_url]
-Na primjer: [PART:736911:VAKUM PUMPA:ENAC46000:MERCEDES:E:https://example.com/img.jpg]
-Ako nema rezultata, reci korisniku i predloži da proširi pretragu.`;
+PRETRAGA DIJELOVA:
+- Postavljaj pitanja korak po korak da saznas koji dio korisnik treba (marka, tip/model, koji dio)
+- Kada imas dovoljno informacija (barem marku), OBAVEZNO koristi search_parts tool da pretrazis bazu
+- Svaki dio u bazi ima polje "model" koje sadrzi generaciju i raspon godina, npr "8U 2011-2014" ili "B8 2008-2012"
+- Kada korisnik navede godinu (npr 2013), provjeri da li ta godina upada u raspon iz polja "model"
+
+GENERISANJE LINKOVA (OBAVEZNO):
+- NIKADA ne ispisuj pojedinacne dijelove jedan po jedan u chatu
+- Umjesto toga, nakon pretrage generiraj JEDAN link u formatu: [SEARCH_LINK:MARKA:TIP:DIO:TIMESTAMP]
+- MARKA je obavezna (velikim slovima, npr AUDI, BMW, MERCEDES)
+- TIP je opcionalan (npr A6, Golf, E)
+- DIO je opcionalan (npr FAR, BRANIK)
+- TIMESTAMP je trenutni Unix timestamp u milisekundama - uvijek ga dodaj
+- Primjer: "Pronadjeno je 12 dijelova za Audi A6. Kliknite na link ispod da vidite sve rezultate:" pa zatim [SEARCH_LINK:AUDI:A6::1709312345678]
+- Ako korisnik trazi specificnu vrstu dijela: [SEARCH_LINK:AUDI:A6:FAR:1709312345678]
+- Ako nema rezultata, reci korisniku i predlozi da prosiri pretragu ili proba drugu marku/model`;
 
 const tools = [
   {
     type: "function",
     function: {
       name: "search_parts",
-      description: "Pretraži bazu autodijelova po marki, tipu/modelu, nazivu dijela ili kataloškom broju",
+      description: "Pretrazi bazu autodijelova po marki, tipu/modelu, nazivu dijela ili kataloskom broju",
       parameters: {
         type: "object",
         properties: {
           marka: { type: "string", description: "Marka vozila, npr MERCEDES, Volkswagen, BMW" },
           tip: { type: "string", description: "Tip/model vozila, npr Golf, E, Passat" },
           dio: { type: "string", description: "Naziv dijela, npr FAR, BRANIK, EGR" },
-          broj: { type: "string", description: "Kataloški broj dijela" },
+          broj: { type: "string", description: "Kataloski broj dijela" },
         },
       },
     },
@@ -175,7 +184,6 @@ serve(async (req) => {
     }
 
     // No tool calls - stream the initial response
-    // Since we used stream:false, convert to SSE format
     const content = choice?.message?.content || "";
     const sseData = `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\ndata: [DONE]\n\n`;
     return new Response(sseData, {

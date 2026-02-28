@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, Send, X, Minus } from "lucide-react";
+import { MessageCircle, Send, X, Minus, ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -26,16 +25,28 @@ function saveMessages(msgs: Msg[]) {
   } catch {}
 }
 
-// Parse [PART:id:name:number:brand:model:image] tags from assistant text
-function parsePartCards(text: string) {
-  const partRegex = /\[PART:(\d+):([^:]*):([^:]*):([^:]*):([^:]*):([^\]]*)\]/g;
-  const parts: { id: string; dio: string; broj: string; marka: string; tip: string; slika: string }[] = [];
+// Parse [SEARCH_LINK:MARKA:TIP:DIO:TIMESTAMP] tags
+function parseSearchLinks(text: string) {
+  const linkRegex = /\[SEARCH_LINK:([^:\]]+):([^:\]]*):([^:\]]*):([^\]]+)\]/g;
+  const links: { marka: string; tip: string; dio: string; timestamp: string; url: string; label: string }[] = [];
   let match;
-  while ((match = partRegex.exec(text)) !== null) {
-    parts.push({ id: match[1], dio: match[2], broj: match[3], marka: match[4], tip: match[5], slika: match[6] });
+  while ((match = linkRegex.exec(text)) !== null) {
+    const marka = match[1];
+    const tip = match[2];
+    const dio = match[3];
+    const timestamp = match[4];
+    const params = new URLSearchParams();
+    if (marka) params.set("marka", marka);
+    if (tip) params.set("tip", tip);
+    if (dio) params.set("dio", dio);
+    params.set("t", timestamp);
+    const url = `/pretraga?${params.toString()}`;
+    const labelParts = [marka, tip].filter(Boolean).join(" ");
+    const label = dio ? `Pogledaj rezultate za ${labelParts} - ${dio}` : `Pogledaj rezultate za ${labelParts}`;
+    links.push({ marka, tip, dio, timestamp, url, label });
   }
-  const cleanText = text.replace(partRegex, "").trim();
-  return { cleanText, parts };
+  const cleanText = text.replace(linkRegex, "").trim();
+  return { cleanText, links };
 }
 
 async function streamChat({
@@ -87,20 +98,16 @@ async function streamChat({
   onDone();
 }
 
-const PartCard = ({ part }: { part: { id: string; dio: string; broj: string; marka: string; tip: string; slika: string } }) => (
-  <Link
-    to={`/dio/${part.id}`}
-    className="flex gap-3 p-2 rounded-md border bg-background hover:bg-accent transition-colors"
+const SearchLinkButton = ({ link }: { link: { url: string; label: string } }) => (
+  <a
+    href={link.url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center gap-2 px-3 py-2 rounded-md border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
   >
-    {part.slika && (
-      <img src={part.slika} alt={part.dio} className="w-14 h-14 rounded object-cover shrink-0" />
-    )}
-    <div className="min-w-0">
-      <p className="text-sm font-semibold text-foreground truncate">{part.dio}</p>
-      <p className="text-xs text-muted-foreground">{part.marka} {part.tip}</p>
-      {part.broj && <p className="text-xs font-mono text-muted-foreground">{part.broj}</p>}
-    </div>
-  </Link>
+    <ExternalLink className="w-4 h-4 shrink-0" />
+    <span>{link.label}</span>
+  </a>
 );
 
 const MessageBubble = ({ msg }: { msg: Msg }) => {
@@ -114,7 +121,7 @@ const MessageBubble = ({ msg }: { msg: Msg }) => {
     );
   }
 
-  const { cleanText, parts } = parsePartCards(msg.content);
+  const { cleanText, links } = parseSearchLinks(msg.content);
 
   return (
     <div className="flex justify-start">
@@ -124,9 +131,9 @@ const MessageBubble = ({ msg }: { msg: Msg }) => {
             {cleanText}
           </div>
         )}
-        {parts.length > 0 && (
+        {links.length > 0 && (
           <div className="space-y-1.5">
-            {parts.map((p) => <PartCard key={p.id} part={p} />)}
+            {links.map((l) => <SearchLinkButton key={l.timestamp} link={l} />)}
           </div>
         )}
       </div>
@@ -154,7 +161,6 @@ const ChatAssistant = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Persist messages
   useEffect(() => { saveMessages(messages); }, [messages]);
 
   const scrollToBottom = useCallback(() => {
@@ -218,7 +224,6 @@ const ChatAssistant = () => {
 
   return (
     <>
-      {/* Floating trigger button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -229,11 +234,9 @@ const ChatAssistant = () => {
         </button>
       )}
 
-      {/* Chat panel */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-[380px] h-[500px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] flex flex-col rounded-xl border border-border bg-background shadow-2xl overflow-hidden sm:w-[380px] sm:h-[500px]
           max-[480px]:w-full max-[480px]:h-full max-[480px]:bottom-0 max-[480px]:right-0 max-[480px]:rounded-none max-[480px]:max-w-none max-[480px]:max-h-none">
-          {/* Header */}
           <div className="flex items-center gap-2 px-4 py-3 border-b bg-primary text-primary-foreground shrink-0">
             <MessageCircle className="w-5 h-5" />
             <span className="text-base font-semibold flex-1">ILMA AI</span>
@@ -253,13 +256,11 @@ const ChatAssistant = () => {
             </button>
           </div>
 
-          {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && <TypingIndicator />}
           </div>
 
-          {/* Input */}
           <div className="border-t p-3 flex gap-2 shrink-0">
             <input
               ref={inputRef}
