@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Support from "./pages/Support";
+import ChatAssistant from "./components/ChatAssistant";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/podrska" element={<Support />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatAssistant />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

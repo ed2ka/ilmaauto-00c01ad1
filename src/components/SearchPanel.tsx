@@ -3,7 +3,7 @@ import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle, Star } fr
 import { useNavigate } from "react-router-dom";
 import VehicleSelector from "./VehicleSelector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import ChatAssistant from "./ChatAssistant";
+
 import { usePartsCount } from "@/hooks/useParts";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
@@ -195,7 +195,6 @@ const SearchPanel = () => {
         </div>
       </div>
 
-      <ChatAssistant open={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>);
 
 };
