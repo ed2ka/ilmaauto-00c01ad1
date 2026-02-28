@@ -1,3 +1,4 @@
+import AnnouncementBar from "@/components/AnnouncementBar";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import SearchPanel from "@/components/SearchPanel";
@@ -9,6 +10,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <AnnouncementBar />
       <TopBar />
       <Header />
 
