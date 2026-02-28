@@ -1,51 +1,75 @@
 
 
-## Dodavanje BrandGrid-a na /pretraga i povezivanje sa kategorijama
+## Refaktoring ILMA AI Asistenta
 
-### 1. Kreiranje novog hook-a za dohvat marki po kategoriji
+### 1. Premjestiti ChatAssistant na globalni nivo (App.tsx)
 
-Novi hook `useBrandsByCategory` u `src/hooks/useParts.ts` koji za odabranu kategoriju vraca listu marki koje imaju dijelove u toj kategoriji.
+Trenutno je ChatAssistant renderovan unutar SearchPanel-a i koristi Dialog komponentu. Treba ga pretvoriti u **globalni floating widget** koji je prisutan na svim stranicama:
+- Ukloniti ChatAssistant iz `SearchPanel.tsx`
+- Dodati ChatAssistant u `App.tsx` (unutar BrowserRouter, ali van Routes)
+- ChatAssistant ce sam upravljati svojim stanjem (open/minimized/closed) -- vise ne prima props
 
-Potrebno je napraviti mapiranje kategorija na `dio` vrijednosti iz baze:
+### 2. Redizajn ChatAssistant komponente
 
-| Kategorija | dio vrijednosti |
-|---|---|
-| motor | MOTOR, MJENJAC, AUTOMATSKI MJENJAC, USISNA GRANA, IZDUVNA GRANA, EGR, CIJEV EGR, KUCISTE FILTERA ULJA, VAKUM PUMPA, VODENA PUMPA, CIRKULACIONA PUMPA, SERVO PUMPA, MOTORIC TURBINE, REDUKTOR, LAMBDA SONDA, POTENCIOMETAR GASA |
-| karoserija | BLATOBRAN, PREDNJA HAUBA, ZADNJA HAUBA, VRATA, BAGLAMA VRATA, LAJSNA VRATA, RETROVIZOR, RESETKA BRANIKA, DIFUZOR, BLENDA, KOMPLET SASIJA |
-| elektrika | ELEKTRONIKA MOTORA, MODUL, DISPLEJ, RADIO, KAMERA, RADAR SENZOR, TAHO SAT |
-| ovjes | MOST |
-| kocnice | (nema direktnih) |
-| svjetla | FAR, MAGLENKA, STOP SVJETLO, KATADIOPTER |
-| stakla | STAKLO |
-| unutrasnjost | AIRBAG, SJEDISTA, KOLO VOLANA, KLIMATRONIK, PEPELJARA, UNUTRASNJI RETROVIZOR, PREKIDAC BRISACA, PREKIDAC SVJETALA, PREKIDAC CETIRI ZMIGAVCA, PREKIDACI PODIZACA, KUGLA MJENJACA, RESETKA VENTILACIJE, MOTORIC VENTILACIJE, MOTORIC PODIZACA, BRAVA VRATA, BRAVA HAUBE, BRAVA PALJENJA, STEKA VRATA, BRISAC, MOTORIC BRISACA, NOSAC AKUMULATORA, PLASTIKA, RACVA VODE, HLADNJAK INTERKULERA |
+**Floating dugme (donji desni ugao):**
+- Uvijek vidljivo na svim stranicama, svim uredjajima
+- Tekst: "AI Pretraga dijelova" sa MessageCircle ikonom
+- Zaobljeno dugme, stil slican ATTACHMENT SLIKA 1 (rounded-full, border, bijela pozadina)
+- Pozicija: `fixed bottom-6 right-6 z-50`
 
-SQL upit: `SELECT DISTINCT marka FROM parts WHERE dio = ANY($1)` - gdje je $1 niz dio vrijednosti za odabranu kategoriju.
+**Header chata:**
+- Naslov: "ILMA AI" umjesto "ILMA Asistent"
+- Samo jedan X dugme (ukloniti dupli X bug -- Dialog komponenta dodaje svoj X, a custom X je vec tu)
+- Dodati dugme za minimiziranje (Minus ikona) pored X-a
 
-### 2. Kreiranje komponente SearchBrandGrid
+**Pozdravna poruka:**
+- Tekst: "Pozdrav, ja sam ILMA AI, Izvolite? Kako mogu pomoci? Koji dio trazite?"
+- Prazan red pa napomena: "Napomena: ILMA AI nikada od vas nece traziti bilo kakve licne podatke, niti ih prikuplja u svoju bazu, sav razgovor i podaci koji se razmjenjuju se koriste iskljucivo u svrhu pretrage i lakseg pronalazenja dijelova."
 
-Nova komponenta `src/components/SearchBrandGrid.tsx`:
-- Prima `activeCategory` (string) kao prop
-- Prikazuje isti grid brendova kao `BrandGrid` sa homepage-a (isti vizual)
-- Klikom na brand, postavlja `marka` URL parametar (i zadrzava ostale parametre)
-- Ako je kategorija aktivna:
-  - Dohvata listu marki koje imaju dijelove u toj kategoriji
-  - Marke koje NEMAJU dijelove: greyed out (opacity-40, pointer-events-none, grayscale)
-  - Marke koje IMAJU dijelove: normalan izgled, klikabilne
-- Ako kategorija NIJE aktivna: sve marke su klikabilne normalno
-- Aktivna marka (iz URL-a) ima istaknuti stil (border-primary)
+**Persistencija konverzacije:**
+- Koristiti `localStorage` za cuvanje poruka (key: `ilma-ai-messages`)
+- Pri otvaranju, ucitati poruke iz localStorage
+- Pri svakoj novoj poruci, sacuvati u localStorage
+- Konverzacija prezivljava zatvaranje taba/browsera
 
-### 3. Integracija u SearchResults stranicu
+**Minimiziranje:**
+- Stanje: `open` (puni chat), `minimized` (samo floating dugme), `closed` (isto kao minimized)
+- Kada se minimizira, chat nestaje ali floating dugme ostaje
+- Kada se ponovo otvori, konverzacija je tu
 
-U `src/pages/SearchResults.tsx`:
-- Importovati `SearchBrandGrid`
-- Dodati odmah ispod `<CategoryGrid />` (linija 104)
-- Proslijediti `activeCategory` iz URL parametra `kategorija`
+### 3. Zamjena Dialog-a za custom panel
+
+Umjesto Radix Dialog-a (koji dodaje overlay i svoj X):
+- Koristiti obican `div` sa `fixed` pozicioniranjem
+- Pozicija: donji desni ugao, iznad floating dugmeta
+- Velicina: `w-[380px] h-[500px]` na desktopu, na mobitelu puni ekran ili skoro puni
 
 ### Tehnicke izmjene
 
 | Fajl | Akcija |
 |---|---|
-| `src/hooks/useParts.ts` | Dodati `useBrandsByCategory` hook + mapiranje kategorija na dio |
-| `src/components/SearchBrandGrid.tsx` | **Novi fajl** - brand grid sa category-aware stanjem |
-| `src/pages/SearchResults.tsx` | Dodati SearchBrandGrid ispod CategoryGrid |
+| `src/components/ChatAssistant.tsx` | Potpuni refaktoring -- floating widget, localStorage, custom panel umjesto Dialog-a |
+| `src/components/SearchPanel.tsx` | Ukloniti ChatAssistant import i renderovanje, zadrzati "Trazi uz asistenta" dugme koje otvara globalni chat |
+| `src/App.tsx` | Dodati ChatAssistant kao globalni widget |
 
+### Struktura nove komponente
+
+```text
+-- Floating dugme (fixed bottom-right, uvijek vidljivo kada chat nije otvoren)
+   [MessageCircle icon] AI Pretraga dijelova
+
+-- Chat panel (fixed bottom-right, iznad dugmeta, kada je otvoren)
+   Header: "ILMA AI" | [Minimize] [X]
+   Body: poruke sa scroll-om
+   Footer: input + send dugme
+```
+
+### localStorage logika
+
+```text
+Key: "ilma-ai-messages"
+Value: JSON.stringify(messages[])
+- Ucitaj pri mount-u komponente
+- Sacuvaj nakon svake nove poruke
+- Pozdravna poruka se dodaje samo ako nema sacuvanih poruka
+```
