@@ -1,75 +1,68 @@
 
 
-## Refaktoring ILMA AI Asistenta
+## Ogranicavanje ILMA AI na pretragu dijelova + generisanje linkova
 
-### 1. Premjestiti ChatAssistant na globalni nivo (App.tsx)
+### Problem
+Trenutno ILMA AI odgovara na bilo kakva pitanja kao opci chatbot. Korisnik moze pitati bilo sta i dobiti odgovor. Takodjer, kada pronadje dijelove, ispisuje ih jedan po jedan u chatu umjesto da ponudi link na stranicu pretrage.
 
-Trenutno je ChatAssistant renderovan unutar SearchPanel-a i koristi Dialog komponentu. Treba ga pretvoriti u **globalni floating widget** koji je prisutan na svim stranicama:
-- Ukloniti ChatAssistant iz `SearchPanel.tsx`
-- Dodati ChatAssistant u `App.tsx` (unutar BrowserRouter, ali van Routes)
-- ChatAssistant ce sam upravljati svojim stanjem (open/minimized/closed) -- vise ne prima props
+### Rjesenje
 
-### 2. Redizajn ChatAssistant komponente
+#### 1. Azuriranje system prompta (edge function)
 
-**Floating dugme (donji desni ugao):**
-- Uvijek vidljivo na svim stranicama, svim uredjajima
-- Tekst: "AI Pretraga dijelova" sa MessageCircle ikonom
-- Zaobljeno dugme, stil slican ATTACHMENT SLIKA 1 (rounded-full, border, bijela pozadina)
-- Pozicija: `fixed bottom-6 right-6 z-50`
+Fajl: `supabase/functions/chat/index.ts`
 
-**Header chata:**
-- Naslov: "ILMA AI" umjesto "ILMA Asistent"
-- Samo jedan X dugme (ukloniti dupli X bug -- Dialog komponenta dodaje svoj X, a custom X je vec tu)
-- Dodati dugme za minimiziranje (Minus ikona) pored X-a
+Promijeniti SYSTEM_PROMPT da:
+- Strogo ogranici AI samo na pretragu autodijelova - odbija sve ostale teme
+- Kada korisnik trazi dijelove, AI koristi `search_parts` tool da provjeri sta postoji u bazi
+- Umjesto ispisivanja dijelova jedan po jedan, AI generise **link** u formatu `[SEARCH_LINK:marka:tip:dio:timestamp]`
+- AI koristi polje `model` iz baze (npr. "8U 2011-2014") da odredi da li dio odgovara trazenoj godini
+- AI ne koristi emoji ikone
 
-**Pozdravna poruka:**
-- Tekst: "Pozdrav, ja sam ILMA AI, Izvolite? Kako mogu pomoci? Koji dio trazite?"
-- Prazan red pa napomena: "Napomena: ILMA AI nikada od vas nece traziti bilo kakve licne podatke, niti ih prikuplja u svoju bazu, sav razgovor i podaci koji se razmjenjuju se koriste iskljucivo u svrhu pretrage i lakseg pronalazenja dijelova."
+Novi prompt ce sadrzavati jasne instrukcije:
+- "Ti si ISKLJUCIVO asistent za pretragu autodijelova. Ne odgovaras na pitanja koja nisu vezana za autodijelove."
+- "Kada korisnik trazi nesto sto nije vezano za autodijelove, ljubazno ga usmjeri nazad na temu."
+- "Kada pronadjes rezultate, generiraj link u formatu [SEARCH_LINK:...] umjesto da ispisujes dijelove."
 
-**Persistencija konverzacije:**
-- Koristiti `localStorage` za cuvanje poruka (key: `ilma-ai-messages`)
-- Pri otvaranju, ucitati poruke iz localStorage
-- Pri svakoj novoj poruci, sacuvati u localStorage
-- Konverzacija prezivljava zatvaranje taba/browsera
+#### 2. Azuriranje ChatAssistant komponente
 
-**Minimiziranje:**
-- Stanje: `open` (puni chat), `minimized` (samo floating dugme), `closed` (isto kao minimized)
-- Kada se minimizira, chat nestaje ali floating dugme ostaje
-- Kada se ponovo otvori, konverzacija je tu
+Fajl: `src/components/ChatAssistant.tsx`
 
-### 3. Zamjena Dialog-a za custom panel
+- Dodati parser za `[SEARCH_LINK:marka:tip:dio:timestamp]` tagove
+- Renderovati ih kao dugme/link koji otvara `/pretraga?marka=X&tip=Y&dio=Z&t=TIMESTAMP` u novom tabu
+- Timestamp osigurava da je svaki link unikatan
+- Ukloniti stari `parsePartCards` i `PartCard` komponentu jer se vise nece koristiti
 
-Umjesto Radix Dialog-a (koji dodaje overlay i svoj X):
-- Koristiti obican `div` sa `fixed` pozicioniranjem
-- Pozicija: donji desni ugao, iznad floating dugmeta
-- Velicina: `w-[380px] h-[500px]` na desktopu, na mobitelu puni ekran ili skoro puni
+#### 3. Tok razgovora
+
+```text
+Korisnik: "Daj mi sve dijelove za AUDI A6 2013"
+AI: (interno poziva search_parts sa marka=AUDI, tip=A6)
+AI: (dobije rezultate, filtrira po model polju koje sadrzi 2013 u rasponu)
+AI: "Pronadeno je 5 dijelova za Audi A6 (2013). Kliknite na link ispod da vidite sve rezultate:"
+    [SEARCH_LINK:AUDI:A6::1772321814261]
+    -- renderuje se kao dugme "Pogledaj rezultate za AUDI A6" --
+
+Korisnik: "Koliko je 2+2?"
+AI: "Izvinite, ja sam ILMA AI asistent specijalizovan iskljucivo za pretragu autodijelova. 
+     Kako vam mogu pomoci u pronalazenju pravog dijela za vase vozilo?"
+```
 
 ### Tehnicke izmjene
 
 | Fajl | Akcija |
 |---|---|
-| `src/components/ChatAssistant.tsx` | Potpuni refaktoring -- floating widget, localStorage, custom panel umjesto Dialog-a |
-| `src/components/SearchPanel.tsx` | Ukloniti ChatAssistant import i renderovanje, zadrzati "Trazi uz asistenta" dugme koje otvara globalni chat |
-| `src/App.tsx` | Dodati ChatAssistant kao globalni widget |
+| `supabase/functions/chat/index.ts` | Azurirati SYSTEM_PROMPT - strogo ograniciti na autodijelove, generisanje linkova umjesto ispisa |
+| `src/components/ChatAssistant.tsx` | Zamijeniti PartCard parser sa SearchLink parser, renderovati linkove kao dugmad koja otvaraju /pretraga u novom tabu |
 
-### Struktura nove komponente
-
-```text
--- Floating dugme (fixed bottom-right, uvijek vidljivo kada chat nije otvoren)
-   [MessageCircle icon] AI Pretraga dijelova
-
--- Chat panel (fixed bottom-right, iznad dugmeta, kada je otvoren)
-   Header: "ILMA AI" | [Minimize] [X]
-   Body: poruke sa scroll-om
-   Footer: input + send dugme
-```
-
-### localStorage logika
+### Format generisanog linka
 
 ```text
-Key: "ilma-ai-messages"
-Value: JSON.stringify(messages[])
-- Ucitaj pri mount-u komponente
-- Sacuvaj nakon svake nove poruke
-- Pozdravna poruka se dodaje samo ako nema sacuvanih poruka
+/pretraga?marka=AUDI&tip=A6&t=1772321814261
 ```
+
+- `marka` - marka vozila (obavezno)
+- `tip` - tip/model ako je poznato (opcionalno)
+- `dio` - vrsta dijela ako je specificirana (opcionalno)
+- `t` - timestamp za unikatnost (uvijek prisutan)
+
+Stranica `/pretraga` vec podrzava ove URL parametre i prikazuje filtrirane rezultate, tako da ne treba mijenjati nista na toj stranici.
