@@ -1,25 +1,29 @@
 
 
-## Dodavanje "Obriši chat" dugmeta u ILMA AI header
+## Dodavanje selekcije u ILMA AI - pitanje prije pretrage
 
-### Izmjene
+### Problem
+Kada korisnik napise "AUDI A6 2013", AI odmah generise link sa svim dijelovima. Korisnik nema opciju da specificira da li zeli SVE dijelove ili trazi jedan konkretan dio.
 
-**Fajl: `src/components/ChatAssistant.tsx`**
+### Rjesenje
 
-1. Dodati `Trash2` ikonu u import iz `lucide-react`
-2. U header dijelu (linija 242-256), izmedju naslova "ILMA AI" i dugmeta za minimiziranje, dodati novo dugme sa `Trash2` ikonom
-3. Dugme ce pozivati funkciju `clearChat` koja:
-   - Resetuje `messages` state na pocetnu pozdravnu poruku `[{ role: "assistant", content: WELCOME_MSG }]`
-   - Brise localStorage pod kljucem `ilma-ai-messages`
-4. Redoslijed dugmadi u headeru: **Obriši chat** | **Minimiziraj** | **Zatvori**
+**Fajl: `supabase/functions/chat/index.ts`**
 
-### Funkcija clearChat
+Azurirati `SYSTEM_PROMPT` da doda novo pravilo u tok razgovora:
+
+Kada korisnik navede marku i model (sa ili bez godine), AI NE smije odmah pretraziti i generisati link. Umjesto toga, AI mora ponuditi korisniku dva izbora:
 
 ```text
-clearChat():
-  - setMessages([{ role: "assistant", content: WELCOME_MSG }])
-  - localStorage removeItem ili ce se automatski sacuvati via useEffect
+"Za AUDI A6 (2013), izaberite jednu od opcija:
+
+1. Pretrazi sve dijelove za ovaj model i marku vozila
+2. Zelim konkretno da mi pronadjete dio"
 ```
 
-Posto vec postoji `useEffect` koji cuva poruke u localStorage pri svakoj promjeni, dovoljno je samo resetovati state - localStorage ce se automatski azurirati.
+- Ako korisnik odabere opciju 1 → AI koristi search_parts i generise SEARCH_LINK sa markom i tipom
+- Ako korisnik odabere opciju 2 → AI pita "Koji dio tacno trazite?" i nastavlja razgovor dok ne sazna koji dio, pa tek onda pretrazuje i generise link sa markom, tipom i dijelom
+
+### Tehnicke izmjene
+
+Samo jedan fajl: `supabase/functions/chat/index.ts` - dodavanje instrukcija u SYSTEM_PROMPT sekciju "PRETRAGA DIJELOVA" da AI uvijek ponudi izbor prije nego sto krene sa pretragom.
 
