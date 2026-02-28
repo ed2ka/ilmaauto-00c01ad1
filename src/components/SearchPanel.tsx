@@ -125,8 +125,8 @@ const SearchPanel = () => {
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
-          className={`relative flex flex-col items-center gap-2 py-4 px-3 text-xs font-semibold tracking-wide transition-all duration-200 ${
-          activeTab === tab.id ? "text-primary bg-card" : "text-muted-foreground hover:text-foreground bg-tab-inactive"} ${
+          className={`relative flex flex-col items-center gap-2 py-4 px-3 text-xs font-semibold tracking-wide transition-all duration-200 after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-red-500 after:transition-transform after:duration-300 ${
+          activeTab === tab.id ? "text-primary bg-card after:scale-x-100 after:origin-bottom-left" : "text-muted-foreground hover:text-foreground bg-tab-inactive after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left"} ${
           i > 0 ? "border-l border-input" : ""}`}>
 
             {tab.icon === "SlidersHorizontal" && <SlidersHorizontal className="w-5 h-5" />}
