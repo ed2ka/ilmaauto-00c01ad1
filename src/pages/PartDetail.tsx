@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
 import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart } from "lucide-react";
 import { getBrandLogo } from "@/lib/brandLogos";
+import { formatPrice } from "@/lib/formatPrice";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import PartImageGallery from "@/components/PartImageGallery";
@@ -211,7 +212,7 @@ const PartDetail = () => {
                   <span className="text-sm text-muted-foreground">Cijena</span>
                   <p className="text-xl font-bold text-foreground mt-0.5">
                     {part.cijena != null && part.cijena > 0
-                      ? `${Number(part.cijena).toFixed(2)} KM`
+                      ? formatPrice(part.cijena)
                       : "Cijena po dogovoru"}
                   </p>
                 </div>
