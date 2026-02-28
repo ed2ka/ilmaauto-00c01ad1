@@ -1,22 +1,52 @@
 
+## Izmjene na SearchPanel-u, dodavanje Trustpilot sekcije i popup banera
 
-## Stilizacija tabova u SearchPanel-u
+### 1. Preimenovanje dugmadi u SearchPanel-u
 
-Tabovi pretrage ("Filter pretraga dijelova", "Pretraga po nazivu dijela", itd.) ce dobiti:
+U `src/components/SearchPanel.tsx`:
+- Crveno dugme: umjesto "Pretraži X rezultata" → **"Pretraži"**
+- Drugo dugme: umjesto "Niste sigurni kako tražiti? Isprobajte asistenta" → **"Traži uz asistenta"**
 
-1. **Aktivni tab** - crvena linija ispod (3px debljine), isti stil kao na screenshot-u
-2. **Hover efekat** - animirana crvena linija koja se popunjava s lijeva na desno, isti kao u Header navigaciji (koristi `after:` pseudo-element sa `scale-x` transformacijom)
+### 2. Info traka ispod dugmadi (Trustpilot + broj dijelova)
+
+Ispod oba dugmeta, unutar SearchPanel-a, dodati novu sekciju:
+- Tekst: **"Preko 700.000 dostupnih dijelova"**
+- Trustpilot ikonica (koristit cu Lucide `Star` ikone) sa ocjenom **4.8/5** (4 pune zvjezdice + 1 skoro puna)
+- Sve centrirano, manji tekst, bijela/siva boja
+
+### 3. Popup baner iznad TopBar-a
+
+Novi komponent `AnnouncementBar.tsx`:
+- Tekst: **"Dostava brzom poštom u cijeloj BiH, Balkanu i EU"**
+- X dugme za zatvaranje na desnoj strani
+- Padding: 9px top/bottom
+- Desktop: max-width teksta 500px, centrirano
+- Mobitel/tablet: padding lijevo/desno 30px za tekst, dozvoljeno prelomiti u dva reda
+- Pozadina: primary (crvena) sa bijelim tekstom
+- Kada se zatvori, baner nestaje i ostatak stranice se pomjeri gore
+- Koristit cu `useState` za vidljivost
 
 ### Tehnicke izmjene
 
-**`src/components/SearchPanel.tsx`** (linije 128-130) - izmjena klasa na tab button-u:
+| Fajl | Akcija |
+|------|--------|
+| `src/components/SearchPanel.tsx` | Preimenovati dugmad, dodati Trustpilot + broj dijelova sekciju ispod CTA |
+| `src/components/AnnouncementBar.tsx` | **Novi fajl** - dismissible baner sa porukom |
+| `src/pages/Index.tsx` | Dodati AnnouncementBar iznad TopBar-a |
 
-- Dodati `after:` pseudo-element za hover animaciju (isti pattern kao Header linkovi)
-- Aktivni tab dobija `after:scale-x-100` (linija uvijek vidljiva)
-- Neaktivni tab dobija `after:scale-x-0` sa hover efektom `hover:after:scale-x-100`
-- Klase: `after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-right after:transition-transform after:duration-300`
-- Aktivni: `after:scale-x-100 after:origin-bottom-left`
-- Neaktivni: `after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left`
+### Struktura AnnouncementBar-a
 
-Nema novih fajlova ni zavisnosti. Samo CSS klase na postojecem button elementu.
+```text
+<div className="bg-primary text-white py-[9px]">
+  <div className="container mx-auto px-[30px] md:px-4 flex items-center justify-center relative">
+    <p className="text-center text-sm max-w-[500px]">
+      Dostava brzom poštom u cijeloj BiH, Balkanu i EU
+    </p>
+    <button className="absolute right-4">
+      <X />
+    </button>
+  </div>
+</div>
+```
 
+Kada se baner zatvori, `pt-[120px]` na hero content-u se automatski prilagodi jer TopBar ostaje fixed a baner je iznad njega u document flow. Trebat ce prilagoditi top offset TopBar-a i Header-a da uzmu u obzir visinu banera.
