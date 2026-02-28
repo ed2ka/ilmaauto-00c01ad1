@@ -1,22 +1,22 @@
 
 
-## Pojednostavljenje Footer-a
+## Stilizacija tabova u SearchPanel-u
 
-### Opis
+Tabovi pretrage ("Filter pretraga dijelova", "Pretraga po nazivu dijela", itd.) ce dobiti:
 
-Uklonit cu cijelu srednju kolonu (opis firme, adresa, telefoni, email) iz tamnog dijela footera. Logo na lijevoj strani cu povecati. Footer ce imati samo dvije kolone: logo (lijevo) i scroll-to-top + social ikone (desno).
+1. **Aktivni tab** - crvena linija ispod (3px debljine), isti stil kao na screenshot-u
+2. **Hover efekat** - animirana crvena linija koja se popunjava s lijeva na desno, isti kao u Header navigaciji (koristi `after:` pseudo-element sa `scale-x` transformacijom)
 
 ### Tehnicke izmjene
 
-| Fajl | Akcija |
-|------|--------|
-| `src/components/Footer.tsx` | Ukloniti Info sekciju (linije 86-110), prebaciti grid sa 3 na 2 kolone, povecati logo sa `h-24` na `h-32` |
+**`src/components/SearchPanel.tsx`** (linije 128-130) - izmjena klasa na tab button-u:
 
-### Detalji promjena
+- Dodati `after:` pseudo-element za hover animaciju (isti pattern kao Header linkovi)
+- Aktivni tab dobija `after:scale-x-100` (linija uvijek vidljiva)
+- Neaktivni tab dobija `after:scale-x-0` sa hover efektom `hover:after:scale-x-100`
+- Klase: `after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-right after:transition-transform after:duration-300`
+- Aktivni: `after:scale-x-100 after:origin-bottom-left`
+- Neaktivni: `after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left`
 
-- Uklanjam kompletnu srednju kolonu sa opisom, adresom, telefonima i emailom
-- Mijenjam `grid-cols-1 md:grid-cols-3` u `grid-cols-1 md:grid-cols-2`
-- Povecavam logo sa `h-24` na `h-32`
-- Uklanjam nekoristene importe (`MapPin`, `Phone`, `Mail`)
-- CTA bar, Benefits bar, social ikone, scroll-to-top dugme i copyright bar ostaju nepromijenjeni
+Nema novih fajlova ni zavisnosti. Samo CSS klase na postojecem button elementu.
 
