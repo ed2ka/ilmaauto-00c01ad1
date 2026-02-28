@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMyOrders } from "@/hooks/useOrders";
 import { useWishlist } from "@/hooks/useWishlist";
 import { supabase } from "@/integrations/supabase/client";
+import { formatPrice } from "@/lib/formatPrice";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -110,7 +111,7 @@ const Dashboard = () => {
                             {new Date(o.created_at).toLocaleDateString("bs-BA")}
                           </p>
                           <p className="text-sm font-semibold text-foreground">
-                            {o.total_price != null ? `${Number(o.total_price).toFixed(2)} KM` : "Po dogovoru"}
+                            {o.total_price != null ? formatPrice(o.total_price) : "Po dogovoru"}
                           </p>
                         </div>
                       );

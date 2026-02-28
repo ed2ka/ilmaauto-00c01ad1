@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/formatPrice";
 import { Link } from "react-router-dom";
 import { Pencil, User, Phone, MapPin } from "lucide-react";
 import {
@@ -290,18 +291,18 @@ function OrderSummary({
       <div className="flex justify-between">
         <span className="text-muted-foreground">Cijena dijela</span>
         <span className="font-medium text-foreground">
-          {partPrice != null ? `${partPrice.toFixed(2)} KM` : "Po dogovoru"}
+          {partPrice != null ? formatPrice(partPrice) : "Po dogovoru"}
         </span>
       </div>
       <div className="flex justify-between">
         <span className="text-muted-foreground">Dostava</span>
-        <span className="font-medium text-foreground">{SHIPPING_PRICE.toFixed(2)} KM</span>
+        <span className="font-medium text-foreground">{formatPrice(SHIPPING_PRICE)}</span>
       </div>
       <Separator className="my-2" />
       <div className="flex justify-between font-bold text-base">
         <span>UKUPNO</span>
         <span>
-          {totalPrice != null ? `${totalPrice.toFixed(2)} KM` : "Po dogovoru"}
+          {totalPrice != null ? formatPrice(totalPrice) : "Po dogovoru"}
         </span>
       </div>
     </div>
