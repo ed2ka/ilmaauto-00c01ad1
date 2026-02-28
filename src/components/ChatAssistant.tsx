@@ -153,13 +153,45 @@ const TypingIndicator = () => (
   </div>
 );
 
+const WelcomeTypingBubble = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
+  const [displayed, setDisplayed] = useState("");
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      indexRef.current++;
+      if (indexRef.current > text.length) {
+        clearInterval(interval);
+        onComplete();
+        return;
+      }
+      setDisplayed(text.slice(0, indexRef.current));
+    }, 20);
+    return () => clearInterval(interval);
+  }, [text, onComplete]);
+
+  return (
+    <div className="flex justify-start">
+      <div className="max-w-[85%] space-y-2">
+        <div className="rounded-lg px-3 py-2 text-sm leading-relaxed bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
+          {displayed}
+          <span className="inline-block w-[2px] h-[1em] bg-foreground/70 ml-0.5 animate-pulse align-text-bottom" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>(loadMessages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isTypingWelcome, setIsTypingWelcome] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hasAnimatedWelcome = useRef(false);
+  const loadedFromStorage = useRef(!!localStorage.getItem(STORAGE_KEY));
 
   useEffect(() => { saveMessages(messages); }, [messages]);
 
@@ -169,9 +201,13 @@ const ChatAssistant = () => {
     }, 50);
   }, []);
 
-  useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
+  useEffect(() => { scrollToBottom(); }, [messages, isTypingWelcome, scrollToBottom]);
 
   useEffect(() => {
+    if (isOpen && !hasAnimatedWelcome.current && !loadedFromStorage.current) {
+      hasAnimatedWelcome.current = true;
+      setIsTypingWelcome(true);
+    }
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
   }, [isOpen]);
 
@@ -241,7 +277,10 @@ const ChatAssistant = () => {
             <MessageCircle className="w-5 h-5" />
             <span className="text-base font-semibold flex-1">ILMA AI</span>
             <button
-              onClick={() => setMessages([{ role: "assistant", content: WELCOME_MSG }])}
+              onClick={() => {
+                setMessages([{ role: "assistant", content: WELCOME_MSG }]);
+                setIsTypingWelcome(true);
+              }}
               className="p-1 rounded hover:bg-primary-foreground/10 transition-colors"
               aria-label="Obriši chat"
               title="Obriši chat"
@@ -265,7 +304,12 @@ const ChatAssistant = () => {
           </div>
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
-            {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
+            {messages.map((msg, i) => {
+              if (i === 0 && msg.role === "assistant" && msg.content === WELCOME_MSG && isTypingWelcome) {
+                return <WelcomeTypingBubble key="welcome-typing" text={WELCOME_MSG} onComplete={() => setIsTypingWelcome(false)} />;
+              }
+              return <MessageBubble key={i} msg={msg} />;
+            })}
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && <TypingIndicator />}
           </div>
 
