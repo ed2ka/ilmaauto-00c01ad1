@@ -5,6 +5,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import PartCard from "@/components/PartCard";
 import CategoryGrid from "@/components/CategoryGrid";
+import SearchBrandGrid from "@/components/SearchBrandGrid";
 import PartListItem from "@/components/PartListItem";
 import SearchFilterSidebar from "@/components/SearchFilterSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -102,8 +103,7 @@ const SearchResults = () => {
       <main className="flex-1 container mx-auto px-4 py-6">
         {/* Category grid */}
         <CategoryGrid />
-
-        {/* Toolbar */}
+        <SearchBrandGrid activeCategory={searchParams.get("kategorija")} />
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-bold text-foreground">

@@ -108,6 +108,35 @@ export function useModels(marka: string | null) {
   });
 }
 
+export const categoryDioMap: Record<string, string[]> = {
+  motor: ["MOTOR", "MJENJAC", "AUTOMATSKI MJENJAC", "USISNA GRANA", "IZDUVNA GRANA", "EGR", "CIJEV EGR", "KUCISTE FILTERA ULJA", "VAKUM PUMPA", "VODENA PUMPA", "CIRKULACIONA PUMPA", "SERVO PUMPA", "MOTORIC TURBINE", "REDUKTOR", "LAMBDA SONDA", "POTENCIOMETAR GASA"],
+  karoserija: ["BLATOBRAN", "PREDNJA HAUBA", "ZADNJA HAUBA", "VRATA", "BAGLAMA VRATA", "LAJSNA VRATA", "RETROVIZOR", "RESETKA BRANIKA", "DIFUZOR", "BLENDA", "KOMPLET SASIJA"],
+  elektrika: ["ELEKTRONIKA MOTORA", "MODUL", "DISPLEJ", "RADIO", "KAMERA", "RADAR SENZOR", "TAHO SAT"],
+  ovjes: ["MOST"],
+  kocnice: [],
+  svjetla: ["FAR", "MAGLENKA", "STOP SVJETLO", "KATADIOPTER"],
+  stakla: ["STAKLO"],
+  unutrasnjost: ["AIRBAG", "SJEDISTA", "KOLO VOLANA", "KLIMATRONIK", "PEPELJARA", "UNUTRASNJI RETROVIZOR", "PREKIDAC BRISACA", "PREKIDAC SVJETALA", "PREKIDAC CETIRI ZMIGAVCA", "PREKIDACI PODIZACA", "KUGLA MJENJACA", "RESETKA VENTILACIJE", "MOTORIC VENTILACIJE", "MOTORIC PODIZACA", "BRAVA VRATA", "BRAVA HAUBE", "BRAVA PALJENJA", "STEKA VRATA", "BRISAC", "MOTORIC BRISACA", "NOSAC AKUMULATORA", "PLASTIKA", "RACVA VODE", "HLADNJAK INTERKULERA"],
+};
+
+export function useBrandsByCategory(category: string | null) {
+  const dioValues = category ? categoryDioMap[category] || [] : [];
+  return useQuery<string[]>({
+    queryKey: ["parts", "brandsByCategory", category],
+    queryFn: async () => {
+      if (dioValues.length === 0) return [];
+      const { data, error } = await supabase
+        .from("parts")
+        .select("marka")
+        .in("dio", dioValues);
+      if (error) throw error;
+      return [...new Set((data || []).map((d: any) => d.marka))].filter(Boolean).sort();
+    },
+    enabled: !!category && dioValues.length > 0,
+    staleTime: 1000 * 60 * 10,
+  });
+}
+
 export function usePartsCount() {
   return useQuery<number>({
     queryKey: ["parts", "count"],
