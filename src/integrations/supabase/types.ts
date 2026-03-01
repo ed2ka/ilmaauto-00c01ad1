@@ -136,6 +136,30 @@ export type Database = {
         }
         Relationships: []
       }
+      support_chat_codes: {
+        Row: {
+          assistant_response: string
+          code: string
+          created_at: string
+          id: number
+          user_message: string
+        }
+        Insert: {
+          assistant_response: string
+          code: string
+          created_at?: string
+          id?: never
+          user_message: string
+        }
+        Update: {
+          assistant_response?: string
+          code?: string
+          created_at?: string
+          id?: never
+          user_message?: string
+        }
+        Relationships: []
+      }
       wishlist: {
         Row: {
           created_at: string
