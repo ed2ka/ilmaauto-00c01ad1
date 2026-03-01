@@ -78,7 +78,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
   const [regPassword, setRegPassword] = useState("");
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [registering, setRegistering] = useState(false);
-  const [guestOrderId, setGuestOrderId] = useState<number | null>(null);
+  const [pendingOrder, setPendingOrder] = useState<Record<string, unknown> | null>(null);
 
   const isProfileComplete = !!(
     profile?.full_name &&
@@ -113,10 +113,25 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
   const partPrice = hasPrice ? Number(part.cijena) : null;
   const totalPrice = partPrice != null ? partPrice + SHIPPING_PRICE : null;
 
+  // Helper: actually insert the order into the database
+  const insertOrder = async (userId?: string) => {
+    if (!pendingOrder) return;
+    const orderData = userId ? { ...pendingOrder, user_id: userId } : pendingOrder;
+    const { error } = await supabase.from("orders").insert(orderData as any);
+    if (error) {
+      console.error("Order insert error:", error);
+      toast.error("Greška pri slanju narudžbe. Pokušajte ponovo.");
+      return false;
+    }
+    toast.success("Narudžba uspješno poslana!");
+    setPendingOrder(null);
+    return true;
+  };
+
   const handleSubmitOrder = async (values: OrderFormValues) => {
     setSubmitting(true);
     try {
-      const { data, error } = await supabase.from("orders").insert({
+      const orderPayload = {
         part_id: part.id,
         part_name: `${part.dio} – ${part.marka} ${part.tip}`,
         customer_name: values.customer_name,
@@ -125,29 +140,28 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
         part_price: partPrice,
         shipping_price: SHIPPING_PRICE,
         total_price: totalPrice,
-        ...(user ? { user_id: user.id } : {}),
-      }).select("id").single();
+      };
 
-      if (error) throw error;
-
-      // Save guest order ID for linking after registration
-      if (!user && data) {
-        setGuestOrderId(data.id);
-      }
-
-      toast.success("Narudžba uspješno poslana!");
-      form.reset();
-
-      // If guest, show account prompt
-      if (!user) {
+      if (user) {
+        // Logged-in user: insert immediately
+        const { error } = await supabase.from("orders").insert({
+          ...orderPayload,
+          user_id: user.id,
+        });
+        if (error) throw error;
+        toast.success("Narudžba uspješno poslana!");
+        form.reset();
+        onOpenChange(false);
+      } else {
+        // Guest: hold in memory, show account prompt
+        setPendingOrder(orderPayload);
         setGuestData({
           name: values.customer_name,
           phone: values.customer_phone,
           address: values.customer_address,
         });
+        form.reset();
         setShowAccountPrompt(true);
-      } else {
-        onOpenChange(false);
       }
     } catch (err) {
       console.error("Order error:", err);
@@ -183,16 +197,19 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
     setRegistering(false);
     if (loginError) {
       toast.error("Nalog kreiran, ali automatska prijava nije uspjela.");
+      // Still insert order without user_id
+      await insertOrder();
     } else {
-      // Link the guest order to the new user
-      if (guestOrderId && loginData?.user?.id) {
-        await supabase.rpc("claim_guest_order", {
-          p_order_id: guestOrderId,
-          p_user_id: loginData.user.id,
-        });
-      }
+      // Insert order with the new user's ID
+      await insertOrder(loginData?.user?.id ?? undefined);
       toast.success("Nalog uspješno kreiran! Dobrodošli!");
     }
+    closeAllDialogs();
+  };
+
+  // "Ne" button: insert order without user_id
+  const handleDeclineAccount = async () => {
+    await insertOrder();
     closeAllDialogs();
   };
 
@@ -200,7 +217,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
     setShowAccountPrompt(false);
     setShowRegForm(false);
     setGuestData(null);
-    setGuestOrderId(null);
+    setPendingOrder(null);
     setRegEmail("");
     setRegPassword("");
     onOpenChange(false);
@@ -347,7 +364,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <Button variant="outline" onClick={closeAllDialogs}>
+                <Button variant="outline" onClick={handleDeclineAccount}>
                   Ne
                 </Button>
                 <Button onClick={() => setShowRegForm(true)}>
