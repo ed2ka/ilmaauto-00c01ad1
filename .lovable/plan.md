@@ -1,14 +1,9 @@
-## Dodavanje disclaimer teksta ispod dugmeta NARUCI
+
+## Premještanje disclaimer teksta iznad dugmeta NARUCI
 
 ### Izmjene u `src/pages/PartDetail.tsx`
 
-**Nakon linije 285** (kraj order buttons sekcije), dodati jedan paragraf:
+1. **Ukloniti** postojeci paragraf sa linija 286-288 (tekst "Moguca zamjena...")
+2. **Dodati** isti paragraf **iznad** order buttons sekcije, tj. prije `{/* Order buttons */}` komentara na liniji 247
 
-```tsx
-
-<p className="text-xs text-muted-foreground mt-1">
-  Moguća zamjena ako ne odgovara: 7 dana – <a href="#" className="underline text-primary">Pročitaj više</a>
-</p>
-```
-
-Link "Pročitaj više" koristi `href="#"` kao placeholder -- moze se kasnije promijeniti na pravu stranicu.
+Rezultat: tekst "Moguca zamjena ako ne odgovara: 7 dana -- Procitaj vise" ce se prikazivati izmedju badge-ova (pregleda) i dugmeta NARUCI.
