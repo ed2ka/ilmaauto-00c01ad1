@@ -1,9 +1,26 @@
 
-## Premještanje disclaimer teksta iznad dugmeta NARUCI
+
+## Zamjena disclaimer teksta sa ikonicama (po uzoru na screenshot)
 
 ### Izmjene u `src/pages/PartDetail.tsx`
 
-1. **Ukloniti** postojeci paragraf sa linija 286-288 (tekst "Moguca zamjena...")
-2. **Dodati** isti paragraf **iznad** order buttons sekcije, tj. prije `{/* Order buttons */}` komentara na liniji 247
+Zamijeniti postojeci paragraf (linije 247-249) sa dva elementa u redu, svaki sa ikonom -- po uzoru na screenshot:
 
-Rezultat: tekst "Moguca zamjena ako ne odgovara: 7 dana -- Procitaj vise" ce se prikazivati izmedju badge-ova (pregleda) i dugmeta NARUCI.
+```tsx
+<div className="flex items-center gap-6 mt-1 mb-3 text-sm text-muted-foreground">
+  <div className="flex items-center gap-2">
+    <RefreshCcw className="w-5 h-5 text-foreground" />
+    <span>Besplatna zamjena: 7 dana</span>
+  </div>
+  <div className="flex items-center gap-2">
+    <Truck className="w-5 h-5 text-foreground" />
+    <span>Dostava u cijeloj BiH i EU</span>
+  </div>
+</div>
+```
+
+- Ikona `RefreshCcw` (lucide) za zamjenu/povrat -- odgovara ikoni sa screenshota
+- Ikona `Truck` (lucide) za dostavu -- odgovara ikoni kamiona sa screenshota
+- Tekst prilagodjen na bosanski jezik
+- Dodati `RefreshCcw` i `Truck` u postojeci import iz `lucide-react`
+
