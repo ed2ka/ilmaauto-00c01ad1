@@ -1,11 +1,20 @@
 
 
-## Smanjenje fonta na sekciji sa ikonicama
+## Dodavanje GARANCIJA i EASY RETURN sekcije ispod filtera
 
-### Izmjena u `src/pages/PartDetail.tsx` (linija 247)
+### Izmjene u `src/components/SearchFilterSidebar.tsx`
 
-Promijeniti `text-sm` u `text-[11px]` (dvije velicine manje od `text-sm` koji je 14px), te smanjiti ikone sa `w-5 h-5` na `w-4 h-4`:
+Ispod zatvarajuceg `</div>` za `space-y-5` (linija 148), ali unutar komponente, dodati novu sekciju sa:
 
-- Linija 247: `text-sm` -> `text-[11px]`
-- Linije 249, 253: ikone sa `w-5 h-5` na `w-4 h-4`
+1. **GARANCIJA** -- boldovan naslov, pa tekst: "Na sve kupljene dijelove ostvarujete garanciju od **1 godine**."
+2. **EASY RETURN** -- boldovan naslov, pa tekst: "Sve kupljene dijelove mozete vratiti u roku od **7 dana**."
+3. **Telefon** -- stilizovan kao plavo dugme sa ikonom telefona i brojem +387 66 818 315 (klikabilan, `tel:` link)
+
+Sekcija ce biti odvojena separatorom ili marginom od filtera, sa stilom koji prati screenshot (bold naslovi, normalan tekst, plavo dugme za telefon sa zaobljenim uglovima i gradijentom).
+
+### Tehnicke izmjene:
+
+- Dodati import za `Phone` iz `lucide-react`
+- Dodati JSX blok nakon `space-y-5` diva (unutar return-a, wrapper ce biti fragment ili dodatni div)
+- Telefonsko dugme: `a` tag sa `href="tel:+38766818315"`, plavi gradijent pozadina, bijeli tekst, zaobljeni uglovi
 
