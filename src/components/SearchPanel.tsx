@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle, Star } from "lucide-react";
+import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle, Star, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import VehicleSelector from "./VehicleSelector";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -80,7 +82,9 @@ const FloatingInput = ({ label, placeholder, value, onChange }: {label: string;p
 const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isDecoding, setIsDecoding] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Filter state
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -93,7 +97,32 @@ const SearchPanel = () => {
 
   const { data: totalCount } = usePartsCount();
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    if (activeTab === "sasija") {
+      if (!vinSearch || vinSearch.trim().length !== 17) {
+        toast({ title: "Greška", description: "VIN broj mora imati tačno 17 karaktera.", variant: "destructive" });
+        return;
+      }
+      setIsDecoding(true);
+      try {
+        const { data, error } = await supabase.functions.invoke("decode-vin", {
+          body: { vin: vinSearch.trim().toUpperCase() },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        const params = new URLSearchParams();
+        if (data.marka) params.set("marka", data.marka.toUpperCase());
+        if (data.tip) params.set("tip", data.tip.toUpperCase());
+        navigate(`/pretraga?${params.toString()}`);
+      } catch (e: any) {
+        toast({ title: "Dekodiranje neuspješno", description: e?.message || "Nije moguće dekodirati VIN broj.", variant: "destructive" });
+      } finally {
+        setIsDecoding(false);
+      }
+      return;
+    }
+
     const params = new URLSearchParams();
 
     if (activeTab === "filter") {
@@ -104,8 +133,6 @@ const SearchPanel = () => {
       if (nameSearch) params.set("dio", nameSearch);
     } else if (activeTab === "kataloski") {
       if (catalogSearch) params.set("broj", catalogSearch);
-    } else if (activeTab === "sasija") {
-      if (vinSearch) params.set("q", vinSearch);
     }
 
     navigate(`/pretraga?${params.toString()}`);
@@ -170,10 +197,20 @@ const SearchPanel = () => {
       <div className="p-6 md:p-8 pt-4 md:pt-6 bg-card space-y-3">
         <button
           onClick={handleSearch}
-          className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30">
+          disabled={isDecoding}
+          className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed">
 
-          <Search className="w-4 h-4" />
-          Pretraži
+          {isDecoding ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Dekodiranje VIN-a...
+            </>
+          ) : (
+            <>
+              <Search className="w-4 h-4" />
+              Pretraži
+            </>
+          )}
         </button>
         <button
           onClick={() => setIsChatOpen(true)}
