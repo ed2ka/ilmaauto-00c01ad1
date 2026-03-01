@@ -405,13 +405,19 @@ const ChatAssistant = () => {
   return (
     <>
       {!isOpen && (
-        <button
+        <div
+          className="fixed bottom-6 right-6 z-50 rounded-full p-[3px] cursor-pointer"
+          style={{
+            background: 'conic-gradient(from var(--gradient-angle), #dc2626, #9333ea, #ffffff, #7f1d1d, #dc2626)',
+            animation: 'spin-gradient 3s linear infinite, pulse-glow-soft 2.5s ease-in-out infinite',
+          }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full border border-border bg-background text-foreground shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
         >
-          <MessageCircle className="w-5 h-5 text-primary" />
-          <span className="text-sm font-semibold">AI Pretraga dijelova</span>
-        </button>
+          <div className="flex items-center gap-2 px-5 py-3 rounded-full bg-background text-foreground">
+            <MessageCircle className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold">AI Pretraga dijelova</span>
+          </div>
+        </div>
       )}
 
       {isOpen && (
