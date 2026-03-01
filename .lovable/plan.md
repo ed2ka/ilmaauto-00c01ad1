@@ -1,34 +1,37 @@
 
 
-## VIN Dekoder - Pretraga po broju sasije
+## VIN Input - Unos cifra po cifra
 
-Kada korisnik unese VIN broj u tab "Pretraga po broju sasije" i klikne "Pretrazi", aplikacija ce:
+Zamjena obicnog text inputa za VIN broj sa custom komponentom koja prikazuje 17 individualnih polja za unos, jedno po karakteru.
 
-1. Poslati VIN na backend funkciju koja koristi AI model za dekodiranje
-2. Iz VIN-a izvuci marku, tip/model i godiste vozila
-3. Preusmjeriti korisnika na `/pretraga` sa aktivnim filterima (marka, tip) na osnovu dekodiranih podataka
-4. Prikazati loading stanje dok se VIN dekodira
+### Nova komponenta: `src/components/VinInput.tsx`
 
-### Tehnicke izmjene
+- 17 individualnih polja (`input` elemenata) u nizu, svako prima jedan karakter
+- Automatski prelaz na sljedece polje nakon unosa karaktera
+- Backspace brise trenutno polje i vraca fokus na prethodno
+- **Paste podrska**: Detektuje `onPaste` event, rasporedi karaktere po poljima, preskace razmake
+- **Paste ikonica**: Dugme sa `ClipboardPaste` ikonom na kraju niza - klik cita clipboard (`navigator.clipboard.readText()`) i popunjava polja
+- **Filtriranje razmaka**: Svaki unos prolazi kroz filter koji odbacuje space karaktere (` `)
+- Dozvoljeni karakteri: alfanumericki (A-Z, 0-9), sve se automatski pretvara u uppercase
+- Vizuelno: polja grupisana u segmente (npr. 3-6-8 format VIN-a) sa malim razmakom izmedju grupa
+- Stil polja: `w-8 h-10 text-center border rounded text-sm font-mono uppercase` sa fokusom highlight
 
-**1. Nova backend funkcija `supabase/functions/decode-vin/index.ts`**
-- Prima VIN broj kao input
-- Koristi Lovable AI (gemini-2.5-flash) za dekodiranje VIN-a
-- Vraca JSON sa `marka`, `tip` i `godina` poljem
-- AI prompt instruira model da iz VIN-a izvuce iskljucivo marku, model i modelsku godinu
-- Mapira rezultat na format koji odgovara postojecim markama u bazi (uppercase, npr. "MERCEDES", "VOLKSWAGEN", "FORD")
+### Izmjena: `src/components/SearchPanel.tsx`
 
-**2. Izmjena `src/components/SearchPanel.tsx`**
-- U `handleSearch()` za tab "sasija": umjesto direktnog navigiranja sa `q=VIN`, poziva edge funkciju `decode-vin`
-- Prikazuje loading spinner na dugmetu dok traje dekodiranje
-- Po uspjesnom dekodiranju: navigira na `/pretraga?marka=MERCEDES&tip=E` (primjer)
-- Po gresci: prikazuje toast poruku o neuspjelom dekodiranju
-- Dodaje state `isDecoding` za upravljanje loading stanjem
+- Import `VinInput` komponente
+- U "sasija" tabu zamijeniti `FloatingInput` sa:
+  ```
+  <fieldset> sa legendom "Broj sasije (VIN)"
+    <VinInput value={vinSearch} onChange={setVinSearch} />
+  </fieldset>
+  ```
+- `vinSearch` state ostaje string od 17 karaktera, VinInput interno upravlja nizom
 
-**3. Tok korisnickog iskustva**
-- Korisnik unese VIN (17 karaktera) u polje
-- Klikne "Pretrazi"
-- Dugme prikazuje spinner i tekst "Dekodiranje VIN-a..."
-- Nakon 1-2 sekunde, korisnik je preusmjeren na stranicu pretrage sa aktivnim filterima za tu marku i tip vozila
-- Rezultati prikazuju samo dijelove dostupne za to vozilo
+### Detalji ponasanja
+
+1. **Unos**: Korisnik klikne na prvo polje, upise karakter, fokus ide na sljedece
+2. **Paste**: Ctrl+V na bilo kojem polju - razmaci se filtriraju, karakteri se rasporede
+3. **Paste dugme**: Klik na ikonicu - cita clipboard, filtrira razmake, popunjava polja
+4. **Razmaci**: Automatski se brisu iz unosa i paste-a
+5. **Backspace**: Brise karakter i vraca fokus na prethodno polje
 
