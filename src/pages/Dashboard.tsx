@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyOrders } from "@/hooks/useOrders";
@@ -119,29 +120,33 @@ const Dashboard = () => {
                           <OrderStatusStepper status={o.status} />
 
                           {/* Tracking */}
-                          {(o as any).tracking_code && (
-                            <div className="flex items-center gap-3 bg-muted/50 rounded-md px-3 py-2">
-                              <span className="text-xs text-muted-foreground">Tracking:</span>
-                              <code className="text-xs font-mono font-semibold text-foreground">{(o as any).tracking_code}</code>
-                              {(o as any).tracking_url && (
-                                <a
-                                  href={(o as any).tracking_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="ml-auto text-xs text-primary hover:underline inline-flex items-center gap-1"
-                                >
-                                  Prati pošiljku <ExternalLink className="w-3 h-3" />
-                                </a>
-                              )}
-                            </div>
-                          )}
+                          <div className="flex items-center gap-3 bg-muted/50 rounded-md px-3 py-2">
+                            <span className="text-xs text-muted-foreground">Tracking:</span>
+                            {(o as any).tracking_code ? (
+                              <>
+                                <code className="text-xs font-mono font-semibold text-foreground">{(o as any).tracking_code}</code>
+                                {(o as any).tracking_url && (
+                                  <a
+                                    href={(o as any).tracking_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="ml-auto text-xs text-primary hover:underline inline-flex items-center gap-1"
+                                  >
+                                    Prati pošiljku <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-xs text-muted-foreground italic">...nije još uvijek dodijeljen kod za praćenje</span>
+                            )}
+                          </div>
 
                           <Separator />
 
                           {/* Date & price */}
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
-                              {new Date(o.created_at).toLocaleDateString("bs-BA")}
+                              {format(new Date(o.created_at), "dd-MM-yyyy")}
                             </span>
                             <span className="font-semibold text-foreground">
                               {o.total_price != null ? formatPrice(o.total_price) : "Po dogovoru"}
