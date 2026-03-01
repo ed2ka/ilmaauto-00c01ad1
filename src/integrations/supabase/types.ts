@@ -27,6 +27,8 @@ export type Database = {
           shipping_price: number
           status: string
           total_price: number | null
+          tracking_code: string | null
+          tracking_url: string | null
           user_id: string | null
         }
         Insert: {
@@ -41,6 +43,8 @@ export type Database = {
           shipping_price?: number
           status?: string
           total_price?: number | null
+          tracking_code?: string | null
+          tracking_url?: string | null
           user_id?: string | null
         }
         Update: {
@@ -55,6 +59,8 @@ export type Database = {
           shipping_price?: number
           status?: string
           total_price?: number | null
+          tracking_code?: string | null
+          tracking_url?: string | null
           user_id?: string | null
         }
         Relationships: [

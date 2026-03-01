@@ -11,7 +11,7 @@ export const useMyOrders = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("*")
+        .select("*, parts(dio, broj, marka, tip, model)")
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;

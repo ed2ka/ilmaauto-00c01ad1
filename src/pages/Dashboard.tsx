@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/formatPrice";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
+import OrderStatusStepper from "@/components/OrderStatusStepper";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -15,16 +16,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Trash2, Package, Heart, UserIcon } from "lucide-react";
+import { Trash2, Package, Heart, UserIcon, ExternalLink } from "lucide-react";
 import { useToggleWishlist } from "@/hooks/useWishlist";
 import Footer from "@/components/Footer";
 
-const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  nova: { label: "Nova", variant: "default" },
-  "u obradi": { label: "U obradi", variant: "secondary" },
-  poslano: { label: "Poslano", variant: "outline" },
-  zavrseno: { label: "Završeno", variant: "secondary" },
-};
 
 const Dashboard = () => {
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
@@ -98,21 +93,60 @@ const Dashboard = () => {
                 ) : !orders?.length ? (
                   <p className="text-muted-foreground text-sm">Nemate nijednu narudžbu.</p>
                 ) : (
-                  <div className="space-y-3">
-                    {orders.map((o) => {
-                      const s = statusMap[o.status] || { label: o.status, variant: "outline" as const };
+                  <div className="space-y-4">
+                    {orders.map((o: any) => {
+                      const part = o.parts;
                       return (
-                        <div key={o.id} className="border rounded-lg p-4 space-y-1">
-                          <div className="flex items-start justify-between">
-                            <p className="font-medium text-sm text-foreground">{o.part_name}</p>
-                            <Badge variant={s.variant}>{s.label}</Badge>
+                        <div key={o.id} className="border rounded-lg p-4 space-y-3">
+                          {/* Header: part name + catalog number */}
+                          <div>
+                            <p className="font-semibold text-foreground">{part?.dio || o.part_name}</p>
+                            {part?.broj && (
+                              <p className="text-xs text-muted-foreground font-mono">Kat. br: {part.broj}</p>
+                            )}
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(o.created_at).toLocaleDateString("bs-BA")}
-                          </p>
-                          <p className="text-sm font-semibold text-foreground">
-                            {o.total_price != null ? formatPrice(o.total_price) : "Po dogovoru"}
-                          </p>
+
+                          {/* Vehicle details */}
+                          {part && (
+                            <p className="text-sm text-muted-foreground">
+                              {part.marka} {part.tip} {part.model && `· ${part.model}`}
+                            </p>
+                          )}
+
+                          <Separator />
+
+                          {/* Status stepper */}
+                          <OrderStatusStepper status={o.status} />
+
+                          {/* Tracking */}
+                          {(o as any).tracking_code && (
+                            <div className="flex items-center gap-3 bg-muted/50 rounded-md px-3 py-2">
+                              <span className="text-xs text-muted-foreground">Tracking:</span>
+                              <code className="text-xs font-mono font-semibold text-foreground">{(o as any).tracking_code}</code>
+                              {(o as any).tracking_url && (
+                                <a
+                                  href={(o as any).tracking_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-auto text-xs text-primary hover:underline inline-flex items-center gap-1"
+                                >
+                                  Prati pošiljku <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                            </div>
+                          )}
+
+                          <Separator />
+
+                          {/* Date & price */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">
+                              {new Date(o.created_at).toLocaleDateString("bs-BA")}
+                            </span>
+                            <span className="font-semibold text-foreground">
+                              {o.total_price != null ? formatPrice(o.total_price) : "Po dogovoru"}
+                            </span>
+                          </div>
                         </div>
                       );
                     })}
