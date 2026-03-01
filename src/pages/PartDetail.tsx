@@ -244,6 +244,10 @@ const PartDetail = () => {
                   </span>
                 </div>
 
+                <p className="text-xs text-muted-foreground mt-1 mb-3">
+                  Moguća zamjena ako ne odgovara: 7 dana – <a href="#" className="underline text-primary">Pročitaj više</a>
+                </p>
+
                 {/* Order buttons */}
                 <div className="flex flex-col gap-2 pb-4">
                   <Button className="w-full" onClick={() => setOrderOpen(true)}>
@@ -283,9 +287,6 @@ const PartDetail = () => {
                     </Button>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Moguća zamjena ako ne odgovara: 7 dana – <a href="#" className="underline text-primary">Pročitaj više</a>
-                </p>
 
                 <Separator />
 
