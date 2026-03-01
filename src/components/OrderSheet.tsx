@@ -78,6 +78,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
   const [regPassword, setRegPassword] = useState("");
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [registering, setRegistering] = useState(false);
+  const [guestOrderId, setGuestOrderId] = useState<number | null>(null);
 
   const isProfileComplete = !!(
     profile?.full_name &&
@@ -115,7 +116,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
   const handleSubmitOrder = async (values: OrderFormValues) => {
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("orders").insert({
+      const { data, error } = await supabase.from("orders").insert({
         part_id: part.id,
         part_name: `${part.dio} – ${part.marka} ${part.tip}`,
         customer_name: values.customer_name,
@@ -125,9 +126,14 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
         shipping_price: SHIPPING_PRICE,
         total_price: totalPrice,
         ...(user ? { user_id: user.id } : {}),
-      });
+      }).select("id").single();
 
       if (error) throw error;
+
+      // Save guest order ID for linking after registration
+      if (!user && data) {
+        setGuestOrderId(data.id);
+      }
 
       toast.success("Narudžba uspješno poslana!");
       form.reset();
@@ -173,11 +179,18 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
       toast.error(error.message);
       return;
     }
-    const { error: loginError } = await signIn(regEmail, regPassword);
+    const { error: loginError, data: loginData } = await signIn(regEmail, regPassword);
     setRegistering(false);
     if (loginError) {
       toast.error("Nalog kreiran, ali automatska prijava nije uspjela.");
     } else {
+      // Link the guest order to the new user
+      if (guestOrderId && loginData?.user?.id) {
+        await supabase.rpc("claim_guest_order", {
+          p_order_id: guestOrderId,
+          p_user_id: loginData.user.id,
+        });
+      }
       toast.success("Nalog uspješno kreiran! Dobrodošli!");
     }
     closeAllDialogs();
@@ -187,6 +200,7 @@ const OrderSheet = ({ open, onOpenChange, part }: OrderSheetProps) => {
     setShowAccountPrompt(false);
     setShowRegForm(false);
     setGuestData(null);
+    setGuestOrderId(null);
     setRegEmail("");
     setRegPassword("");
     onOpenChange(false);
