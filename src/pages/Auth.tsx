@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 import facebookIcon from "@/assets/facebook-icon.svg";
 import instagramIcon from "@/assets/instagram-icon.svg";
 import viberIcon from "@/assets/viber-icon.svg";
@@ -36,6 +37,11 @@ const Auth = () => {
   const [submitting, setSubmitting] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
+
+  // Password visibility states
+  const [showLoginPass, setShowLoginPass] = useState(false);
+  const [showRegPass, setShowRegPass] = useState(false);
+  const [showRegPassConfirm, setShowRegPassConfirm] = useState(false);
 
   const allChecked = acceptTerms && acceptPrivacy && acceptData;
 
@@ -74,11 +80,19 @@ const Auth = () => {
     }
     setSubmitting(true);
     const { error } = await signUp(regEmail, regPass, regName, regPhone, regAddress);
-    setSubmitting(false);
     if (error) {
+      setSubmitting(false);
       toast.error(error.message);
+      return;
+    }
+    // Auto-login after registration
+    const { error: loginError } = await signIn(regEmail, regPass);
+    setSubmitting(false);
+    if (loginError) {
+      toast.error("Registracija uspješna, ali automatska prijava nije uspjela. Prijavite se ručno.");
     } else {
-      toast.success("Registracija uspješna! Provjerite email za potvrdu.");
+      toast.success("Registracija uspješna! Dobrodošli!");
+      navigate("/");
     }
   };
 
@@ -94,6 +108,17 @@ const Auth = () => {
       setShowForgot(false);
     }
   };
+
+  const PasswordToggle = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
+    <button
+      type="button"
+      tabIndex={-1}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+      onClick={onToggle}
+    >
+      {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+    </button>
+  );
 
   if (showForgot) {
     return (
@@ -162,7 +187,10 @@ const Auth = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="login-pass">Lozinka</Label>
-                      <Input id="login-pass" type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)} required />
+                      <div className="relative">
+                        <Input id="login-pass" type={showLoginPass ? "text" : "password"} value={loginPass} onChange={e => setLoginPass(e.target.value)} required className="pr-10" />
+                        <PasswordToggle show={showLoginPass} onToggle={() => setShowLoginPass(!showLoginPass)} />
+                      </div>
                     </div>
                     <Button type="submit" className="w-full" disabled={submitting}>
                       {submitting ? "Prijava..." : "Prijavi se"}
@@ -194,11 +222,17 @@ const Auth = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="reg-pass">Lozinka</Label>
-                      <Input id="reg-pass" type="password" value={regPass} onChange={e => setRegPass(e.target.value)} required minLength={6} />
+                      <div className="relative">
+                        <Input id="reg-pass" type={showRegPass ? "text" : "password"} value={regPass} onChange={e => setRegPass(e.target.value)} required minLength={6} className="pr-10" />
+                        <PasswordToggle show={showRegPass} onToggle={() => setShowRegPass(!showRegPass)} />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="reg-pass-confirm">Potvrdi lozinku</Label>
-                      <Input id="reg-pass-confirm" type="password" value={regPassConfirm} onChange={e => setRegPassConfirm(e.target.value)} required minLength={6} />
+                      <div className="relative">
+                        <Input id="reg-pass-confirm" type={showRegPassConfirm ? "text" : "password"} value={regPassConfirm} onChange={e => setRegPassConfirm(e.target.value)} required minLength={6} className="pr-10" />
+                        <PasswordToggle show={showRegPassConfirm} onToggle={() => setShowRegPassConfirm(!showRegPassConfirm)} />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="reg-address">Adresa</Label>
