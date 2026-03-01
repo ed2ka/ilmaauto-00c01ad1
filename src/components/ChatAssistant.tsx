@@ -313,6 +313,13 @@ const WelcomeTypingBubble = ({ text, onComplete, supportCode }: { text: string; 
 
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener('open-chat-assistant', handler);
+    return () => window.removeEventListener('open-chat-assistant', handler);
+  }, []);
+
   const [messages, setMessages] = useState<Msg[]>(loadMessages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);

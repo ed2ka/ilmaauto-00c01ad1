@@ -82,7 +82,7 @@ const FloatingInput = ({ label, placeholder, value, onChange }: {label: string;p
 
 const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  
   const [isDecoding, setIsDecoding] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -232,7 +232,7 @@ const SearchPanel = () => {
           )}
         </button>
         <button
-          onClick={() => setIsChatOpen(true)}
+          onClick={() => window.dispatchEvent(new CustomEvent('open-chat-assistant'))}
           className="w-full h-11 border-2 border-primary bg-transparent text-primary font-medium rounded transition-all duration-200 flex items-center justify-center gap-2 hover:bg-primary/5">
           <MessageCircle className="w-4 h-4" />
           Traži uz asistenta
