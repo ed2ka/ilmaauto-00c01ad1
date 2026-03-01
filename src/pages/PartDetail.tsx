@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { usePartById } from "@/hooks/useParts";
 import { useAuth } from "@/hooks/useAuth";
 import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
-import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart, Eye } from "lucide-react";
+import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart, Eye, RefreshCcw, Truck } from "lucide-react";
 import { getBrandLogo } from "@/lib/brandLogos";
 import { formatPrice } from "@/lib/formatPrice";
 import TopBar from "@/components/TopBar";
@@ -244,9 +244,16 @@ const PartDetail = () => {
                   </span>
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-1 mb-3">
-                  Moguća zamjena ako ne odgovara: 7 dana – <a href="#" className="underline text-primary">Pročitaj više</a>
-                </p>
+                <div className="flex items-center gap-6 mt-1 mb-3 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <RefreshCcw className="w-5 h-5 text-foreground" />
+                    <span>Besplatna zamjena: 7 dana</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Truck className="w-5 h-5 text-foreground" />
+                    <span>Dostava u cijeloj BiH i EU</span>
+                  </div>
+                </div>
 
                 {/* Order buttons */}
                 <div className="flex flex-col gap-2 pb-4">
