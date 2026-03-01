@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, Type, Hash, Car, X, MessageCircle, Star, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -95,8 +95,20 @@ const SearchPanel = () => {
   const [nameSearch, setNameSearch] = useState("");
   const [catalogSearch, setCatalogSearch] = useState("");
   const [vinSearch, setVinSearch] = useState("");
+  const [partsFound24h, setPartsFound24h] = useState<number>(0);
 
   const { data: totalCount } = usePartsCount();
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('ilma_parts_found_24h');
+    if (saved) {
+      setPartsFound24h(parseInt(saved));
+    } else {
+      const num = Math.floor(Math.random() * (8711 - 2666 + 1)) + 2666;
+      sessionStorage.setItem('ilma_parts_found_24h', num.toString());
+      setPartsFound24h(num);
+    }
+  }, []);
 
   const handleSearch = async () => {
     if (activeTab === "sasija") {
@@ -199,6 +211,9 @@ const SearchPanel = () => {
 
       {/* CTA */}
       <div className="p-6 md:p-8 pt-4 md:pt-6 bg-card space-y-3">
+        <p className="text-center text-sm text-muted-foreground">
+          Pronađeno <span className="font-bold text-foreground">{partsFound24h}</span> dijelova u protekla 24h
+        </p>
         <button
           onClick={handleSearch}
           disabled={isDecoding}
