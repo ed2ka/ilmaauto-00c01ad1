@@ -1,46 +1,24 @@
 
-## Dodavanje WhatsApp dugmeta pored Viber dugmeta
+
+## Izmjena ikonica i teksta na Viber/WhatsApp dugmićima
 
 ### Izmjene u `src/pages/PartDetail.tsx`
 
-1. **Import WhatsApp ikonice** (linija 27-28): Dodati import za `whatsapp-icon.svg`
+1. **Crne ikonice**: Dodati CSS filter `brightness(0)` na obe `<img>` ikonice kako bi bile crne boje -- klasa `[filter:brightness(0)]` ili inline style
+2. **Tekst dugmića**:
+   - "Naruči preko Vibera" -> "Viber narudžba"
+   - "Naruči preko WhatsApp" -> "WhatsApp narudžba"
 
-2. **Izmjena layout-a dugmadi** (linije 240-254): Zamijeniti jedan Viber dugme sa dva dugmeta u istom redu:
-   - Viber i WhatsApp dugmici ce biti u `flex flex-row gap-2` kontejneru
-   - Oba dugmeta imaju `flex-1` da budu jednake sirine
+### Tehničke izmjene
 
-3. **WhatsApp link format**: `https://wa.me/38761454151?text={encodedMessage}` -- ista poruka kao za Viber
-
-### Struktura
-
-```text
-[        Naruci dugme (puna sirina)       ]
-[ Viber dugme (50%) ] [ WhatsApp dugme (50%) ]
-```
-
-### Tehnicke izmjene
-
-**Linija 28** - dodati import:
+**Linija 253**: Dodati `[filter:brightness(0)]` klasu i promijeniti tekst
 ```tsx
-import whatsappIcon from "@/assets/whatsapp-icon.svg";
+<img src={viberIcon} alt="Viber" className="w-4 h-4 mr-1 [filter:brightness(0)]" />
+Viber narudžba
 ```
 
-**Linije 240-254** - zamijeniti sa:
+**Linija 268**: Isto za WhatsApp
 ```tsx
-<div className="flex gap-2">
-  <Button variant="outline" className="flex-1" asChild>
-    <a href={viberLink} target="_blank" rel="noopener noreferrer">
-      <img src={viberIcon} alt="Viber" className="w-4 h-4 mr-1" />
-      Naruči preko Vibera
-    </a>
-  </Button>
-  <Button variant="outline" className="flex-1" asChild>
-    <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-      <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4 mr-1" />
-      Naruči preko WhatsApp
-    </a>
-  </Button>
-</div>
+<img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4 mr-1 [filter:brightness(0)]" />
+WhatsApp narudžba
 ```
-
-WhatsApp link koristi `https://wa.me/38761454151?text={encodeURIComponent(message)}` sa istom porukom kao Viber dugme.
