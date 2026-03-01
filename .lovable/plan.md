@@ -1,26 +1,25 @@
 
 
-## Zamjena disclaimer teksta sa ikonicama (po uzoru na screenshot)
+## Promjena teksta u sekciji sa ikonicama
 
-### Izmjene u `src/pages/PartDetail.tsx`
+### Izmjene u `src/pages/PartDetail.tsx` (linije 248-255)
 
-Zamijeniti postojeci paragraf (linije 247-249) sa dva elementa u redu, svaki sa ikonom -- po uzoru na screenshot:
+Tekst u oba bloka ce biti razbijen u dva reda koristeci `<br />` tag:
 
 ```tsx
 <div className="flex items-center gap-6 mt-1 mb-3 text-sm text-muted-foreground">
   <div className="flex items-center gap-2">
     <RefreshCcw className="w-5 h-5 text-foreground" />
-    <span>Besplatna zamjena: 7 dana</span>
+    <span>Besplatna zamjena<br />7 dana</span>
   </div>
   <div className="flex items-center gap-2">
     <Truck className="w-5 h-5 text-foreground" />
-    <span>Dostava u cijeloj BiH i EU</span>
+    <span>Dostava:<br />BiH, Balkan i EU</span>
   </div>
 </div>
 ```
 
-- Ikona `RefreshCcw` (lucide) za zamjenu/povrat -- odgovara ikoni sa screenshota
-- Ikona `Truck` (lucide) za dostavu -- odgovara ikoni kamiona sa screenshota
-- Tekst prilagodjen na bosanski jezik
-- Dodati `RefreshCcw` i `Truck` u postojeci import iz `lucide-react`
+Promjene:
+- Prvi blok: "Besplatna zamjena" na jednom redu, "7 dana" na drugom
+- Drugi blok: "Dostava:" na jednom redu, "BiH, Balkan i EU" na drugom
 
