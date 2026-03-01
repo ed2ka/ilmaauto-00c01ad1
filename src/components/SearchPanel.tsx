@@ -212,7 +212,7 @@ const SearchPanel = () => {
       {/* CTA */}
       <div className="p-6 md:p-8 pt-4 md:pt-6 bg-card space-y-3">
         <p className="text-center text-sm text-muted-foreground">
-          Pronađeno <span className="font-bold text-foreground">{partsFound24h}</span> dijelova u protekla 24h
+          Pronađeno <span className="font-bold text-foreground">{partsFound24h}</span> dijelova u proteklih 20minuta
         </p>
         <button
           onClick={handleSearch}
