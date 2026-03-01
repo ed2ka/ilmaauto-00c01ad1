@@ -25,6 +25,7 @@ import {
 import Footer from "@/components/Footer";
 
 import viberIcon from "@/assets/viber-icon.svg";
+import whatsappIcon from "@/assets/whatsapp-icon.svg";
 
 const PartDetail = () => {
   const { id } = useParams();
@@ -237,21 +238,38 @@ const PartDetail = () => {
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Naruči
                   </Button>
-                  <Button variant="outline" className="w-full" asChild>
-                    <a
-                      href={(() => {
-                        const pageUrl = window.location.href;
-                        const partTitle = `${part.dio} – ${part.marka} ${part.tip}${part.model ? ` (${part.model})` : ""}`;
-                        const message = `Pozdrav, zanima me ovaj artikal sa vaše web stranice: ${partTitle} – ILMA AUTO | originalni autodijelovi za sve marke vozila - ${pageUrl}`;
-                        return `viber://chat?number=%2B38761454151&draft=${encodeURIComponent(message)}`;
-                      })()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <img src={viberIcon} alt="Viber" className="w-4 h-4 mr-2" />
-                      Naruči preko Vibera
-                    </a>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="flex-1" asChild>
+                      <a
+                        href={(() => {
+                          const pageUrl = window.location.href;
+                          const partTitle = `${part.dio} – ${part.marka} ${part.tip}${part.model ? ` (${part.model})` : ""}`;
+                          const message = `Pozdrav, zanima me ovaj artikal sa vaše web stranice: ${partTitle} – ILMA AUTO | originalni autodijelovi za sve marke vozila - ${pageUrl}`;
+                          return `viber://chat?number=%2B38761454151&draft=${encodeURIComponent(message)}`;
+                        })()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img src={viberIcon} alt="Viber" className="w-4 h-4 mr-1" />
+                        Naruči preko Vibera
+                      </a>
+                    </Button>
+                    <Button variant="outline" className="flex-1" asChild>
+                      <a
+                        href={(() => {
+                          const pageUrl = window.location.href;
+                          const partTitle = `${part.dio} – ${part.marka} ${part.tip}${part.model ? ` (${part.model})` : ""}`;
+                          const message = `Pozdrav, zanima me ovaj artikal sa vaše web stranice: ${partTitle} – ILMA AUTO | originalni autodijelovi za sve marke vozila - ${pageUrl}`;
+                          return `https://wa.me/38761454151?text=${encodeURIComponent(message)}`;
+                        })()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4 mr-1" />
+                        Naruči preko WhatsApp
+                      </a>
+                    </Button>
+                  </div>
                 </div>
 
                 <Separator />
