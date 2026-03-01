@@ -113,12 +113,18 @@ const VinInput = ({ value, onChange }: VinInputProps) => {
   return (
     <div className="flex flex-col gap-2">
       {/* Inputi */}
-      <div className="flex flex-wrap items-center gap-0.5 gap-y-2">
-        {[0, 1, 2].map(renderInput)}
-        <span className="w-2" />
-        {[3, 4, 5, 6, 7, 8].map(renderInput)}
-        <span className="w-2 hidden sm:inline-block" />
-        {[9, 10, 11, 12, 13, 14, 15, 16].map(renderInput)}
+      <div className="flex flex-wrap items-center gap-y-2">
+        {/* Grupa A: WMI(0-2) + spacer + VDS(3-8) */}
+        <div className="inline-flex items-center gap-0.5 flex-shrink-0">
+          {[0, 1, 2].map(renderInput)}
+          <span className="w-2" />
+          {[3, 4, 5, 6, 7, 8].map(renderInput)}
+        </div>
+        {/* Grupa B: VIS(9-16) */}
+        <div className="inline-flex items-center gap-0.5 flex-shrink-0">
+          <span className="w-2 hidden sm:inline-block" />
+          {[9, 10, 11, 12, 13, 14, 15, 16].map(renderInput)}
+        </div>
       </div>
       {/* Dugmići -- uvijek u zasebnom redu */}
       <div className="flex items-center gap-3">
