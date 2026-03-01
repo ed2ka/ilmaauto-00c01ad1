@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import VehicleSelector from "./VehicleSelector";
+import VinInput from "./VinInput";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { usePartsCount } from "@/hooks/useParts";
@@ -188,7 +189,10 @@ const SearchPanel = () => {
         }
         {activeTab === "sasija" &&
         <div className="animate-fade-in">
-            <FloatingInput label="Broj šasije (VIN)" placeholder="Upišite broj šasije vozila" value={vinSearch} onChange={setVinSearch} />
+            <fieldset className="relative border border-input rounded bg-background px-3 pt-1 pb-3">
+              <legend className="text-xs text-muted-foreground px-1">Broj šasije (VIN)</legend>
+              <VinInput value={vinSearch} onChange={setVinSearch} />
+            </fieldset>
           </div>
         }
       </div>
