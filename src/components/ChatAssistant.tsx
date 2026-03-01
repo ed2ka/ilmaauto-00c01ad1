@@ -110,7 +110,44 @@ const SearchLinkButton = ({ link }: { link: { url: string; label: string } }) =>
   </a>
 );
 
-const MessageBubble = ({ msg }: { msg: Msg }) => {
+function parseOptions(text: string): { textBefore: string; options: { num: string; label: string }[]; hasOptions: boolean } {
+  const optionRegex = /^(\d+)\.\s+(.+)$/gm;
+  const matches: { num: string; label: string; index: number; fullMatch: string }[] = [];
+  let m;
+  while ((m = optionRegex.exec(text)) !== null) {
+    matches.push({ num: m[1], label: m[2], index: m.index, fullMatch: m[0] });
+  }
+  if (matches.length < 2) return { textBefore: text, options: [], hasOptions: false };
+
+  const firstIndex = matches[0].index;
+  let textBefore = text.slice(0, firstIndex).trim();
+
+  // Remove trailing instruction like "Molim odgovorite sa 1 ili 2..."
+  const lastMatch = matches[matches.length - 1];
+  let afterOptions = text.slice(lastMatch.index + lastMatch.fullMatch.length).trim();
+  // Filter out instruction lines
+  afterOptions = afterOptions.replace(/^.*(?:odgovorite|napišite|unesite|reply|respond).*$/gim, "").trim();
+
+  return {
+    textBefore: textBefore + (afterOptions ? "\n\n" + afterOptions : ""),
+    options: matches.map((o) => ({ num: o.num, label: o.label })),
+    hasOptions: true,
+  };
+}
+
+const OptionCard = ({ num, label, onClick }: { num: string; label: string; onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg border border-border bg-background hover:bg-accent hover:border-primary/40 transition-all text-left cursor-pointer group"
+  >
+    <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+      {num}
+    </span>
+    <span className="text-sm text-foreground leading-snug">{label}</span>
+  </button>
+);
+
+const MessageBubble = ({ msg, onOptionClick }: { msg: Msg; onOptionClick?: (text: string) => void }) => {
   if (msg.role === "user") {
     return (
       <div className="flex justify-end">
@@ -122,13 +159,26 @@ const MessageBubble = ({ msg }: { msg: Msg }) => {
   }
 
   const { cleanText, links } = parseSearchLinks(msg.content);
+  const { textBefore, options, hasOptions } = parseOptions(cleanText);
 
   return (
     <div className="flex justify-start">
       <div className="max-w-[85%] space-y-2">
-        {cleanText && (
+        {textBefore && (
           <div className="rounded-lg px-3 py-2 text-sm leading-relaxed bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
-            {cleanText}
+            {textBefore}
+          </div>
+        )}
+        {hasOptions && (
+          <div className="space-y-1.5">
+            {options.map((o) => (
+              <OptionCard
+                key={o.num}
+                num={o.num}
+                label={o.label}
+                onClick={() => onOptionClick?.(o.num)}
+              />
+            ))}
           </div>
         )}
         {links.length > 0 && (
@@ -211,14 +261,11 @@ const ChatAssistant = () => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
   }, [isOpen]);
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
-
-    const userMsg: Msg = { role: "user", content: text };
+  const sendOption = async (optionText: string) => {
+    if (isLoading) return;
+    const userMsg: Msg = { role: "user", content: optionText };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
-    setInput("");
     setIsLoading(true);
 
     let assistantSoFar = "";
@@ -252,6 +299,13 @@ const ChatAssistant = () => {
       setIsLoading(false);
       toast({ title: "Greška", description: "Nije moguće povezati se sa asistentom.", variant: "destructive" });
     }
+  };
+
+  const send = async () => {
+    const text = input.trim();
+    if (!text || isLoading) return;
+    setInput("");
+    sendOption(text);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -308,7 +362,7 @@ const ChatAssistant = () => {
               if (i === 0 && msg.role === "assistant" && msg.content === WELCOME_MSG && isTypingWelcome) {
                 return <WelcomeTypingBubble key="welcome-typing" text={WELCOME_MSG} onComplete={() => setIsTypingWelcome(false)} />;
               }
-              return <MessageBubble key={i} msg={msg} />;
+              return <MessageBubble key={i} msg={msg} onOptionClick={(text) => sendOption(text)} />;
             })}
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && <TypingIndicator />}
           </div>
