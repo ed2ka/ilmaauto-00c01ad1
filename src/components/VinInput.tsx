@@ -1,0 +1,123 @@
+import { useRef, useEffect, useCallback } from "react";
+import { ClipboardPaste } from "lucide-react";
+
+const VIN_LENGTH = 17;
+const VALID_CHAR = /^[A-Z0-9]$/;
+// VIN segments: 3 - 6 - 8 (WMI - VDS - VIS)
+const SEGMENT_BREAKS = [3, 9];
+
+interface VinInputProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const VinInput = ({ value, onChange }: VinInputProps) => {
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+  const chars = value.padEnd(VIN_LENGTH, "").slice(0, VIN_LENGTH).split("");
+
+  const updateValue = useCallback(
+    (newChars: string[]) => {
+      onChange(newChars.join("").replace(/\s/g, ""));
+    },
+    [onChange]
+  );
+
+  const fillFromString = useCallback(
+    (raw: string) => {
+      const cleaned = raw.replace(/\s/g, "").toUpperCase().slice(0, VIN_LENGTH);
+      const newChars = Array(VIN_LENGTH).fill("");
+      for (let i = 0; i < cleaned.length; i++) {
+        if (VALID_CHAR.test(cleaned[i])) newChars[i] = cleaned[i];
+      }
+      onChange(newChars.join(""));
+      // Focus the field after last filled char
+      const nextIdx = Math.min(cleaned.length, VIN_LENGTH - 1);
+      setTimeout(() => inputsRef.current[nextIdx]?.focus(), 0);
+    },
+    [onChange]
+  );
+
+  const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\s/g, "").toUpperCase();
+    if (!raw) return;
+    const ch = raw.slice(-1);
+    if (!VALID_CHAR.test(ch)) return;
+
+    const newChars = [...chars];
+    newChars[index] = ch;
+    updateValue(newChars);
+
+    if (index < VIN_LENGTH - 1) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      const newChars = [...chars];
+      if (newChars[index]) {
+        newChars[index] = "";
+        updateValue(newChars);
+      } else if (index > 0) {
+        newChars[index - 1] = "";
+        updateValue(newChars);
+        inputsRef.current[index - 1]?.focus();
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      inputsRef.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < VIN_LENGTH - 1) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    fillFromString(e.clipboardData.getData("text"));
+  };
+
+  const handleClipboardButton = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      fillFromString(text);
+    } catch {
+      // Clipboard API not available or denied
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center gap-0.5">
+        {Array.from({ length: VIN_LENGTH }).map((_, i) => (
+          <span key={i} className="contents">
+            {SEGMENT_BREAKS.includes(i) && <span className="w-2" />}
+            <input
+              ref={(el) => { inputsRef.current[i] = el; }}
+              type="text"
+              inputMode="text"
+              maxLength={2}
+              value={chars[i] || ""}
+              onChange={(e) => handleChange(i, e)}
+              onKeyDown={(e) => handleKeyDown(i, e)}
+              onPaste={handlePaste}
+              onFocus={(e) => e.target.select()}
+              className="w-7 h-9 sm:w-8 sm:h-10 text-center border border-input rounded bg-background text-sm font-mono uppercase text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+              aria-label={`VIN karakter ${i + 1}`}
+            />
+          </span>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={handleClipboardButton}
+        className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded border border-input bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+        title="Zalijepi iz clipboard-a"
+        aria-label="Zalijepi VIN iz clipboard-a"
+      >
+        <ClipboardPaste className="w-4 h-4" />
+      </button>
+    </div>
+  );
+};
+
+export default VinInput;
