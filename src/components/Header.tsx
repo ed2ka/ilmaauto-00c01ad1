@@ -1,4 +1,4 @@
-import { Heart, User, Menu, X, LogOut, Search, Headset } from "lucide-react";
+import { Heart, User, Menu, X, LogOut, Search, Headset, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -59,8 +60,15 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                    <Link to="/profil">Moj profil</Link>
+                    <Link to="/profil?tab=orders"><ShoppingBag className="w-4 h-4 mr-2" /> Narudžbe</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profil?tab=wishlist"><Heart className="w-4 h-4 mr-2" /> Lista želja</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profil"><User className="w-4 h-4 mr-2" /> Moj profil</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="w-4 h-4 mr-2" /> Odjava
                   </DropdownMenuItem>
@@ -87,8 +95,10 @@ const Header = () => {
             <Link to="/podrska" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Headset className="w-4 h-4" /> Korisnička podrška</Link>
             {user ? (
               <>
-                <Link to="/profil" className="block text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>Moj profil</Link>
-                <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="block text-sm font-medium text-header-foreground/90 py-2">Odjava</button>
+                <Link to="/profil?tab=orders" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><ShoppingBag className="w-4 h-4" /> Narudžbe</Link>
+                <Link to="/profil?tab=wishlist" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Heart className="w-4 h-4" /> Lista želja</Link>
+                <Link to="/profil" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><User className="w-4 h-4" /> Moj profil</Link>
+                <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2"><LogOut className="w-4 h-4" /> Odjava</button>
               </>
             ) : (
               <Link to="/prijava" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}>
