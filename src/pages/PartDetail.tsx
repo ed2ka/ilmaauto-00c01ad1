@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePartById } from "@/hooks/useParts";
 import { useAuth } from "@/hooks/useAuth";
 import { useWishlistIds, useToggleWishlist } from "@/hooks/useWishlist";
-import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart } from "lucide-react";
+import { ArrowLeft, Check, X as XIcon, ShoppingCart, Heart, Eye } from "lucide-react";
 import { getBrandLogo } from "@/lib/brandLogos";
 import { formatPrice } from "@/lib/formatPrice";
 import TopBar from "@/components/TopBar";
@@ -35,6 +35,15 @@ const PartDetail = () => {
   const { user } = useAuth();
   const { data: wishlistIds } = useWishlistIds();
   const toggleWishlist = useToggleWishlist();
+
+  const viewCount = useMemo(() => {
+    const key = `part_views_${id}`;
+    const stored = localStorage.getItem(key);
+    if (stored) return parseInt(stored, 10);
+    const num = Math.floor(Math.random() * (144 - 47 + 1)) + 47;
+    localStorage.setItem(key, num.toString());
+    return num;
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -220,7 +229,7 @@ const PartDetail = () => {
 
                 <Separator />
 
-                <div className="py-4">
+                <div className="py-4 flex flex-wrap gap-2">
                   {part.is_available ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium">
                       <Check className="w-4 h-4" /> Dostupan
@@ -230,6 +239,9 @@ const PartDetail = () => {
                       <XIcon className="w-4 h-4" /> Nije dostupan
                     </span>
                   )}
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                    <Eye className="w-4 h-4" /> {viewCount} pregleda u 20 min.
+                  </span>
                 </div>
 
                 {/* Order buttons */}
