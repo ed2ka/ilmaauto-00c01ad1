@@ -80,9 +80,29 @@ const FloatingInput = ({ label, placeholder, value, onChange }: {label: string;p
   </fieldset>;
 
 
+const recentSearchPairs = [
+  { brand: "BMW", model: "E46" },
+  { brand: "VOLKSWAGEN", model: "GOLF 5" },
+  { brand: "AUDI", model: "A4 B8" },
+  { brand: "MERCEDES", model: "W204" },
+  { brand: "OPEL", model: "ASTRA H" },
+  { brand: "FORD", model: "FOCUS MK2" },
+  { brand: "RENAULT", model: "MEGANE 2" },
+  { brand: "PEUGEOT", model: "307" },
+  { brand: "SKODA", model: "OCTAVIA 2" },
+  { brand: "FIAT", model: "PUNTO" },
+  { brand: "TOYOTA", model: "COROLLA" },
+  { brand: "SEAT", model: "LEON" },
+];
+
+function pickRandom3() {
+  const shuffled = [...recentSearchPairs].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3);
+}
+
 const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
-  
+  const [recentSearches] = useState(pickRandom3);
   const [isDecoding, setIsDecoding] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -182,6 +202,16 @@ const SearchPanel = () => {
       <div className="px-6 md:px-8 pb-2 pt-6 bg-card">
         {activeTab === "filter" &&
         <div className="space-y-4 animate-fade-in">
+            <div className="space-y-1.5">
+              <span className="text-xs text-muted-foreground">Posljednja pretraga:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {recentSearches.map((item, i) => (
+                  <span key={i} className="inline-flex items-center px-3 py-1 rounded-full border border-border bg-muted text-muted-foreground text-xs">
+                    {item.brand} {item.model}
+                  </span>
+                ))}
+              </div>
+            </div>
             <VehicleSelector onSelectionChange={(brand, models) => {setSelectedBrand(brand);setSelectedModels(models);}} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FloatingInput label="Naziv dijela" placeholder='Upišite naziv, npr "desni far"' value={partName} onChange={setPartName} />
