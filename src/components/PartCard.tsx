@@ -30,7 +30,7 @@ const PartCard = ({ part }: PartCardProps) => {
   return (
     <Link
       to={`/dio/${part.id}`}
-      className="bg-card rounded-lg border hover:shadow-lg transition-shadow group overflow-hidden flex flex-col relative"
+      className="bg-card rounded-lg border hover:border-foreground/30 transition-colors group overflow-hidden flex flex-col relative"
     >
       <button
         onClick={handleWishlist}

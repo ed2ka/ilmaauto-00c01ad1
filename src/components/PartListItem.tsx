@@ -30,7 +30,7 @@ const PartListItem = ({ part }: PartListItemProps) => {
   return (
     <Link
       to={`/dio/${part.id}`}
-      className="bg-card rounded-lg border hover:shadow-md transition-shadow flex overflow-hidden relative"
+      className="bg-card rounded-lg border hover:border-foreground/30 transition-colors flex overflow-hidden relative"
     >
       <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 bg-muted overflow-hidden relative">
         <div className="absolute top-1.5 left-1.5 z-10 bg-white/90 rounded p-1 shadow-sm backdrop-blur-sm">
