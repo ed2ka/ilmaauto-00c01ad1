@@ -250,8 +250,8 @@ const PartDetail = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <img src={viberIcon} alt="Viber" className="w-4 h-4 mr-1" />
-                        Naruči preko Vibera
+                        <img src={viberIcon} alt="Viber" className="w-4 h-4 mr-1 [filter:brightness(0)]" />
+                        Viber narudžba
                       </a>
                     </Button>
                     <Button variant="outline" className="flex-1" asChild>
@@ -265,8 +265,8 @@ const PartDetail = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4 mr-1" />
-                        Naruči preko WhatsApp
+                        <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4 mr-1 [filter:brightness(0)]" />
+                        WhatsApp narudžba
                       </a>
                     </Button>
                   </div>
