@@ -46,14 +46,14 @@ const CategoryGrid = () => {
         onClick={() => handleClick(cat.value)}
         className={cn(
           "flex flex-col items-center justify-center gap-1.5 rounded-[9px] border px-4 py-3 min-w-[90px] transition-all duration-200",
-          "hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm hover:rounded-xl",
+          "hover:border-foreground hover:bg-muted hover:shadow-sm hover:rounded-xl hover:text-foreground",
           isActive
-            ? "border-primary bg-primary/10 text-primary shadow-sm rounded-xl"
+            ? "border-foreground bg-muted text-foreground shadow-sm rounded-xl"
             : "border-border bg-card text-muted-foreground"
         )}
       >
-        <Icon className={cn("w-6 h-6", isActive && "text-primary")} strokeWidth={1.5} />
-        <span className={cn("text-xs font-medium whitespace-nowrap", isActive && "text-primary")}>
+        <Icon className={cn("w-6 h-6", isActive && "text-foreground")} strokeWidth={1.5} />
+        <span className={cn("text-xs font-medium whitespace-nowrap", isActive && "text-foreground")}>
           {cat.name}
         </span>
       </button>
