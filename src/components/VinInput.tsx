@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback } from "react";
-import { ClipboardPaste } from "lucide-react";
+import { ClipboardPaste, ClipboardCopy } from "lucide-react";
 
 const VIN_LENGTH = 17;
 const VALID_CHAR = /^[A-Z0-9]$/;
@@ -85,8 +85,16 @@ const VinInput = ({ value, onChange }: VinInputProps) => {
     }
   };
 
+  const handleCopyButton = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      // Clipboard API not available or denied
+    }
+  };
+
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-0.5">
         {Array.from({ length: VIN_LENGTH }).map((_, i) => (
           <span key={i} className="contents">
@@ -107,15 +115,26 @@ const VinInput = ({ value, onChange }: VinInputProps) => {
           </span>
         ))}
       </div>
-      <button
-        type="button"
-        onClick={handleClipboardButton}
-        className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded border border-input bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-        title="Zalijepi iz clipboard-a"
-        aria-label="Zalijepi VIN iz clipboard-a"
-      >
-        <ClipboardPaste className="w-4 h-4" />
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={handleClipboardButton}
+          className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          title="Zalijepi iz clipboard-a"
+        >
+          <ClipboardPaste className="w-4 h-4" />
+          <span>Zalijepi</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleCopyButton}
+          className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          title="Kopiraj VIN"
+        >
+          <ClipboardCopy className="w-4 h-4" />
+          <span>Kopiraj</span>
+        </button>
+      </div>
     </div>
   );
 };
