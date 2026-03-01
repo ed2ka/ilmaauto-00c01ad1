@@ -1,15 +1,35 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, Send, X, Minus, ExternalLink, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+function generateSupportCode(): string {
+  const ts = Date.now().toString();
+  const last4 = ts.slice(-4);
+  const rand3 = Math.floor(100 + Math.random() * 900).toString();
+  return `${last4}-${rand3}`;
+}
+
 const WELCOME_MSG = `Pozdrav, ja sam ILMA AI, Izvolite? Kako mogu pomoći? Koji dio tražite?
 
-Napomena: ILMA AI nikada od vas neće tražiti bilo kakve lične podatke, niti ih prikuplja u svoju bazu, sav razgovor i podaci koji se razmjenjuju se koriste isključivo u svrhu pretrage i lakšeg pronalaženja dijelova.`;
+Napomena: ILMA AI nikada od vas neće tražiti bilo kakve lične podatke, niti ih prikuplja u svoju bazu, sav razgovor i podaci koji se razmjenjuju se koriste isključivo u svrhu pretrage i lakšeg pronalaženja dijelova.
+Na zahtjev pročitajte ovaj code`;
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 const STORAGE_KEY = "ilma-ai-messages";
+const SUPPORT_CODE_KEY = "ilma-support-code";
+
+function loadSupportCode(): string {
+  try {
+    const saved = localStorage.getItem(SUPPORT_CODE_KEY);
+    if (saved) return saved;
+  } catch {}
+  const code = generateSupportCode();
+  try { localStorage.setItem(SUPPORT_CODE_KEY, code); } catch {}
+  return code;
+}
 
 function loadMessages(): Msg[] {
   try {
@@ -147,7 +167,7 @@ const OptionCard = ({ num, label, onClick }: { num: string; label: string; onCli
   </button>
 );
 
-const MessageBubble = ({ msg, onOptionClick }: { msg: Msg; onOptionClick?: (text: string) => void }) => {
+const MessageBubble = ({ msg, onOptionClick, supportCode }: { msg: Msg; onOptionClick?: (text: string) => void; supportCode?: string }) => {
   if (msg.role === "user") {
     return (
       <div className="flex justify-end">
@@ -166,12 +186,17 @@ const MessageBubble = ({ msg, onOptionClick }: { msg: Msg; onOptionClick?: (text
   const mainText = napomenaIndex >= 0 ? textBefore.slice(0, napomenaIndex).trimEnd() : textBefore;
   const noteText = napomenaIndex >= 0 ? textBefore.slice(napomenaIndex) : "";
 
+  const isWelcome = msg.content === WELCOME_MSG;
+
   return (
     <div className="flex justify-start">
       <div className="max-w-[85%] space-y-2">
         {(mainText || noteText) && (
           <div className="rounded-lg px-3 py-2 bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
             {mainText && <span className="text-sm leading-relaxed">{mainText}</span>}
+            {isWelcome && supportCode && (
+              <p className="text-sm leading-relaxed mt-2">Vaša lozinka za podršku je: <strong>{supportCode}</strong></p>
+            )}
             {noteText && <p className="text-[10px] italic leading-relaxed mt-2 text-muted-foreground">{noteText}</p>}
           </div>
         )}
@@ -245,7 +270,7 @@ const SmartTypingIndicator = ({ userMessage }: { userMessage: string }) => {
   );
 };
 
-const WelcomeTypingBubble = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
+const WelcomeTypingBubble = ({ text, onComplete, supportCode }: { text: string; onComplete: () => void; supportCode: string }) => {
   const [displayed, setDisplayed] = useState("");
   const indexRef = useRef(0);
 
@@ -266,11 +291,18 @@ const WelcomeTypingBubble = ({ text, onComplete }: { text: string; onComplete: (
   const mainPart = napomenaIndex >= 0 ? displayed.slice(0, napomenaIndex).trimEnd() : displayed;
   const notePart = napomenaIndex >= 0 ? displayed.slice(napomenaIndex) : "";
 
+  // Show support code once main text is fully typed (before Napomena starts)
+  const fullMainText = text.slice(0, text.indexOf("Napomena:")).trimEnd();
+  const mainComplete = mainPart === fullMainText && napomenaIndex >= 0;
+
   return (
     <div className="flex justify-start">
       <div className="max-w-[85%] space-y-2">
         <div className="rounded-lg px-3 py-2 bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
           <span className="text-sm leading-relaxed">{mainPart}</span>
+          {mainComplete && (
+            <p className="text-sm leading-relaxed mt-2">Vaša lozinka za podršku je: <strong>{supportCode}</strong></p>
+          )}
           {notePart && <p className="text-[10px] italic leading-relaxed mt-2 text-muted-foreground">{notePart}</p>}
           <span className="inline-block w-[2px] h-[1em] bg-foreground/70 ml-0.5 animate-pulse align-text-bottom" />
         </div>
@@ -285,6 +317,7 @@ const ChatAssistant = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isTypingWelcome, setIsTypingWelcome] = useState(false);
+  const [supportCode, setSupportCode] = useState(loadSupportCode);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasAnimatedWelcome = useRef(false);
@@ -332,7 +365,17 @@ const ChatAssistant = () => {
           }
           scrollToBottom();
         },
-        onDone: () => setIsLoading(false),
+        onDone: () => {
+          setIsLoading(false);
+          // Log to support_chat_codes
+          if (assistantSoFar) {
+            supabase.from('support_chat_codes').insert({
+              code: supportCode,
+              user_message: optionText,
+              assistant_response: assistantSoFar,
+            });
+          }
+        },
         onError: (status) => {
           setIsLoading(false);
           if (status === 429) {
@@ -379,6 +422,9 @@ const ChatAssistant = () => {
             <span className="text-base font-semibold flex-1">ILMA AI</span>
             <button
               onClick={() => {
+                const newCode = generateSupportCode();
+                setSupportCode(newCode);
+                try { localStorage.setItem(SUPPORT_CODE_KEY, newCode); } catch {}
                 setMessages([{ role: "assistant", content: WELCOME_MSG }]);
                 setIsTypingWelcome(true);
               }}
@@ -407,9 +453,9 @@ const ChatAssistant = () => {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((msg, i) => {
               if (i === 0 && msg.role === "assistant" && msg.content === WELCOME_MSG && isTypingWelcome) {
-                return <WelcomeTypingBubble key="welcome-typing" text={WELCOME_MSG} onComplete={() => setIsTypingWelcome(false)} />;
+                return <WelcomeTypingBubble key="welcome-typing" text={WELCOME_MSG} onComplete={() => setIsTypingWelcome(false)} supportCode={supportCode} />;
               }
-              return <MessageBubble key={i} msg={msg} onOptionClick={(text) => sendOption(text)} />;
+              return <MessageBubble key={i} msg={msg} onOptionClick={(text) => sendOption(text)} supportCode={supportCode} />;
             })}
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
               <SmartTypingIndicator userMessage={messages.filter(m => m.role === "user").pop()?.content || ""} />
