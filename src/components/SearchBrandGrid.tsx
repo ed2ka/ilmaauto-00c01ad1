@@ -39,10 +39,10 @@ const SearchBrandGrid = ({ activeCategory }: Props) => {
               onClick={() => !isDisabled && handleClick(brand.name)}
               disabled={isDisabled}
               className={cn(
-                "group flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-200",
+                "group flex flex-col items-center gap-2 p-4 rounded-[9px] border transition-all duration-200",
                 isActive
-                  ? "border-primary bg-primary/10 shadow-md scale-105"
-                  : "bg-card hover:shadow-md hover:scale-105",
+                  ? "border-foreground bg-muted shadow-md scale-105"
+                  : "bg-card hover:border-foreground hover:bg-muted hover:shadow-md hover:scale-105",
                 isDisabled && "opacity-30 grayscale pointer-events-none"
               )}
             >
@@ -63,7 +63,7 @@ const SearchBrandGrid = ({ activeCategory }: Props) => {
                 className={cn(
                   "text-xs font-medium text-center leading-tight transition-colors",
                   isActive
-                    ? "text-primary"
+                    ? "text-foreground"
                     : "text-muted-foreground group-hover:text-foreground"
                 )}
               >
