@@ -194,6 +194,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_guest_order: {
+        Args: { p_order_id: number; p_user_id: string }
+        Returns: boolean
+      }
       search_parts: {
         Args: {
           p_broj?: string
