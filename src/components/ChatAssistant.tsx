@@ -191,17 +191,53 @@ const MessageBubble = ({ msg, onOptionClick }: { msg: Msg; onOptionClick?: (text
   );
 };
 
-const TypingIndicator = () => (
-  <div className="flex justify-start">
-    <div className="bg-muted rounded-lg px-4 py-2 rounded-bl-sm">
-      <div className="flex gap-1">
-        <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-        <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-        <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+const BRANDS = ['audi', 'bmw', 'mercedes', 'volkswagen', 'vw', 'opel', 'renault', 'peugeot', 'citroen', 'fiat', 'ford', 'toyota', 'hyundai', 'nissan', 'mazda', 'volvo', 'skoda', 'seat', 'alfa romeo', 'kia'];
+const PARTS_KEYWORDS = ['filter', 'kočnic', 'disk', 'pakn', 'ulje', 'svjećic', 'amortizer', 'ležaj', 'remen', 'pumpa', 'hladnjak', 'alternator', 'starter', 'lambd', 'senzor', 'blatobran', 'branik', 'retrovizor', 'far', 'stop', 'staklo'];
+
+function getContextMessages(text: string): string[] {
+  const lower = text.toLowerCase();
+  const hasBrand = BRANDS.some(b => lower.includes(b));
+  const hasPart = PARTS_KEYWORDS.some(p => lower.includes(p));
+
+  if (hasBrand && hasPart) {
+    return ["Pretražujem marku vozila...", "Tražim odgovarajuće dijelove...", "Provjeravam dostupnost...", "Pripremam rezultate..."];
+  }
+  if (hasBrand) {
+    return ["Pretražujem marku vozila...", "Pretražujem model...", "Provjeravam dostupne dijelove...", "Pripremam rezultate..."];
+  }
+  if (hasPart) {
+    return ["Pretražujem bazu dijelova...", "Analiziram upit...", "Provjeravam dostupnost...", "Pripremam rezultate..."];
+  }
+  return ["Pretražujem bazu podataka...", "Analiziram upit...", "Pripremam odgovor..."];
+}
+
+const SmartTypingIndicator = ({ userMessage }: { userMessage: string }) => {
+  const [msgIndex, setMsgIndex] = useState(0);
+  const statusMessages = getContextMessages(userMessage);
+
+  useEffect(() => {
+    setMsgIndex(0);
+    const interval = setInterval(() => {
+      setMsgIndex(prev => (prev + 1) % statusMessages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [userMessage, statusMessages.length]);
+
+  return (
+    <div className="flex justify-start">
+      <div className="bg-muted rounded-lg px-4 py-2 rounded-bl-sm space-y-1.5">
+        <div className="flex gap-1">
+          <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+          <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+          <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+        </div>
+        <p key={msgIndex} className="text-xs text-muted-foreground animate-fade-in">
+          {statusMessages[msgIndex]}
+        </p>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const WelcomeTypingBubble = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
   const [displayed, setDisplayed] = useState("");
@@ -364,7 +400,9 @@ const ChatAssistant = () => {
               }
               return <MessageBubble key={i} msg={msg} onOptionClick={(text) => sendOption(text)} />;
             })}
-            {isLoading && messages[messages.length - 1]?.role !== "assistant" && <TypingIndicator />}
+            {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+              <SmartTypingIndicator userMessage={messages.filter(m => m.role === "user").pop()?.content || ""} />
+            )}
           </div>
 
           <div className="border-t p-3 flex gap-2 shrink-0">
