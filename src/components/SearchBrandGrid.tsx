@@ -41,8 +41,8 @@ const SearchBrandGrid = ({ activeCategory }: Props) => {
               className={cn(
                 "group flex flex-col items-center gap-2 p-4 rounded-[9px] border transition-all duration-200",
                 isActive
-                  ? "border-foreground bg-muted shadow-md scale-105"
-                  : "bg-card hover:border-foreground hover:bg-muted hover:shadow-md hover:scale-105",
+                  ? "border-foreground bg-muted"
+                  : "bg-card hover:border-foreground hover:bg-muted",
                 isDisabled && "opacity-30 grayscale pointer-events-none"
               )}
             >
