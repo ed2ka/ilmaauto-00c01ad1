@@ -1,63 +1,42 @@
 
 
-## Poboljsanja autentikacije i gost-narudzbe
+## Popravka toka gost narudzbe: "Hold" pristup
 
-### 1. Prikaz/sakrivanje lozinke (Eye toggle)
+### Problem
+1. Narudzba se trenutno unosi u bazu PRIJE nego sto se korisnik odluci za registraciju, pa gost narudzbe nemaju `user_id`
+2. RLS polisa za INSERT na `orders` tabeli je RESTRICTIVE umjesto PERMISSIVE, sto potpuno blokira gost narudzbe (401 greska)
 
-Dodati ikonu oka (`Eye` / `EyeOff` iz lucide-react) pored polja za lozinku na:
-- **Prijava**: polje "Lozinka" (linija 165)
-- **Registracija**: polja "Lozinka" i "Potvrdi lozinku" (linije 197, 201)
+### Novo ponasanje
+1. Gost popuni formu i klikne "Potvrdi narudzbu"
+2. Podaci narudzbe se cuvaju u memoriji (NE upisuju u bazu)
+3. Popup pita: "Zelite li otvoriti korisnicki nalog?" DA / NE
+4. **DA**: Podaci iz narudzbe se popune u formu za registraciju, gost unese email i lozinku, registruje se i automatski uloguje, pa se narudzba unosi u bazu SA `user_id`
+5. **NE**: Narudzba se unosi u bazu BEZ `user_id`
 
-Implementacija: wrapper `div` sa `relative` klasom oko Input-a, a ikona apsolutno pozicionirana desno. Klik na ikonu mijenja `type` izmedju `password` i `text`.
+### Tehnicke izmjene
 
-Novi state varijable:
-- `showLoginPass` za login
-- `showRegPass` za registraciju
-- `showRegPassConfirm` za potvrdu lozinke
+**1. Migracija baze -- popravka RLS polise**
 
-### 2. Automatska prijava nakon registracije (bez email verifikacije)
+Obrisati postojecu RESTRICTIVE INSERT polisu i kreirati novu PERMISSIVE koja dozvoljava svima da naruče:
 
-Izmjena u `src/pages/Auth.tsx` (`handleRegister` funkcija, linije 65-83):
-- Nakon uspjesnog `signUp`, odmah pozvati `signIn(regEmail, regPass)`
-- Ako je prijava uspjesna, preusmjeriti na pocetnu stranicu
-- Promijeniti toast poruku sa "Provjerite email" na "Registracija uspjesna! Dobrodosli!"
+```sql
+DROP POLICY IF EXISTS "Anyone can place an order" ON public.orders;
+CREATE POLICY "Anyone can place an order"
+  ON public.orders FOR INSERT
+  WITH CHECK (true);
+```
 
-Izmjena u `src/hooks/useAuth.tsx` (`signUp` funkcija):
-- Nema promjena potrebnih -- signUp vec radi, a `onAuthStateChange` ce automatski uhvatiti sesiju kada se korisnik uloguje
+**2. Izmjene u `src/components/OrderSheet.tsx`**
 
-**Napomena**: Ako je email verifikacija i dalje ukljucena na backendu, `signIn` nakon `signUp` nece uspjeti dok se email ne potvrdi. Preporucam da se provjeri da li je auto-confirm vec aktivan ili ga treba rucno ukljuciti u postavkama.
+- Ukloniti `guestOrderId` state (vise nije potreban)
+- Dodati novi state `pendingOrder` koji cuva podatke narudzbe u memoriji
+- Promijeniti `handleSubmitOrder`:
+  - Za prijavljene korisnike: odmah upisati u bazu (kao i do sad)
+  - Za goste: sacuvati podatke u `pendingOrder`, prikazati popup, NE upisivati u bazu
+- Dodati helper funkciju `insertOrder(userId?)` koja vrsi stvarni INSERT u bazu
+- Promijeniti "NE" dugme: poziva `insertOrder()` bez user_id, pa zatvara dijaloge
+- Promijeniti `handleGuestRegister`: nakon registracije i login-a, poziva `insertOrder(userId)` sa novim user ID-jem
+- Ukloniti poziv `claim_guest_order` RPC-a (vise nije potreban)
 
-### 3. Popup nakon gost narudzbe za kreiranje naloga
-
-Izmjene u `src/components/OrderSheet.tsx`:
-- Dodati novi state: `showAccountPrompt` (boolean)
-- Dodati state za cuvanje podataka gosta: `guestData` (ime, telefon, adresa)
-- Nakon uspjesne narudzbe bez prijave (gost), umjesto zatvaranja sheet-a, prikazati Dialog/AlertDialog sa pitanjem:
-  - Naslov: "Zelite li otvoriti korisnicki nalog?"
-  - Tekst: "Vasi podaci ce biti sacuvani za brze narudbe u buducnosti."
-  - Dugmad: **DA** i **NE**
-- Ako korisnik klikne **NE** -- zatvori popup i sheet
-- Ako korisnik klikne **DA** -- prikazati mali formular sa:
-  - Email (prazan, za unos)
-  - Lozinka (prazna, za unos)
-  - Ime, telefon i adresa vec popunjeni iz narudzbe (readonly ili skriveni)
-  - Dugme "Kreiraj nalog"
-- Registracija koristi `signUp` sa podacima iz narudzbe + unesenim emailom i lozinkom
-- Nakon registracije, automatski signIn
-
-### Tehnicke izmjene po fajlovima
-
-**`src/pages/Auth.tsx`**:
-- Import `Eye`, `EyeOff` iz lucide-react
-- 3 nova state-a za password visibility
-- Input type dinamicki (`showLoginPass ? "text" : "password"`)
-- Ikona oka kao apsolutno pozicionirano dugme
-- `handleRegister`: nakon signUp, pozvati signIn i navigate("/")
-
-**`src/components/OrderSheet.tsx`**:
-- Import `AlertDialog` komponente i `Eye`, `EyeOff`
-- Novi state-ovi: `showAccountPrompt`, `guestData`, `regEmail`, `regPassword`, `showRegPassword`
-- Modifikovati `handleSubmitOrder`: ako je gost i narudzba uspjesna, sacuvati podatke i prikazati prompt
-- Dodati AlertDialog sa dva koraka: pitanje DA/NE, pa formular za email+lozinku
-- Funkcija za registraciju koja koristi sacuvane podatke
+Ovim pristupom narudzba se uvijek unosi sa ispravnim `user_id` od pocetka, bez potrebe za naknadnim azuriranjem.
 
