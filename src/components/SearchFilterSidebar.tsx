@@ -3,7 +3,7 @@ import { useBrands, useModels } from "@/hooks/useParts";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RotateCcw, X } from "lucide-react";
+import { Phone, RotateCcw, X } from "lucide-react";
 
 const SearchFilterSidebar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,6 +39,7 @@ const SearchFilterSidebar = () => {
   ].filter(Boolean) as { key: string; label: string }[];
 
   return (
+    <>
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold uppercase tracking-wide text-foreground">Filteri</h3>
@@ -146,6 +147,29 @@ const SearchFilterSidebar = () => {
         </div>
       </div>
     </div>
+
+      <div className="space-y-4 mt-6 pt-6 border-t border-border">
+        <div>
+          <h4 className="font-bold text-sm text-foreground">GARANCIJA</h4>
+          <p className="text-xs text-muted-foreground mt-1">
+            Na sve kupljene dijelove ostvarujete garanciju od <strong className="text-foreground">1 godine</strong>.
+          </p>
+        </div>
+        <div>
+          <h4 className="font-bold text-sm text-foreground">EASY RETURN</h4>
+          <p className="text-xs text-muted-foreground mt-1">
+            Sve kupljene dijelove možete vratiti u roku od <strong className="text-foreground">7 dana</strong>.
+          </p>
+        </div>
+        <a
+          href="tel:+38766818315"
+          className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-medium transition-all"
+        >
+          <Phone className="w-4 h-4" />
+          +387 66 818 315
+        </a>
+      </div>
+    </>
   );
 };
 
