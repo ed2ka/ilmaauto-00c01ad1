@@ -1,52 +1,36 @@
 
 
-## Interaktivne kartice za opcije u ILMA AI chatu
+## Dinamične statusne poruke ispod tačkica dok AI pretražuje
 
-### Problem
-Kada AI ponudi opcije (npr. "1. Pretrazi sve dijelove..." i "2. Zelim konkretno..."), one se prikazuju kao obican tekst. Korisnik mora rucno upisati "1" ili "2" umjesto da jednostavno klikne.
-
-### Rjesenje
+### Izmjena
 
 **Fajl: `src/components/ChatAssistant.tsx`**
 
-1. Dodati funkciju `parseOptions(text)` koja detektuje numerirane opcije u AI odgovoru (pattern: `1. ...` / `2. ...`) i razdvaja tekst na:
-   - `textBefore` - tekst prije opcija
-   - `options[]` - niz opcija (label tekst)
-   - `textAfter` - tekst poslije opcija (npr. "Molim odgovorite...")
+Zadržati postojeće tri skačuće tačkice i dodati ispod njih rotirajući tekst sa kontekstualnim porukama.
 
-2. Kreirati komponentu `OptionCard` - klikabilna kartica koja:
-   - Prikazuje broj opcije i tekst
-   - Ima hover efekat i pointer kursor
-   - Na klik salje tekst opcije kao korisnicku poruku (poziva `send` funkciju sa sadrzajem opcije)
-   - Responsive dimenzije - zauzima punu sirinu chat prozora
-
-3. Azurirati `MessageBubble` da prima `onOptionClick` callback i koristi `parseOptions` za renderovanje opcija kao kartica umjesto teksta
-
-4. U `ChatAssistant` komponenti proslijediti `onOptionClick` handler koji dodaje korisnikovu poruku i pokrece `send`
-
-### Dizajn kartica
+### Vizualni prikaz
 
 ```text
-+------------------------------------------+
-|  1  Pretrazi sve dijelove za ovaj model   |
-|     i marku vozila                        |
-+------------------------------------------+
-
-+------------------------------------------+
-|  2  Zelim konkretno da mi pronadjete dio  |
-+------------------------------------------+
++-------------------------------+
+|         ● ● ●                 |
+| Pretražujem marku vozila...   |
++-------------------------------+
 ```
 
-- Kartice imaju border, zaobljene uglove, padding
-- Hover: lagana promjena pozadine
-- Broj opcije istaknut boldano
-- Kartice se prilagodjavaju sirini chat prozora (responsive)
-- "Molim odgovorite sa 1 ili 2" tekst se SAKRIJE jer vise nije potreban
+Tačkice ostaju gore, ispod njih se pojavljuje tekst koji se mijenja svakih ~2 sekunde sa fade animacijom.
 
-### Regex za detekciju opcija
+### Tehničke izmjene
 
-Pattern ce traziti linije koje pocinju sa `1.`, `2.`, itd. i izdvojiti ih kao opcije. Tekst "Molim odgovorite sa 1 ili 2" ce se filtrirati jer kartice same po sebi sluze kao odgovor.
+1. **Zamjena `TypingIndicator` sa `SmartTypingIndicator`**:
+   - Prima `userMessage` prop (posljednja korisnikova poruka)
+   - Gornji dio: tri skačuće tačkice (nepromijenjene)
+   - Donji dio: rotirajući tekst sa `useState` + `setInterval` (2s)
+   - Fade-in animacija pri promjeni teksta (CSS transition ili `animate-fade-in`)
 
-### Tehnicke izmjene - samo jedan fajl
+2. **Funkcija `getContextMessages(text)`**:
+   - Provjerava da li korisnikov tekst sadrži poznate brendove (Audi, BMW, Mercedes, itd.) ili ključne riječi (dio, filter, kočnica...)
+   - Ako prepozna kontekst: vraća niz poput ["Pretražujem marku vozila...", "Pretražujem model...", "Pretražujem godište...", "Provjeravam dostupne dijelove...", "Pripremam rezultate..."]
+   - Ako ne prepozna: vraća generalne poruke ["Pretražujem bazu podataka...", "Analiziram upit...", "Pripremam odgovor..."]
 
-- `src/components/ChatAssistant.tsx`: dodati `parseOptions`, `OptionCard`, azurirati `MessageBubble` i `ChatAssistant`
+3. **Ažuriranje renderovanja**: Proslijediti posljednju korisnikovu poruku u `SmartTypingIndicator` umjesto starog `TypingIndicator`.
+
