@@ -1,37 +1,29 @@
 
 
-## VIN Input - Unos cifra po cifra
+## Izmjene VIN inputa i error poruke
 
-Zamjena obicnog text inputa za VIN broj sa custom komponentom koja prikazuje 17 individualnih polja za unos, jedno po karakteru.
+### 1. Poboljšana error poruka za neuspješno dekodiranje VIN-a
 
-### Nova komponenta: `src/components/VinInput.tsx`
+U `src/components/SearchPanel.tsx`, promijeniti catch blok (linija 120) da prikazuje specifičnu poruku:
 
-- 17 individualnih polja (`input` elemenata) u nizu, svako prima jedan karakter
-- Automatski prelaz na sljedece polje nakon unosa karaktera
-- Backspace brise trenutno polje i vraca fokus na prethodno
-- **Paste podrska**: Detektuje `onPaste` event, rasporedi karaktere po poljima, preskace razmake
-- **Paste ikonica**: Dugme sa `ClipboardPaste` ikonom na kraju niza - klik cita clipboard (`navigator.clipboard.readText()`) i popunjava polja
-- **Filtriranje razmaka**: Svaki unos prolazi kroz filter koji odbacuje space karaktere (` `)
-- Dozvoljeni karakteri: alfanumericki (A-Z, 0-9), sve se automatski pretvara u uppercase
-- Vizuelno: polja grupisana u segmente (npr. 3-6-8 format VIN-a) sa malim razmakom izmedju grupa
-- Stil polja: `w-8 h-10 text-center border rounded text-sm font-mono uppercase` sa fokusom highlight
+> "Žao nam je, nismo uspjeli pronaći vaše vozilo automatski putem broja šasije, molimo vas izvršite pretragu na neki drugi način."
 
-### Izmjena: `src/components/SearchPanel.tsx`
+### 2. COPY i PASTE dugmad sa ikonama i tekstom
 
-- Import `VinInput` komponente
-- U "sasija" tabu zamijeniti `FloatingInput` sa:
-  ```
-  <fieldset> sa legendom "Broj sasije (VIN)"
-    <VinInput value={vinSearch} onChange={setVinSearch} />
-  </fieldset>
-  ```
-- `vinSearch` state ostaje string od 17 karaktera, VinInput interno upravlja nizom
+U `src/components/VinInput.tsx`:
 
-### Detalji ponasanja
+- Zamijeniti postojece PASTE dugme (samo ikona) sa dugmetom koje ima ikonu + tekst "Zalijepi"
+- Dodati novo COPY dugme sa `ClipboardCopy` ikonom + tekst "Kopiraj" koje kopira trenutni VIN string u clipboard
+- Oba dugmeta ce biti u redu ispod VIN polja, stilizirana kao mali linkovi/dugmici
 
-1. **Unos**: Korisnik klikne na prvo polje, upise karakter, fokus ide na sljedece
-2. **Paste**: Ctrl+V na bilo kojem polju - razmaci se filtriraju, karakteri se rasporede
-3. **Paste dugme**: Klik na ikonicu - cita clipboard, filtrira razmake, popunjava polja
-4. **Razmaci**: Automatski se brisu iz unosa i paste-a
-5. **Backspace**: Brise karakter i vraca fokus na prethodno polje
+### Tehnicke izmjene
+
+**`src/components/SearchPanel.tsx`** (linija 120)
+- Promijeniti `description` u toast poruci na novu poruku
+
+**`src/components/VinInput.tsx`**
+- Import `ClipboardCopy` iz lucide-react pored `ClipboardPaste`
+- Dodati `handleCopyButton` funkciju koja koristi `navigator.clipboard.writeText(value)`
+- Zamijeniti layout: VIN polja gore, ispod toga red sa dva dugmeta (Zalijepi i Kopiraj)
+- Dugmad: `flex items-center gap-1.5` sa ikonom (w-4 h-4) i tekstom
 
