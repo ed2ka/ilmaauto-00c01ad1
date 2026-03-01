@@ -1,32 +1,84 @@
 
 
-## Napomena tekst - manji font i italic stil
+## Support Chat Code - generisanje i čuvanje historije razgovora
 
-### Izmjena
+### Šta se radi
 
-**Fajl: `src/components/ChatAssistant.tsx`**
+1. Nakon što se welcome poruka ispiše, prikazati dodatnu poruku:
+   - **"Vaša lozinka za podršku je: XXXX-XXX"** (normalan font)
+   - **"Na zahtjev pročitajte ovaj code"** (italic, manji font - kao Napomena)
 
-Razdvojiti WELCOME_MSG na dva dijela pri renderovanju:
-- Gornji dio (pozdrav): "Pozdrav, ja sam ILMA AI..." - ostaje kao sada
-- Donji dio (napomena): "Napomena: ILMA AI nikada..." - prikazuje se manjim fontom i italic stilom
+2. Code format: posljednje 4 cifre timestampa + "-" + 3 random cifre (npr. `1778-112`)
 
-### Tehničke izmjene
+3. Nova tabela u bazi: **support_chat_codes** - čuva historiju pretrage (šta je korisnik pitao, šta je AI odgovorio)
 
-1. **Ažurirati `MessageBubble`**: Dodati logiku koja detektuje da li poruka sadrži "Napomena:" i razdvaja tekst na dva dijela. Gornji dio se renderuje normalno (`text-sm`), donji dio sa `text-[10px] italic` (3 veličine manji od `text-sm` koji je 14px).
-
-2. **Ažurirati `WelcomeTypingBubble`**: Isti tretman - kada typing animacija dođe do "Napomena:" dijela, taj tekst se prikazuje manjim fontom i italic stilom.
-
-3. Nema promjena u samom `WELCOME_MSG` stringu - samo u renderovanju.
-
-### Vizualni rezultat
+### Vizualni prikaz
 
 ```text
 +--------------------------------------------+
-| Pozdrav, ja sam ILMA AI, Izvolite?         |  <- normalan font (text-sm / 14px)
+| Pozdrav, ja sam ILMA AI, Izvolite?         |
 | Kako mogu pomoći? Koji dio tražite?        |
 |                                            |
-| Napomena: ILMA AI nikada od vas neće       |  <- manji font (text-[10px]) + italic
-| tražiti bilo kakve lične podatke...        |
+| Vaša lozinka za podršku je: 6695-482       |
+|                                            |
+| Napomena: ILMA AI nikada od vas neće...    |  <- text-[10px] italic
+| Na zahtjev pročitajte ovaj code            |  <- text-[10px] italic
 +--------------------------------------------+
+```
+
+### Tehničke izmjene
+
+**1. Nova tabela: `support_chat_codes`** (migracija)
+
+```sql
+CREATE TABLE public.support_chat_codes (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  code text NOT NULL UNIQUE,
+  user_message text NOT NULL,
+  assistant_response text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.support_chat_codes ENABLE ROW LEVEL SECURITY;
+
+-- Javno upisivanje (anonimni korisnici mogu koristiti chat)
+CREATE POLICY "Anyone can insert chat logs"
+  ON public.support_chat_codes FOR INSERT
+  WITH CHECK (true);
+
+-- Samo admin može čitati (korisnici ne trebaju pristup)
+CREATE POLICY "Service role can read all"
+  ON public.support_chat_codes FOR SELECT
+  USING (false);
+```
+
+**2. Fajl: `src/components/ChatAssistant.tsx`**
+
+- Funkcija `generateSupportCode()`: uzima `Date.now()`, zadnje 4 cifre + "-" + random trocifreni broj
+- Dodati state `supportCode` koji se generiše jednom pri otvaranju chata (ili pri novom razgovoru)
+- Ažurirati `WELCOME_MSG` da uključi placeholder `{{SUPPORT_CODE}}` ili dodati code kao zasebnu liniju pri renderovanju
+- Kod prikaza welcome poruke: nakon Napomene dodati italic tekst "Na zahtjev pročitajte ovaj code"
+- Nakon svakog AI odgovora: upisati u `support_chat_codes` tabelu (korisnikova poruka, AI odgovor, support code)
+- Čuvati `supportCode` u localStorage zajedno sa porukama, da se ne mijenja pri refreshu
+
+**3. Logika generisanja koda**
+
+```typescript
+function generateSupportCode(): string {
+  const ts = Date.now().toString();
+  const last4 = ts.slice(-4);
+  const rand3 = Math.floor(100 + Math.random() * 900).toString();
+  return `${last4}-${rand3}`;
+}
+```
+
+**4. Čuvanje u bazu** - nakon svakog kompletnog AI odgovora poziv:
+
+```typescript
+supabase.from('support_chat_codes').insert({
+  code: supportCode,
+  user_message: lastUserMessage,
+  assistant_response: aiResponse
+});
 ```
 
