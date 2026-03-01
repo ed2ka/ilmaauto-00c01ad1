@@ -1,44 +1,49 @@
 
 
-##Responzivni VIN Input za mobilne uređaje
+## Responzivni VIN Input -- ispravka layout-a
 
-### Trenutno stanje
-Svih 17 VIN polja su u jednom redu, što na mobilnim ekranima izlazi van okvira.
+### Pravila po uređaju
 
-### Novo ponašanje na mobilnim uređajima
-- **Red 1**: Prva 3 polja (WMI) + razmak + sljedećih 6 polja (VDS) = ukupno 9 polja
-- **Red 2**: Preostalih 8 polja (VIS) + dugmići "Zalijepi" i "Kopiraj"
-- Na desktopu ostaje sve u jednom redu kao i do sada
+**Mobilni telefoni (ispod 640px / `sm`):**
+- Red 1: Prva 3 polja + razmak + narednih 6 polja (ukupno 9)
+- Red 2: Preostalih 8 polja
+- Red 3: Ikona Zalijepi + tekst "Zalijepi" + Ikona Kopiraj + tekst "Kopiraj"
 
-### Tehničke izmjene
+**Tableti i desktop (640px+):**
+- Sve u jednom redu kao originalno: 3 polja + razmak + 6 polja + razmak + 8 polja, a dugmici ispod u zasebnom redu
+
+### Tehnicke izmjene
 
 **`src/components/VinInput.tsx`**:
 
-Umjesto jednog `flex` kontejnera sa svih 17 inputa, podijeliti ih u dva dijela:
-- Grupa 1: indeksi 0-8 (prva 3 + razmak + sljedećih 6)
-- Grupa 2: indeksi 9-16 (preostalih 8) + Zalijepi/Kopiraj dugmići
+Vratiti strukturu blizu originalne za tablet/desktop, a na mobilnom koristiti `flex-wrap` za prelom:
 
-Struktura:
-```
-<div className="flex flex-wrap items-center gap-0.5">
-  <!-- Grupa 1: inputi 0-8 -->
-  <div className="flex items-center gap-0.5">
-    {inputs 0-2}
-    <span className="w-2" />  <!-- razmak -->
-    {inputs 3-8}
+```tsx
+<div className="flex flex-col gap-2">
+  {/* Inputi */}
+  <div className="flex flex-wrap items-center gap-0.5 gap-y-2">
+    {/* Grupa 1: WMI (0-2) + spacer + VDS (3-8) */}
+    {[0, 1, 2].map(renderInput)}
+    <span className="w-2" />
+    {[3, 4, 5, 6, 7, 8].map(renderInput)}
+    <span className="w-2 hidden sm:inline-block" />
+    {/* Na mobilnom ovo ide u novi red automatski jer nema mjesta */}
+    {[9, 10, 11, 12, 13, 14, 15, 16].map(renderInput)}
   </div>
-  <!-- Grupa 2: inputi 9-16 + dugmići -->
-  <div className="flex items-center gap-0.5">
-    <span className="w-2 hidden sm:inline" />  <!-- razmak samo na desktopu -->
-    {inputs 9-16}
-    <!-- Zalijepi/Kopiraj dugmići -->
-    <div className="flex items-center gap-1 ml-2">
-      ...
-    </div>
+  {/* Dugmici -- uvijek u zasebnom redu */}
+  <div className="flex items-center gap-3">
+    <button ...>
+      <ClipboardPaste /> Zalijepi
+    </button>
+    <button ...>
+      <ClipboardCopy /> Kopiraj
+    </button>
   </div>
 </div>
 ```
 
-Na mobilnom, `flex-wrap` će automatski prebaciti drugu grupu u novi red. Na desktopu, sve ostaje u jednom redu.
+Kljucne promjene:
+- Svi inputi idu u jedan `flex-wrap` kontejner -- na mobilnom ce se preostalih 8 automatski prebaciti u novi red jer nema prostora
+- Dugmici (Zalijepi/Kopiraj) su uvijek u zasebnom redu ispod inputa, sa vidljivim tekstom na svim velicinama ekrana (ukloniti `hidden sm:inline`)
+- Na tabletu/desktopu svi inputi staju u jedan red, dugmici ispod -- isto kao originalno
 
-Dugmići "Zalijepi" i "Kopiraj" se premještaju iz zasebnog `div`-a ispod inputa u drugi red pored preostalih 8 polja (samo na mobilnom), a na desktopu ostaju dio istog reda.
