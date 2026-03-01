@@ -1,20 +1,26 @@
 
 
-## Dodavanje GARANCIJA i EASY RETURN sekcije ispod filtera
+## Promjena dugmeta za telefon
 
-### Izmjene u `src/components/SearchFilterSidebar.tsx`
+### Izmjena u `src/components/SearchFilterSidebar.tsx` (linije 164-170)
 
-Ispod zatvarajuceg `</div>` za `space-y-5` (linija 148), ali unutar komponente, dodati novu sekciju sa:
+- Promijeniti broj telefona sa `+387 66 818 315` na `+387 62 667 700`
+- Promijeniti `href` na `tel:+38762667700`
+- Promijeniti boju dugmeta sa plavog gradijenta na zuti gradijent (od amber/yellow tonova)
 
-1. **GARANCIJA** -- boldovan naslov, pa tekst: "Na sve kupljene dijelove ostvarujete garanciju od **1 godine**."
-2. **EASY RETURN** -- boldovan naslov, pa tekst: "Sve kupljene dijelove mozete vratiti u roku od **7 dana**."
-3. **Telefon** -- stilizovan kao plavo dugme sa ikonom telefona i brojem +387 66 818 315 (klikabilan, `tel:` link)
+```tsx
+<a
+  href="tel:+38762667700"
+  className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black rounded-lg text-sm font-bold transition-all"
+>
+  <Phone className="w-4 h-4" />
+  +387 62 667 700
+</a>
+```
 
-Sekcija ce biti odvojena separatorom ili marginom od filtera, sa stilom koji prati screenshot (bold naslovi, normalan tekst, plavo dugme za telefon sa zaobljenim uglovima i gradijentom).
-
-### Tehnicke izmjene:
-
-- Dodati import za `Phone` iz `lucide-react`
-- Dodati JSX blok nakon `space-y-5` diva (unutar return-a, wrapper ce biti fragment ili dodatni div)
-- Telefonsko dugme: `a` tag sa `href="tel:+38766818315"`, plavi gradijent pozadina, bijeli tekst, zaobljeni uglovi
+Promjene:
+- Gradijent: plavi -> zuti (`from-yellow-400 to-amber-500`)
+- Tekst: bijeli -> crni (za bolji kontrast na zutoj pozadini)
+- Font: `font-medium` -> `font-bold`
+- Broj telefona azuriran
 
