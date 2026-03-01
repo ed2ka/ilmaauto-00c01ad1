@@ -1,62 +1,26 @@
 
 
-## Prikaz narudzbi sa detaljnim informacijama i vizuelnim statusom
+## Izmjene na prikazu narudzbi
 
-### Problem
-Trenutno narudzbe prikazuju samo naziv dijela, datum i cijenu. Nedostaju kataloški broj, detalji vozila, vizuelni prikaz statusa i tracking informacije.
+### 1. Format datuma DD-MM-YYYY
 
-### Izmjene
+Na liniji 144 u `src/pages/Dashboard.tsx`, zamijeniti `toLocaleDateString("bs-BA")` sa custom formatom koristeci `date-fns` funkciju `format(date, "dd-MM-yyyy")`.
 
-**1. Migracija baze -- dodavanje kolona za tracking**
+Takodje pretraziti cijelu aplikaciju za bilo koje druge prikaze datuma i primijeniti isti format.
 
-Dodati dvije nove kolone u `orders` tabelu:
-- `tracking_code` (text, nullable) -- kod za pracenje posiljke
-- `tracking_url` (text, nullable) -- link za pracenje posiljke
+### 2. Tracking sekcija -- uvijek vidljiva
 
-```sql
-ALTER TABLE public.orders
-  ADD COLUMN IF NOT EXISTS tracking_code text,
-  ADD COLUMN IF NOT EXISTS tracking_url text;
-```
+Trenutno se tracking sekcija prikazuje samo ako `tracking_code` postoji (linija 122). Izmjena:
 
-**2. Izmjena upita u `src/hooks/useOrders.ts`**
+- Ukloniti uslov `(o as any).tracking_code &&`
+- Uvijek prikazivati tracking sekciju
+- Ako `tracking_code` postoji: prikazati kod i link kao do sada
+- Ako `tracking_code` NE postoji: prikazati poruku "Nije jos uvijek dodijeljen kod za pracenje" u sivo/italic stilu
 
-Umjesto `select("*")`, koristiti join sa `parts` tabelom da se dohvate svi detalji dijela:
+### Tehnicke izmjene
 
-```typescript
-.select("*, parts(dio, broj, marka, tip, model)")
-```
+**`src/pages/Dashboard.tsx`**:
+- Import `format` iz `date-fns`
+- Linija 144: `format(new Date(o.created_at), "dd-MM-yyyy")`
+- Linije 122-137: Ukloniti uslovni prikaz, dodati fallback poruku za tracking
 
-**3. Redizajn prikaza narudzbi u `src/pages/Dashboard.tsx`**
-
-Za svaku narudzbu prikazati:
-
-- **Zaglavlje**: Puni naziv artikla (dio) i kataloški broj (broj)
-- **Detalji vozila**: Marka, tip, model (godiste)
-- **Vizuelni stepper statusa** sa 4 koraka:
-  1. Poslana narudzba
-  2. Primljena
-  3. Obradjena
-  4. Na dostavi
-
-  Stepper koristi horizontalnu liniju sa krugovima/ikonama. Aktivni koraci su obojeni (primary), buduci su sivi. Mapiranje DB statusa na korake:
-  - `nova` = korak 1 (Poslana)
-  - `primljena` = korak 2
-  - `u obradi` = korak 3 (Obradjena)
-  - `poslano` = korak 4 (Na dostavi)
-
-- **Tracking sekcija** (prikazuje se samo ako `tracking_code` postoji):
-  - Tracking kod prikazan kao badge ili monospace tekst
-  - Link "Prati posiljku" koji vodi na `tracking_url`
-
-- **Datum i cijena**: Ispod svega, datum narudzbe i ukupna cijena
-
-### Vizuelni primjer stepera
-
-```text
-  (1)--------(2)--------(3)--------(4)
-Poslana   Primljena  Obradjena  Na dostavi
-```
-
-Aktivni koraci: ispunjeni krugovi sa primary bojom i linijom
-Buduci koraci: sivi krugovi i isprekidana linija
