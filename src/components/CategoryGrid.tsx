@@ -46,9 +46,9 @@ const CategoryGrid = () => {
         onClick={() => handleClick(cat.value)}
         className={cn(
           "flex flex-col items-center justify-center gap-1.5 rounded-[9px] border px-4 py-3 min-w-[90px] transition-all duration-200",
-          "hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm",
+          "hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm hover:rounded-xl",
           isActive
-            ? "border-primary bg-primary/10 text-primary shadow-sm"
+            ? "border-primary bg-primary/10 text-primary shadow-sm rounded-xl"
             : "border-border bg-card text-muted-foreground"
         )}
       >
