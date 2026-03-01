@@ -111,37 +111,35 @@ const VinInput = ({ value, onChange }: VinInputProps) => {
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-y-2 gap-x-0.5">
-      {/* Group 1: WMI (0-2) + spacer + VDS (3-8) */}
-      <div className="flex items-center gap-0.5">
+    <div className="flex flex-col gap-2">
+      {/* Inputi */}
+      <div className="flex flex-wrap items-center gap-0.5 gap-y-2">
         {[0, 1, 2].map(renderInput)}
         <span className="w-2" />
         {[3, 4, 5, 6, 7, 8].map(renderInput)}
-      </div>
-      {/* Group 2: VIS (9-16) + action buttons */}
-      <div className="flex items-center gap-0.5">
         <span className="w-2 hidden sm:inline-block" />
         {[9, 10, 11, 12, 13, 14, 15, 16].map(renderInput)}
-        <div className="flex items-center gap-1 ml-2">
-          <button
-            type="button"
-            onClick={handleClipboardButton}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            title="Zalijepi iz clipboard-a"
-          >
-            <ClipboardPaste className="w-4 h-4" />
-            <span className="hidden sm:inline">Zalijepi</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleCopyButton}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            title="Kopiraj VIN"
-          >
-            <ClipboardCopy className="w-4 h-4" />
-            <span className="hidden sm:inline">Kopiraj</span>
-          </button>
-        </div>
+      </div>
+      {/* Dugmići -- uvijek u zasebnom redu */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={handleClipboardButton}
+          className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          title="Zalijepi iz clipboard-a"
+        >
+          <ClipboardPaste className="w-4 h-4" />
+          <span>Zalijepi</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleCopyButton}
+          className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          title="Kopiraj VIN"
+        >
+          <ClipboardCopy className="w-4 h-4" />
+          <span>Kopiraj</span>
+        </button>
       </div>
     </div>
   );
