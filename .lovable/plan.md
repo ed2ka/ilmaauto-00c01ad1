@@ -1,12 +1,28 @@
 
+## Povezivanje dugmeta "Traži uz asistenta" sa ChatAssistant widgetom
 
-## Izmjena teksta iznad dugmeta "Pretraži"
+Trenutno dugme "Traži uz asistenta" u SearchPanel postavlja lokalni state `isChatOpen` koji se nigdje ne koristi za otvaranje ChatAssistant komponente. ChatAssistant ima svoj nezavisni `isOpen` state.
 
-Jednostavna izmjena teksta u `src/components/SearchPanel.tsx` (linija 215):
+### Rjesenje: Custom DOM Event
 
-**Prije:** `Pronađeno {partsFound24h} dijelova u protekla 24h`
+Najjednostavniji pristup bez prop drillinga ili context providera -- koristiti custom DOM event.
 
-**Poslije:** `Pronađeno {partsFound24h} dijelova u proteklih 20minuta`
+### Tehnicke izmjene
 
-Samo jedna linija se mijenja, logika generisanja broja ostaje ista.
+**1. `src/components/SearchPanel.tsx`** (linija 235):
+- Zamijeniti `onClick={() => setIsChatOpen(true)}` sa `onClick={() => window.dispatchEvent(new CustomEvent('open-chat-assistant'))}`
+- Ukloniti nekoristen `isChatOpen` state (linija 85)
 
+**2. `src/components/ChatAssistant.tsx`**:
+- Dodati `useEffect` koji slusa `open-chat-assistant` event na `window` objektu
+- Kada primi event, pozvati `setIsOpen(true)`
+
+```tsx
+useEffect(() => {
+  const handler = () => setIsOpen(true);
+  window.addEventListener('open-chat-assistant', handler);
+  return () => window.removeEventListener('open-chat-assistant', handler);
+}, []);
+```
+
+Ovim se dugme iz SearchPanel-a direktno povezuje sa ChatAssistant widgetom bez potrebe za zajednickim parent state-om ili context providerom.
