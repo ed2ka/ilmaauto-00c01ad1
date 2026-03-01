@@ -117,7 +117,7 @@ const SearchPanel = () => {
         if (data.tip) params.set("tip", data.tip.toUpperCase());
         navigate(`/pretraga?${params.toString()}`);
       } catch (e: any) {
-        toast({ title: "Dekodiranje neuspješno", description: e?.message || "Nije moguće dekodirati VIN broj.", variant: "destructive" });
+        toast({ title: "Dekodiranje neuspješno", description: "Žao nam je, nismo uspjeli pronaći vaše vozilo automatski putem broja šasije, molimo vas izvršite pretragu na neki drugi način.", variant: "destructive" });
       } finally {
         setIsDecoding(false);
       }
