@@ -113,7 +113,7 @@ const VinInput = ({ value, onChange }: VinInputProps) => {
   return (
     <div className="flex flex-col gap-2">
       {/* Inputi */}
-      <div className="flex flex-wrap items-center gap-y-2">
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-y-2">
         {/* Grupa A: WMI(0-2) + spacer + VDS(3-8) */}
         <div className="inline-flex items-center gap-0.5 flex-shrink-0">
           {[0, 1, 2].map(renderInput)}
