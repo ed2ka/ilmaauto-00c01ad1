@@ -247,11 +247,11 @@ const PartDetail = () => {
                 <div className="flex items-center gap-6 mt-1 mb-3 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <RefreshCcw className="w-5 h-5 text-foreground" />
-                    <span>Besplatna zamjena: 7 dana</span>
+                    <span>Besplatna zamjena<br />7 dana</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Truck className="w-5 h-5 text-foreground" />
-                    <span>Dostava u cijeloj BiH i EU</span>
+                    <span>Dostava:<br />BiH, Balkan i EU</span>
                   </div>
                 </div>
 
