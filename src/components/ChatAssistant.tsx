@@ -161,12 +161,18 @@ const MessageBubble = ({ msg, onOptionClick }: { msg: Msg; onOptionClick?: (text
   const { cleanText, links } = parseSearchLinks(msg.content);
   const { textBefore, options, hasOptions } = parseOptions(cleanText);
 
+  // Split at "Napomena:" to style disclaimer differently
+  const napomenaIndex = textBefore.indexOf("Napomena:");
+  const mainText = napomenaIndex >= 0 ? textBefore.slice(0, napomenaIndex).trimEnd() : textBefore;
+  const noteText = napomenaIndex >= 0 ? textBefore.slice(napomenaIndex) : "";
+
   return (
     <div className="flex justify-start">
       <div className="max-w-[85%] space-y-2">
-        {textBefore && (
-          <div className="rounded-lg px-3 py-2 text-sm leading-relaxed bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
-            {textBefore}
+        {(mainText || noteText) && (
+          <div className="rounded-lg px-3 py-2 bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
+            {mainText && <span className="text-sm leading-relaxed">{mainText}</span>}
+            {noteText && <p className="text-[10px] italic leading-relaxed mt-2 text-muted-foreground">{noteText}</p>}
           </div>
         )}
         {hasOptions && (
@@ -256,11 +262,16 @@ const WelcomeTypingBubble = ({ text, onComplete }: { text: string; onComplete: (
     return () => clearInterval(interval);
   }, [text, onComplete]);
 
+  const napomenaIndex = displayed.indexOf("Napomena:");
+  const mainPart = napomenaIndex >= 0 ? displayed.slice(0, napomenaIndex).trimEnd() : displayed;
+  const notePart = napomenaIndex >= 0 ? displayed.slice(napomenaIndex) : "";
+
   return (
     <div className="flex justify-start">
       <div className="max-w-[85%] space-y-2">
-        <div className="rounded-lg px-3 py-2 text-sm leading-relaxed bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
-          {displayed}
+        <div className="rounded-lg px-3 py-2 bg-muted text-foreground rounded-bl-sm whitespace-pre-wrap">
+          <span className="text-sm leading-relaxed">{mainPart}</span>
+          {notePart && <p className="text-[10px] italic leading-relaxed mt-2 text-muted-foreground">{notePart}</p>}
           <span className="inline-block w-[2px] h-[1em] bg-foreground/70 ml-0.5 animate-pulse align-text-bottom" />
         </div>
       </div>
