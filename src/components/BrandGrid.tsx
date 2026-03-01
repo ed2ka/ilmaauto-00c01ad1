@@ -8,7 +8,7 @@ const BrandGrid = () => {
         <Link
           key={brand.name}
           to={`/pretraga?marka=${encodeURIComponent(brand.name)}`}
-          className="group flex flex-col items-center gap-2 p-4 rounded-[9px] border bg-card hover:border-foreground hover:bg-muted hover:shadow-md hover:scale-105 transition-all duration-200"
+          className="group flex flex-col items-center gap-2 p-4 rounded-[9px] border bg-card hover:border-foreground hover:bg-muted transition-all duration-200"
         >
           <div className="w-12 h-12 flex items-center justify-center">
             {brand.logo ? (
