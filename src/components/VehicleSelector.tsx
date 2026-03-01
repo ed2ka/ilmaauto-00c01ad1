@@ -6,11 +6,9 @@ import { useBrands, useModels } from "@/hooks/useParts";
 
 interface VehicleSelectorProps {
   onSelectionChange?: (brand: string | null, models: string[]) => void;
-  externalBrand?: string | null;
-  externalModel?: string | null;
 }
 
-const VehicleSelector = ({ onSelectionChange, externalBrand, externalModel }: VehicleSelectorProps) => {
+const VehicleSelector = ({ onSelectionChange }: VehicleSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<"brands" | "models">("brands");
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -25,24 +23,7 @@ const VehicleSelector = ({ onSelectionChange, externalBrand, externalModel }: Ve
     onSelectionChange?.(selectedBrand, selectedModels);
   }, [selectedBrand, selectedModels]);
 
-  useEffect(() => {
-    if (externalBrand) {
-      setSelectedBrand(externalBrand);
-      setSelectedModels([]);
-      setStep("models");
-    }
-  }, [externalBrand, externalModel]);
 
-  useEffect(() => {
-    if (externalModel && modelOptions.length > 0) {
-      const match = modelOptions.find(m =>
-        m.toLowerCase().includes(externalModel.toLowerCase())
-      );
-      if (match && !selectedModels.includes(match)) {
-        setSelectedModels([match]);
-      }
-    }
-  }, [modelOptions, externalModel]);
 
   const handleBrandClick = (brand: string) => {
     if (brand !== selectedBrand) {

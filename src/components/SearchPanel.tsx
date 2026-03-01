@@ -103,8 +103,6 @@ function pickRandom3() {
 const SearchPanel = () => {
   const [activeTab, setActiveTab] = useState<SearchTab>("filter");
   const [recentSearches] = useState(pickRandom3);
-  const [externalBrand, setExternalBrand] = useState<string | null>(null);
-  const [externalModel, setExternalModel] = useState<string | null>(null);
   const [isDecoding, setIsDecoding] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -208,17 +206,13 @@ const SearchPanel = () => {
               <span className="text-xs text-muted-foreground">Posljednja pretraga:</span>
               <div className="flex flex-wrap gap-1.5">
                 {recentSearches.map((item, i) => (
-                  <button
-                    key={i}
-                    onClick={() => { setExternalBrand(item.brand); setExternalModel(item.model); }}
-                    className="inline-flex items-center px-3 py-1 rounded-full border border-border bg-muted text-muted-foreground text-xs cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
-                  >
+                  <span key={i} className="inline-flex items-center px-3 py-1 rounded-full border border-border bg-muted text-muted-foreground text-xs">
                     {item.brand} {item.model}
-                  </button>
+                  </span>
                 ))}
               </div>
             </div>
-            <VehicleSelector onSelectionChange={(brand, models) => {setSelectedBrand(brand);setSelectedModels(models);}} externalBrand={externalBrand} externalModel={externalModel} />
+            <VehicleSelector onSelectionChange={(brand, models) => {setSelectedBrand(brand);setSelectedModels(models);}} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FloatingInput label="Naziv dijela" placeholder='Upišite naziv, npr "desni far"' value={partName} onChange={setPartName} />
               <CategorySelect value={category} onChange={setCategory} />
