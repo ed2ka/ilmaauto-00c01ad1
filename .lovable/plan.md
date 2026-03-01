@@ -1,36 +1,32 @@
 
 
-## Dinamične statusne poruke ispod tačkica dok AI pretražuje
+## Napomena tekst - manji font i italic stil
 
 ### Izmjena
 
 **Fajl: `src/components/ChatAssistant.tsx`**
 
-Zadržati postojeće tri skačuće tačkice i dodati ispod njih rotirajući tekst sa kontekstualnim porukama.
-
-### Vizualni prikaz
-
-```text
-+-------------------------------+
-|         ● ● ●                 |
-| Pretražujem marku vozila...   |
-+-------------------------------+
-```
-
-Tačkice ostaju gore, ispod njih se pojavljuje tekst koji se mijenja svakih ~2 sekunde sa fade animacijom.
+Razdvojiti WELCOME_MSG na dva dijela pri renderovanju:
+- Gornji dio (pozdrav): "Pozdrav, ja sam ILMA AI..." - ostaje kao sada
+- Donji dio (napomena): "Napomena: ILMA AI nikada..." - prikazuje se manjim fontom i italic stilom
 
 ### Tehničke izmjene
 
-1. **Zamjena `TypingIndicator` sa `SmartTypingIndicator`**:
-   - Prima `userMessage` prop (posljednja korisnikova poruka)
-   - Gornji dio: tri skačuće tačkice (nepromijenjene)
-   - Donji dio: rotirajući tekst sa `useState` + `setInterval` (2s)
-   - Fade-in animacija pri promjeni teksta (CSS transition ili `animate-fade-in`)
+1. **Ažurirati `MessageBubble`**: Dodati logiku koja detektuje da li poruka sadrži "Napomena:" i razdvaja tekst na dva dijela. Gornji dio se renderuje normalno (`text-sm`), donji dio sa `text-[10px] italic` (3 veličine manji od `text-sm` koji je 14px).
 
-2. **Funkcija `getContextMessages(text)`**:
-   - Provjerava da li korisnikov tekst sadrži poznate brendove (Audi, BMW, Mercedes, itd.) ili ključne riječi (dio, filter, kočnica...)
-   - Ako prepozna kontekst: vraća niz poput ["Pretražujem marku vozila...", "Pretražujem model...", "Pretražujem godište...", "Provjeravam dostupne dijelove...", "Pripremam rezultate..."]
-   - Ako ne prepozna: vraća generalne poruke ["Pretražujem bazu podataka...", "Analiziram upit...", "Pripremam odgovor..."]
+2. **Ažurirati `WelcomeTypingBubble`**: Isti tretman - kada typing animacija dođe do "Napomena:" dijela, taj tekst se prikazuje manjim fontom i italic stilom.
 
-3. **Ažuriranje renderovanja**: Proslijediti posljednju korisnikovu poruku u `SmartTypingIndicator` umjesto starog `TypingIndicator`.
+3. Nema promjena u samom `WELCOME_MSG` stringu - samo u renderovanju.
+
+### Vizualni rezultat
+
+```text
++--------------------------------------------+
+| Pozdrav, ja sam ILMA AI, Izvolite?         |  <- normalan font (text-sm / 14px)
+| Kako mogu pomoći? Koji dio tražite?        |
+|                                            |
+| Napomena: ILMA AI nikada od vas neće       |  <- manji font (text-[10px]) + italic
+| tražiti bilo kakve lične podatke...        |
++--------------------------------------------+
+```
 
