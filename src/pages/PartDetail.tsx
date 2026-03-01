@@ -283,6 +283,9 @@ const PartDetail = () => {
                     </Button>
                   </div>
                 </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Moguća zamjena ako ne odgovara: 7 dana – <a href="#" className="underline text-primary">Pročitaj više</a>
+                </p>
 
                 <Separator />
 
