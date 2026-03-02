@@ -153,7 +153,7 @@ const Dashboard = () => {
                           {/* Date & price breakdown */}
                           <div className="space-y-1 text-sm">
                             <p className="text-muted-foreground">
-                              Narudžba kreirana {format(new Date(o.created_at), "dd-MM-yyyy")}
+                              Narudžba kreirana {format(new Date(o.created_at), "dd.MM.yyyy 'u' HH:mm")}
                             </p>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Cijena dijela:</span>
@@ -199,7 +199,7 @@ const Dashboard = () => {
                             <Badge variant={statusVariant}>{statusLabel}</Badge>
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            {format(new Date(inq.created_at), "dd-MM-yyyy")}
+                            Upit kreiran {format(new Date(inq.created_at), "dd.MM.yyyy 'u' HH:mm")}
                           </p>
                           {inq.status === "riješen" && inq.admin_response && (
                             <div className="bg-muted/50 rounded-md px-3 py-2 mt-1">
