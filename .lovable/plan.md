@@ -1,29 +1,24 @@
 
 
-## Precizni datumi sa vremenom
+## Uskladiti terminologiju: sve na "zahtjev"
 
-Trenutno datumi koriste format `dd-MM-yyyy` (npr. "02-03-2026"). Korisnik zahtijeva da se prikazuje i tačno vrijeme.
+Zamijenit cu sve pojave termina "upit" sa "zahtjev" na svim mjestima u aplikaciji.
 
-### Izmjene u `src/pages/Dashboard.tsx`
+### Izmjene
 
-**Narudžbe (linija 156)**: Promijeniti format datuma sa vremenom
-- Prije: `Narudžba kreirana 02-03-2026`
-- Poslije: `Narudžba kreirana 02.03.2026 u 15:42`
+**`src/components/Header.tsx`** (linija 69, 103):
+- "Upiti" -> "Zahtjevi" (u dropdown meniju i mobilnom meniju)
 
-**Upiti (linija 202)**: Dodati label + vrijeme
-- Prije: `02-03-2026`
-- Poslije: `Upit kreiran 02.03.2026 u 15:42`
+**`src/pages/Dashboard.tsx`**:
+- Linija 184: "Moji upiti za pretragu" -> "Moji zahtjevi"
+- Linija 189: "Nemate nijedan upit za pretragu." -> "Nemate nijedan zahtjev."
+- Linija 193: Status labele: "Poslan upit" -> "Poslan", "Nije odgovoren" -> "Nije odgovoreno", "Odgovoren" -> "Odgovoreno"
+- Linija 202: "Upit kreiran" -> "Zahtjev kreiran"
 
-### Tehnicki detalji
+**`src/components/NoResultsInquiry.tsx`** -- vec koristi "zahtjev", bez promjena potrebnih.
 
-Promjena formata na oba mjesta sa `"dd-MM-yyyy"` na `"dd.MM.yyyy 'u' HH:mm"`:
+### Stavke koje se NE mijenjaju
+- Imena tabela u bazi (`part_inquiries`) -- tehnicka stvar, ne utice na korisnika
+- Imena hook-ova i funkcija u kodu (`useMyInquiries`, `createInquiry`) -- interni kod
+- Query parametar `tab=inquiries` u URL-u -- tehnicki detalj
 
-Linija 156:
-```tsx
-Narudžba kreirana {format(new Date(o.created_at), "dd.MM.yyyy 'u' HH:mm")}
-```
-
-Linija 202:
-```tsx
-Upit kreiran {format(new Date(inq.created_at), "dd.MM.yyyy 'u' HH:mm")}
-```
