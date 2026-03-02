@@ -1,22 +1,37 @@
 
+## Otvaranje ispravnog taba iz URL parametra
 
-## Dodavanje "Upiti" stavke u padajući meni profila
+### Problem
+Dashboard stranica koristi `defaultValue="orders"` na `Tabs` komponenti i potpuno ignorise `?tab=` query parametar iz URL-a. Zato klik na "Upiti", "Lista zelja" itd. iz header dropdown menija uvijek otvara tab "Narudžbe".
 
-Potrebno je dodati link "Upiti" na dva mjesta u `src/components/Header.tsx`:
+### Rješenje
+U `src/pages/Dashboard.tsx`:
 
-### 1. Desktop padajuci meni (linija 64-67)
-Dodati novu `DropdownMenuItem` sa `MessageSquare` ikonom i linkom na `/profil?tab=inquiries`, odmah nakon "Lista zelja".
+1. Importovati `useSearchParams` iz `react-router-dom`
+2. Procitati `tab` parametar iz URL-a
+3. Koristiti ga kao `defaultValue` umjesto hardkodiranog `"orders"`
+4. Mapirati header linkove na ispravne tab vrijednosti (orders, inquiries, wishlist, profile)
 
-### 2. Mobilni meni (linija 99-100)  
-Dodati isti link u mobilnom meniju, nakon "Lista zelja".
+### Tehnicke izmjene
 
-### 3. Import
-Dodati `MessageSquare` u import iz `lucide-react`.
+**Fajl: `src/pages/Dashboard.tsx`**
 
-### Tehnicki detalji
+- Dodati `useSearchParams` u import iz `react-router-dom` (linija 3)
+- Dodati konstantu za citanje tab parametra:
+  ```typescript
+  const [searchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "orders";
+  ```
+- Promijeniti `<Tabs defaultValue="orders">` u `<Tabs defaultValue={activeTab}>` (linija 76)
 
-Izmjene su samo u fajlu `src/components/Header.tsx`:
-- Import: dodati `MessageSquare` u postojeci lucide-react import
-- Desktop meni: nova stavka izmedju "Lista zelja" i "Moj profil"
-- Mobilni meni: nova stavka izmedju "Lista zelja" i "Moj profil"
+**Fajl: `src/components/Header.tsx`**
 
+- Promijeniti link "Moj profil" sa `/profil` na `/profil?tab=profile` u oba menija (desktop i mobilni) kako bi i taj link otvarao ispravan tab
+
+### Mapiranje linkova
+| Meni stavka | URL | Tab vrijednost |
+|---|---|---|
+| Narudžbe | /profil?tab=orders | orders |
+| Upiti | /profil?tab=inquiries | inquiries |
+| Lista želja | /profil?tab=wishlist | wishlist |
+| Moj profil | /profil?tab=profile | profile |
