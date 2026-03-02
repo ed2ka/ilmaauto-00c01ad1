@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Trash2, Package, Heart, UserIcon, ExternalLink, Search } from "lucide-react";
+import { Trash2, Package, Heart, UserIcon, ExternalLink, MessageSquare } from "lucide-react";
 import { useToggleWishlist } from "@/hooks/useWishlist";
 import { useMyInquiries } from "@/hooks/useInquiries";
 import Footer from "@/components/Footer";
@@ -81,7 +81,7 @@ const Dashboard = () => {
               <Package className="w-4 h-4" /> Narudžbe
             </TabsTrigger>
             <TabsTrigger value="inquiries" className="gap-1.5">
-              <Search className="w-4 h-4" /> Upiti
+              <MessageSquare className="w-4 h-4" /> Upiti
             </TabsTrigger>
             <TabsTrigger value="wishlist" className="gap-1.5">
               <Heart className="w-4 h-4" /> Želje
@@ -150,14 +150,24 @@ const Dashboard = () => {
 
                           <Separator />
 
-                          {/* Date & price */}
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">
-                              {format(new Date(o.created_at), "dd-MM-yyyy")}
-                            </span>
-                            <span className="font-semibold text-foreground">
-                              {o.total_price != null ? formatPrice(o.total_price) : "Po dogovoru"}
-                            </span>
+                          {/* Date & price breakdown */}
+                          <div className="space-y-1 text-sm">
+                            <p className="text-muted-foreground">
+                              Narudžba kreirana {format(new Date(o.created_at), "dd-MM-yyyy")}
+                            </p>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Cijena dijela:</span>
+                              <span className="text-foreground">{o.part_price != null ? formatPrice(o.part_price) : "Po dogovoru"}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Trošak dostave:</span>
+                              <span className="text-foreground">{formatPrice(o.shipping_price)}</span>
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between font-semibold">
+                              <span className="text-foreground">Ukupno za naplatu:</span>
+                              <span className="text-foreground">{o.total_price != null ? formatPrice(o.total_price) : "Po dogovoru"}</span>
+                            </div>
                           </div>
                         </div>
                       );
@@ -179,19 +189,27 @@ const Dashboard = () => {
                   <p className="text-muted-foreground text-sm">Nemate nijedan upit za pretragu.</p>
                 ) : (
                   <div className="space-y-3">
-                    {inquiries.map((inq: any) => (
-                      <div key={inq.id} className="border rounded-lg p-4 space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="font-medium text-foreground text-sm">{inq.search_query}</p>
-                          <Badge variant={inq.status === "riješen" ? "default" : inq.status === "u_obradi" ? "secondary" : "outline"}>
-                            {inq.status === "novi" ? "Novi" : inq.status === "u_obradi" ? "U obradi" : "Riješen"}
-                          </Badge>
+                    {inquiries.map((inq: any) => {
+                      const statusLabel = inq.status === "riješen" ? "Odgovoren" : inq.status === "u_obradi" ? "Nije odgovoren" : "Poslan upit";
+                      const statusVariant = inq.status === "riješen" ? "default" : inq.status === "u_obradi" ? "secondary" : "outline";
+                      return (
+                        <div key={inq.id} className="border rounded-lg p-4 space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="font-medium text-foreground text-sm">{inq.search_query}</p>
+                            <Badge variant={statusVariant}>{statusLabel}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(inq.created_at), "dd-MM-yyyy")}
+                          </p>
+                          {inq.status === "riješen" && inq.admin_response && (
+                            <div className="bg-muted/50 rounded-md px-3 py-2 mt-1">
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Odgovor:</p>
+                              <p className="text-sm text-foreground">{inq.admin_response}</p>
+                            </div>
+                          )}
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          {format(new Date(inq.created_at), "dd.MM.yyyy HH:mm")}
-                        </p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>

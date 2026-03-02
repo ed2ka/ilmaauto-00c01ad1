@@ -1,0 +1,1 @@
+ALTER TABLE public.part_inquiries ADD COLUMN admin_response text;

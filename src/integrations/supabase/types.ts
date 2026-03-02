@@ -75,6 +75,7 @@ export type Database = {
       }
       part_inquiries: {
         Row: {
+          admin_response: string | null
           created_at: string
           customer_email: string
           customer_name: string
@@ -85,6 +86,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          admin_response?: string | null
           created_at?: string
           customer_email?: string
           customer_name?: string
@@ -95,6 +97,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          admin_response?: string | null
           created_at?: string
           customer_email?: string
           customer_name?: string
