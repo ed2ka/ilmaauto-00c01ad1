@@ -1,25 +1,37 @@
 
 
-## Problem
+## Uskladjivanje ikona, upita i narudzbi
 
-The `Tabs` component uses `defaultValue` (uncontrolled mode) which means the tab state is only set on mount. Even with `key={activeTab}`, React may optimize and not fully remount when navigating between the same route with different query params. This causes the header dropdown links to not switch tabs correctly.
+### 1. Uskladiti ikonu za "Upiti"
+Header dropdown koristi `MessageSquare` ikonu, a tab u Dashboardu koristi `Search`. Zamijenit cu `Search` sa `MessageSquare` u tabu kako bi bile iste.
 
-## Solution
+### 2. Upiti - statusi i odgovor
+Trenutno tabela `part_inquiries` nema kolonu za odgovor. Potrebno je:
+- Dodati kolonu `admin_response` (text, nullable) u tabelu `part_inquiries` putem migracije
+- Prilagoditi status prikaz:
+  - `novi` -> "Poslan upit"
+  - `u_obradi` -> "Nije odgovoren"  
+  - `riješen` -> "Odgovoren"
+- Kada je status "Odgovoren" i postoji `admin_response`, prikazati tekst odgovora na upitu
 
-Switch from uncontrolled (`defaultValue`) to controlled (`value` + `onValueChange`) Tabs in `src/pages/Dashboard.tsx`. This ensures the active tab always reflects the URL parameter, and clicking a tab on the page also updates the URL.
+### 3. Narudzbe - detaljan prikaz cijena i datum
+Umjesto jednog reda sa datumom i ukupnom cijenom, prikazati:
+- "Narudzba kreirana dd.MM.yyyy" umjesto samog datuma
+- Raspis cijena:
+  - Cijena dijela: X KM
+  - Trosak dostave: X KM  
+  - Ukupno za naplatu: X KM (bold)
 
-### Changes in `src/pages/Dashboard.tsx`
+### Tehnicke izmjene
 
-1. Import `useNavigate` from `react-router-dom`
-2. Replace `defaultValue={activeTab} key={activeTab}` with `value={activeTab}`
-3. Add `onValueChange` handler that updates the URL search params:
-   ```typescript
-   const navigate = useNavigate();
-   
-   const handleTabChange = (value: string) => {
-     navigate(`/profil?tab=${value}`, { replace: true });
-   };
-   ```
-4. Apply to Tabs: `<Tabs value={activeTab} onValueChange={handleTabChange}>`
+**Migracija baze**: Dodati kolonu `admin_response` u `part_inquiries`
+```sql
+ALTER TABLE public.part_inquiries ADD COLUMN admin_response text;
+```
 
-This makes the tabs fully controlled by the URL, so header links and direct tab clicks both work consistently.
+**`src/pages/Dashboard.tsx`**:
+- Zamijeniti `Search` sa `MessageSquare` u importu i u TabsTrigger za "Upiti"
+- Upiti sekcija: promijeniti status labele, dodati prikaz odgovora kada postoji
+- Narudzbe sekcija: zamijeniti datum/cijena red sa detaljnim prikazom (kreirana datum + raspis cijena)
+
+**`src/components/Header.tsx`**: Bez promjena (vec koristi ispravnu ikonu)
