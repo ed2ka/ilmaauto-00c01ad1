@@ -31,19 +31,15 @@ export const useCreateInquiry = () => {
 
   return useMutation({
     mutationFn: async (params: CreateInquiryParams) => {
-      const { data, error } = await supabase
-        .from("part_inquiries")
-        .insert({
-          user_id: user?.id || null,
-          search_query: params.searchQuery,
-          customer_name: params.customerName,
-          customer_phone: params.customerPhone,
-          customer_email: params.customerEmail,
-        })
-        .select("id")
-        .single();
+      const { data, error } = await supabase.rpc("create_inquiry", {
+        p_user_id: user?.id || null,
+        p_search_query: params.searchQuery,
+        p_customer_name: params.customerName,
+        p_customer_phone: params.customerPhone,
+        p_customer_email: params.customerEmail,
+      });
       if (error) throw error;
-      return data;
+      return { id: data as number };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-inquiries"] });
