@@ -81,7 +81,7 @@ const Dashboard = () => {
               <Package className="w-4 h-4" /> Narudžbe
             </TabsTrigger>
             <TabsTrigger value="inquiries" className="gap-1.5">
-              <MessageSquare className="w-4 h-4" /> Upiti
+              <MessageSquare className="w-4 h-4" /> Zahtjevi
             </TabsTrigger>
             <TabsTrigger value="wishlist" className="gap-1.5">
               <Heart className="w-4 h-4" /> Želje
@@ -181,16 +181,16 @@ const Dashboard = () => {
           {/* Inquiries */}
           <TabsContent value="inquiries">
             <Card>
-              <CardHeader><CardTitle>Moji upiti za pretragu</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Moji zahtjevi</CardTitle></CardHeader>
               <CardContent>
                 {inquiriesLoading ? (
                   <p className="text-muted-foreground text-sm">Učitavanje...</p>
                 ) : !inquiries?.length ? (
-                  <p className="text-muted-foreground text-sm">Nemate nijedan upit za pretragu.</p>
+                  <p className="text-muted-foreground text-sm">Nemate nijedan zahtjev.</p>
                 ) : (
                   <div className="space-y-3">
                     {inquiries.map((inq: any) => {
-                      const statusLabel = inq.status === "riješen" ? "Odgovoren" : inq.status === "u_obradi" ? "Nije odgovoren" : "Poslan upit";
+                      const statusLabel = inq.status === "riješen" ? "Odgovoreno" : inq.status === "u_obradi" ? "Nije odgovoreno" : "Poslan";
                       const statusVariant = inq.status === "riješen" ? "default" : inq.status === "u_obradi" ? "secondary" : "outline";
                       return (
                         <div key={inq.id} className="border rounded-lg p-4 space-y-2">
@@ -199,7 +199,7 @@ const Dashboard = () => {
                             <Badge variant={statusVariant}>{statusLabel}</Badge>
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            Upit kreiran {format(new Date(inq.created_at), "dd.MM.yyyy 'u' HH:mm")}
+                            Zahtjev kreiran {format(new Date(inq.created_at), "dd.MM.yyyy 'u' HH:mm")}
                           </p>
                           {inq.status === "riješen" && inq.admin_response && (
                             <div className="bg-muted/50 rounded-md px-3 py-2 mt-1">
