@@ -8,6 +8,7 @@ import CategoryGrid from "@/components/CategoryGrid";
 
 import PartListItem from "@/components/PartListItem";
 import SearchFilterSidebar from "@/components/SearchFilterSidebar";
+import NoResultsInquiry from "@/components/NoResultsInquiry";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ChevronLeft, ChevronRight, LayoutGrid, List, SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -226,12 +227,13 @@ const SearchResults = () => {
                 )}
               </>
             ) : (
-              <div className="text-center py-16">
-                <p className="text-muted-foreground">Nema rezultata za zadane parametre.</p>
-                <Link to="/" className="text-primary hover:underline text-sm mt-2 inline-block">
-                  Nazad na početnu
-                </Link>
-              </div>
+              <NoResultsInquiry
+                searchQuery={params.query || ""}
+                marka={params.marka}
+                tip={params.tip}
+                dio={params.dio}
+                broj={params.broj}
+              />
             )}
           </div>
         </div>

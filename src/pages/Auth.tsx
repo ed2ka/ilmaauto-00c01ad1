@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useClaimGuestInquiry } from "@/hooks/useInquiries";
 import { lovable } from "@/integrations/lovable/index";
 import authBg from "@/assets/auth-bg.jpg";
 import TopBar from "@/components/TopBar";
@@ -21,6 +22,7 @@ import whatsappIcon from "@/assets/whatsapp-icon.svg";
 
 const Auth = () => {
   const { user, loading, signIn, signUp, resetPassword } = useAuth();
+  const claimInquiry = useClaimGuestInquiry();
   const navigate = useNavigate();
 
   const [loginEmail, setLoginEmail] = useState("");
@@ -86,13 +88,19 @@ const Auth = () => {
       return;
     }
     // Auto-login after registration
-    const { error: loginError } = await signIn(regEmail, regPass);
+    const { error: loginError, data: loginData } = await signIn(regEmail, regPass);
     setSubmitting(false);
     if (loginError) {
       toast.error("Registracija uspješna, ali automatska prijava nije uspjela. Prijavite se ručno.");
     } else {
+      // Claim pending guest inquiry
+      const pendingId = sessionStorage.getItem("pending_inquiry_id");
+      if (pendingId && loginData?.user?.id) {
+        claimInquiry.mutate({ inquiryId: Number(pendingId), userId: loginData.user.id });
+        sessionStorage.removeItem("pending_inquiry_id");
+      }
       toast.success("Registracija uspješna! Dobrodošli!");
-      navigate("/");
+      navigate("/profil");
     }
   };
 

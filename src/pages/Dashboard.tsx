@@ -17,8 +17,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Trash2, Package, Heart, UserIcon, ExternalLink } from "lucide-react";
+import { Trash2, Package, Heart, UserIcon, ExternalLink, Search } from "lucide-react";
 import { useToggleWishlist } from "@/hooks/useWishlist";
+import { useMyInquiries } from "@/hooks/useInquiries";
 import Footer from "@/components/Footer";
 
 
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
   const { data: wishlistItems, isLoading: wishLoading } = useWishlist();
   const toggleWishlist = useToggleWishlist();
+  const { data: inquiries, isLoading: inquiriesLoading } = useMyInquiries();
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -72,9 +74,12 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="orders">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="orders" className="gap-1.5">
               <Package className="w-4 h-4" /> Narudžbe
+            </TabsTrigger>
+            <TabsTrigger value="inquiries" className="gap-1.5">
+              <Search className="w-4 h-4" /> Upiti
             </TabsTrigger>
             <TabsTrigger value="wishlist" className="gap-1.5">
               <Heart className="w-4 h-4" /> Želje
@@ -155,6 +160,36 @@ const Dashboard = () => {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Inquiries */}
+          <TabsContent value="inquiries">
+            <Card>
+              <CardHeader><CardTitle>Moji upiti za pretragu</CardTitle></CardHeader>
+              <CardContent>
+                {inquiriesLoading ? (
+                  <p className="text-muted-foreground text-sm">Učitavanje...</p>
+                ) : !inquiries?.length ? (
+                  <p className="text-muted-foreground text-sm">Nemate nijedan upit za pretragu.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {inquiries.map((inq: any) => (
+                      <div key={inq.id} className="border rounded-lg p-4 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="font-medium text-foreground text-sm">{inq.search_query}</p>
+                          <Badge variant={inq.status === "riješen" ? "default" : inq.status === "u_obradi" ? "secondary" : "outline"}>
+                            {inq.status === "novi" ? "Novi" : inq.status === "u_obradi" ? "U obradi" : "Riješen"}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(inq.created_at), "dd.MM.yyyy HH:mm")}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 )}
               </CardContent>
