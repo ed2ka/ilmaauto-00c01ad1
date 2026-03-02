@@ -1,37 +1,29 @@
 
 
-## Uskladjivanje ikona, upita i narudzbi
+## Precizni datumi sa vremenom
 
-### 1. Uskladiti ikonu za "Upiti"
-Header dropdown koristi `MessageSquare` ikonu, a tab u Dashboardu koristi `Search`. Zamijenit cu `Search` sa `MessageSquare` u tabu kako bi bile iste.
+Trenutno datumi koriste format `dd-MM-yyyy` (npr. "02-03-2026"). Korisnik zahtijeva da se prikazuje i tačno vrijeme.
 
-### 2. Upiti - statusi i odgovor
-Trenutno tabela `part_inquiries` nema kolonu za odgovor. Potrebno je:
-- Dodati kolonu `admin_response` (text, nullable) u tabelu `part_inquiries` putem migracije
-- Prilagoditi status prikaz:
-  - `novi` -> "Poslan upit"
-  - `u_obradi` -> "Nije odgovoren"  
-  - `riješen` -> "Odgovoren"
-- Kada je status "Odgovoren" i postoji `admin_response`, prikazati tekst odgovora na upitu
+### Izmjene u `src/pages/Dashboard.tsx`
 
-### 3. Narudzbe - detaljan prikaz cijena i datum
-Umjesto jednog reda sa datumom i ukupnom cijenom, prikazati:
-- "Narudzba kreirana dd.MM.yyyy" umjesto samog datuma
-- Raspis cijena:
-  - Cijena dijela: X KM
-  - Trosak dostave: X KM  
-  - Ukupno za naplatu: X KM (bold)
+**Narudžbe (linija 156)**: Promijeniti format datuma sa vremenom
+- Prije: `Narudžba kreirana 02-03-2026`
+- Poslije: `Narudžba kreirana 02.03.2026 u 15:42`
 
-### Tehnicke izmjene
+**Upiti (linija 202)**: Dodati label + vrijeme
+- Prije: `02-03-2026`
+- Poslije: `Upit kreiran 02.03.2026 u 15:42`
 
-**Migracija baze**: Dodati kolonu `admin_response` u `part_inquiries`
-```sql
-ALTER TABLE public.part_inquiries ADD COLUMN admin_response text;
+### Tehnicki detalji
+
+Promjena formata na oba mjesta sa `"dd-MM-yyyy"` na `"dd.MM.yyyy 'u' HH:mm"`:
+
+Linija 156:
+```tsx
+Narudžba kreirana {format(new Date(o.created_at), "dd.MM.yyyy 'u' HH:mm")}
 ```
 
-**`src/pages/Dashboard.tsx`**:
-- Zamijeniti `Search` sa `MessageSquare` u importu i u TabsTrigger za "Upiti"
-- Upiti sekcija: promijeniti status labele, dodati prikaz odgovora kada postoji
-- Narudzbe sekcija: zamijeniti datum/cijena red sa detaljnim prikazom (kreirana datum + raspis cijena)
-
-**`src/components/Header.tsx`**: Bez promjena (vec koristi ispravnu ikonu)
+Linija 202:
+```tsx
+Upit kreiran {format(new Date(inq.created_at), "dd.MM.yyyy 'u' HH:mm")}
+```
