@@ -1,24 +1,40 @@
 
 
-## Uskladiti terminologiju: sve na "zahtjev"
+## Prikaz "Nismo pronašli traženi dio" samo za pretragu po kataloškom broju
 
-Zamijenit cu sve pojave termina "upit" sa "zahtjev" na svim mjestima u aplikaciji.
+Trenutno se `NoResultsInquiry` komponenta (sa formom za slanje zahtjeva) prikazuje kad god pretraga ne vrati rezultate, bez obzira na tip pretrage. Treba je prikazivati samo kada korisnik pretražuje po kataloškom broju.
 
-### Izmjene
+### Izmjena u `src/pages/SearchResults.tsx` (linije 229-237)
 
-**`src/components/Header.tsx`** (linija 69, 103):
-- "Upiti" -> "Zahtjevi" (u dropdown meniju i mobilnom meniju)
+Dodati uslov: ako je `params.broj` prisutan (pretraga po kataloškom broju), prikazati `NoResultsInquiry`. U suprotnom, prikazati jednostavnu poruku "Nema rezultata".
 
-**`src/pages/Dashboard.tsx`**:
-- Linija 184: "Moji upiti za pretragu" -> "Moji zahtjevi"
-- Linija 189: "Nemate nijedan upit za pretragu." -> "Nemate nijedan zahtjev."
-- Linija 193: Status labele: "Poslan upit" -> "Poslan", "Nije odgovoren" -> "Nije odgovoreno", "Odgovoren" -> "Odgovoreno"
-- Linija 202: "Upit kreiran" -> "Zahtjev kreiran"
+```tsx
+// Umjesto:
+<NoResultsInquiry ... />
 
-**`src/components/NoResultsInquiry.tsx`** -- vec koristi "zahtjev", bez promjena potrebnih.
+// Novo:
+{params.broj ? (
+  <NoResultsInquiry
+    searchQuery={params.query || ""}
+    marka={params.marka}
+    tip={params.tip}
+    dio={params.dio}
+    broj={params.broj}
+  />
+) : (
+  <div className="py-12 text-center space-y-3">
+    <div className="mx-auto w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+      <Search className="w-6 h-6 text-muted-foreground" />
+    </div>
+    <h2 className="text-xl font-bold text-foreground">Nema rezultata</h2>
+    <p className="text-muted-foreground">
+      Pokušajte promijeniti filtere ili pretražiti po kataloškom broju.
+    </p>
+  </div>
+)}
+```
 
-### Stavke koje se NE mijenjaju
-- Imena tabela u bazi (`part_inquiries`) -- tehnicka stvar, ne utice na korisnika
-- Imena hook-ova i funkcija u kodu (`useMyInquiries`, `createInquiry`) -- interni kod
-- Query parametar `tab=inquiries` u URL-u -- tehnicki detalj
+Potrebno je dodati `Search` ikonu u import iz `lucide-react` u `SearchResults.tsx`.
 
+### Jedna datoteka, jedna izmjena
+- `src/pages/SearchResults.tsx` -- uslovni prikaz NoResultsInquiry samo za kataloski broj
