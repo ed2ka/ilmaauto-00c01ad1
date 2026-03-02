@@ -105,14 +105,13 @@ const SearchResults = () => {
         {/* Category grid */}
         <CategoryGrid />
         
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
-            <h1 className="text-lg font-bold text-foreground">
+        {isMobile ? (
+          <>
+            <h1 className="text-lg font-bold text-foreground mb-3">
               Rezultati pretrage
               {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
             </h1>
-
-            {isMobile && (
+            <div className="flex items-center justify-between mb-5">
               <Sheet>
                 <SheetTrigger asChild>
                   <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm hover:bg-accent transition-colors">
@@ -129,40 +128,74 @@ const SearchResults = () => {
                   </div>
                 </SheetContent>
               </Sheet>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="flex border rounded-md overflow-hidden">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
-                title="Grid prikaz"
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
-                title="List prikaz"
-              >
-                <List className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <div className="flex border rounded-md overflow-hidden">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+                    title="Grid prikaz"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+                    title="List prikaz"
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                </div>
+                <Select value={sort} onValueChange={(v) => setSort(v as SortOption)}>
+                  <SelectTrigger className="w-[140px] bg-background">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="oldest">Najstarije</SelectItem>
+                    <SelectItem value="newest">Najnovije</SelectItem>
+                    <SelectItem value="az">Naziv A-Z</SelectItem>
+                    <SelectItem value="za">Naziv Z-A</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-
-            <Select value={sort} onValueChange={(v) => setSort(v as SortOption)}>
-              <SelectTrigger className="w-[140px] bg-background">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-background z-50">
-                <SelectItem value="oldest">Najstarije</SelectItem>
-                <SelectItem value="newest">Najnovije</SelectItem>
-                <SelectItem value="az">Naziv A-Z</SelectItem>
-                <SelectItem value="za">Naziv Z-A</SelectItem>
-              </SelectContent>
-            </Select>
+          </>
+        ) : (
+          <div className="flex items-center justify-between mb-5">
+            <h1 className="text-lg font-bold text-foreground">
+              Rezultati pretrage
+              {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
+            </h1>
+            <div className="flex items-center gap-2">
+              <div className="flex border rounded-md overflow-hidden">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+                  title="Grid prikaz"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+                  title="List prikaz"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+              <Select value={sort} onValueChange={(v) => setSort(v as SortOption)}>
+                <SelectTrigger className="w-[140px] bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  <SelectItem value="oldest">Najstarije</SelectItem>
+                  <SelectItem value="newest">Najnovije</SelectItem>
+                  <SelectItem value="az">Naziv A-Z</SelectItem>
+                  <SelectItem value="za">Naziv Z-A</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex gap-6">
           {/* Desktop sidebar */}
