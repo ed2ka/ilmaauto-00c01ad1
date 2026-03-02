@@ -22,10 +22,9 @@ import { useToggleWishlist } from "@/hooks/useWishlist";
 import { useMyInquiries } from "@/hooks/useInquiries";
 import Footer from "@/components/Footer";
 
+const Dashboard = () => {
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "orders";
-
-const Dashboard = () => {
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
   const { data: wishlistItems, isLoading: wishLoading } = useWishlist();
