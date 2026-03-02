@@ -1,17 +1,10 @@
 
 
-## FAQ sekcija na homepage-u
+## Stilske izmjene FAQ sekcije
 
-Dodati FAQ sekciju ispod sekcije "Marka vozila" u `src/pages/Index.tsx` koristeći postojeću `Accordion` komponentu iz `src/components/ui/accordion.tsx`.
+U `src/components/FAQ.tsx`:
 
-### Implementacija
-
-- Kreirati novu komponentu `src/components/FAQ.tsx` sa Accordion komponentom
-- Prvo pitanje (`defaultValue`) otvoreno, ostala zatvorena
-- Chevron ikonica već postoji u `AccordionTrigger` komponenti
-- Dodati FAQ komponentu u `Index.tsx` između `BrandGrid` sekcije i `Footer`-a
-- Stilizacija: bijela pozadina, container layout, naslov "Često postavljana pitanja"
-
-### Sadržaj
-10 pitanja i odgovora kako ih je korisnik naveo, uključujući formatiranje liste za pitanje #8 (načini plaćanja).
+1. **Širina kontejnera**: Zamijeniti `max-w-3xl` sa punom širinom (ukloniti max-w ograničenje) da FAQ bude iste širine kao BrandGrid sekcija
+2. **Bold pitanja**: Dodati `font-semibold` ili `font-bold` na `AccordionTrigger`
+3. **Tanji font odgovora**: Dodati `font-light` ili `font-normal` na `AccordionContent` tekst
 
