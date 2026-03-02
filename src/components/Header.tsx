@@ -69,7 +69,7 @@ const Header = () => {
                     <Link to="/profil?tab=inquiries"><MessageSquare className="w-4 h-4 mr-2" /> Upiti</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/profil"><User className="w-4 h-4 mr-2" /> Moj profil</Link>
+                    <Link to="/profil?tab=profile"><User className="w-4 h-4 mr-2" /> Moj profil</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
@@ -101,7 +101,7 @@ const Header = () => {
                 <Link to="/profil?tab=orders" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><ShoppingBag className="w-4 h-4" /> Narudžbe</Link>
                 <Link to="/profil?tab=wishlist" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Heart className="w-4 h-4" /> Lista želja</Link>
                 <Link to="/profil?tab=inquiries" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><MessageSquare className="w-4 h-4" /> Upiti</Link>
-                <Link to="/profil" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><User className="w-4 h-4" /> Moj profil</Link>
+                <Link to="/profil?tab=profile" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><User className="w-4 h-4" /> Moj profil</Link>
                 <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2"><LogOut className="w-4 h-4" /> Odjava</button>
               </>
             ) : (
