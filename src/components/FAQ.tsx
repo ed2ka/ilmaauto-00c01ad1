@@ -53,7 +53,7 @@ const faqItems = [
 const FAQ = () => {
   return (
     <section className="bg-background py-12">
-      <div className="container mx-auto px-4 max-w-3xl">
+      <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold text-center mb-2">Često postavljana pitanja</h2>
         <p className="text-center text-muted-foreground mb-8">
           Odgovori na najčešća pitanja naših kupaca
@@ -61,8 +61,8 @@ const FAQ = () => {
         <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
           {faqItems.map((item, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
-              <AccordionContent>
+              <AccordionTrigger className="text-left font-bold">{item.question}</AccordionTrigger>
+              <AccordionContent className="font-light">
                 {item.isPaymentList ? (
                   <div>
                     <p className="mb-2">Plaćanje je moguće:</p>
