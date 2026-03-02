@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { Navigate, Link, useSearchParams } from "react-router-dom";
+import { Navigate, Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyOrders } from "@/hooks/useOrders";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -24,6 +24,7 @@ import Footer from "@/components/Footer";
 
 const Dashboard = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const activeTab = searchParams.get("tab") || "orders";
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
@@ -74,7 +75,7 @@ const Dashboard = () => {
           <Button variant="ghost" size="sm" onClick={signOut}>Odjavi se</Button>
         </div>
 
-        <Tabs defaultValue={activeTab} key={activeTab}>
+        <Tabs value={activeTab} onValueChange={(value) => navigate(`/profil?tab=${value}`, { replace: true })}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="orders" className="gap-1.5">
               <Package className="w-4 h-4" /> Narudžbe
