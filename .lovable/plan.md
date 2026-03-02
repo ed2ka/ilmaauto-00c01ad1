@@ -1,11 +1,11 @@
 
 
-## Uklanjanje sekcije brendova sa stranice pretrage
+## Izmjena naslova sekcije brendova na početnoj stranici
 
-Ukloniti `SearchBrandGrid` komponentu sa stranice `/pretraga` u fajlu `src/pages/SearchResults.tsx`:
+U `src/pages/Index.tsx`, zamijeniti trenutni `<h2>` naslov "Pretražite po marki" sa:
 
-- Ukloniti import `SearchBrandGrid` (linija 8)
-- Ukloniti renderovanje `<SearchBrandGrid activeCategory={...} />` (linija 100)
+- **Naslov**: "Marka vozila"
+- **Podnaslov** (novi `<p>` element ispod naslova): "Pronađite odgovarajuće autodijelove za željenu marku i model vozila"
 
-Brendovi ostaju dostupni kroz sidebar filter (Marka dropdown) i kroz početnu stranicu (`BrandGrid` komponenta). Sama `SearchBrandGrid` komponenta se neće brisati za slučaj buduće upotrebe.
+Izmjena na linijama 48-49 u fajlu `src/pages/Index.tsx`.
 
