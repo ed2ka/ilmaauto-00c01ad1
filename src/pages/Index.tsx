@@ -5,6 +5,7 @@ import SearchPanel from "@/components/SearchPanel";
 import AppRatingBar from "@/components/AppRatingBar";
 import BrandGrid from "@/components/BrandGrid";
 import Footer from "@/components/Footer";
+import FAQ from "@/components/FAQ";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
@@ -47,6 +48,8 @@ const Index = () => {
           <BrandGrid />
         </div>
       </section>
+
+      <FAQ />
 
       <Footer />
     </div>
