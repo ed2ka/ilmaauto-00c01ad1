@@ -1,29 +1,22 @@
 
 
-## Problem: RLS blokira INSERT u `part_inquiries`
+## Dodavanje "Upiti" stavke u padajući meni profila
 
-Iz network logova vidim da insert u `part_inquiries` vraća **401** sa greškom `"new row violates row-level security policy"`. Razlog: RLS polisa "Anyone can create inquiry" je kreirana kao **RESTRICTIVE** umjesto **PERMISSIVE**. Restrictive polise bez barem jedne permissive polise blokiraju sve.
+Potrebno je dodati link "Upiti" na dva mjesta u `src/components/Header.tsx`:
 
-Isti problem vjerovatno postoji i za SELECT polisu.
+### 1. Desktop padajuci meni (linija 64-67)
+Dodati novu `DropdownMenuItem` sa `MessageSquare` ikonom i linkom na `/profil?tab=inquiries`, odmah nakon "Lista zelja".
 
-### Izmjene
+### 2. Mobilni meni (linija 99-100)  
+Dodati isti link u mobilnom meniju, nakon "Lista zelja".
 
-1. **DB migracija** - Dropati obje postojeće RLS polise i ponovo ih kreirati kao PERMISSIVE:
+### 3. Import
+Dodati `MessageSquare` u import iz `lucide-react`.
 
-```sql
-DROP POLICY IF EXISTS "Anyone can create inquiry" ON public.part_inquiries;
-DROP POLICY IF EXISTS "Users can view own inquiries" ON public.part_inquiries;
+### Tehnicki detalji
 
-CREATE POLICY "Anyone can create inquiry"
-  ON public.part_inquiries FOR INSERT
-  TO anon, authenticated
-  WITH CHECK (true);
-
-CREATE POLICY "Users can view own inquiries"
-  ON public.part_inquiries FOR SELECT
-  TO authenticated
-  USING (user_id = auth.uid());
-```
-
-Ovo je jedina potrebna izmjena. Kod (`NoResultsInquiry`, `useInquiries`, `Auth` claim logika) je ispravan - samo RLS polise trebaju biti permissive.
+Izmjene su samo u fajlu `src/components/Header.tsx`:
+- Import: dodati `MessageSquare` u postojeci lucide-react import
+- Desktop meni: nova stavka izmedju "Lista zelja" i "Moj profil"
+- Mobilni meni: nova stavka izmedju "Lista zelja" i "Moj profil"
 
