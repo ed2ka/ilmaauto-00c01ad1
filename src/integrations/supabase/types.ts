@@ -73,6 +73,47 @@ export type Database = {
           },
         ]
       }
+      part_inquiries: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id: number
+          search_query: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: never
+          search_query: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: never
+          search_query?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "part_inquiries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parts: {
         Row: {
           broj: string
@@ -200,6 +241,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_guest_inquiry: {
+        Args: { p_inquiry_id: number; p_user_id: string }
+        Returns: boolean
+      }
       claim_guest_order: {
         Args: { p_order_id: number; p_user_id: string }
         Returns: boolean
