@@ -1,40 +1,61 @@
 
 
-## Prikaz "Nismo pronašli traženi dio" samo za pretragu po kataloškom broju
+## Razdvojiti "Rezultati pretrage" naslov u poseban red na mobilnom prikazu
 
-Trenutno se `NoResultsInquiry` komponenta (sa formom za slanje zahtjeva) prikazuje kad god pretraga ne vrati rezultate, bez obzira na tip pretrage. Treba je prikazivati samo kada korisnik pretražuje po kataloškom broju.
+Trenutno su naslov "Rezultati pretrage", dugme "Filteri", grid/list ikonice i select za sortiranje svi u jednom redu (`flex items-center justify-between`). Na mobilnom ekranu to je pretrpano.
 
-### Izmjena u `src/pages/SearchResults.tsx` (linije 229-237)
+### Izmjena u `src/pages/SearchResults.tsx` (linije 108-165)
 
-Dodati uslov: ako je `params.broj` prisutan (pretraga po kataloškom broju), prikazati `NoResultsInquiry`. U suprotnom, prikazati jednostavnu poruku "Nema rezultata".
+Restrukturirati layout tako da:
+1. **Naslov "Rezultati pretrage" (sa brojem rezultata)** bude u svom redu -- puni width, iznad svega
+2. **Ispod naslova** -- red sa: Filteri dugme (lijevo), grid/list ikonice + sort select (desno)
+
+Ovo se primjenjuje samo na mobilni prikaz (`isMobile`). Na desktopu ostaje kao sada.
+
+### Konkretna izmjena
+
+Zamijeniti blok linija 108-165 sa:
 
 ```tsx
-// Umjesto:
-<NoResultsInquiry ... />
-
-// Novo:
-{params.broj ? (
-  <NoResultsInquiry
-    searchQuery={params.query || ""}
-    marka={params.marka}
-    tip={params.tip}
-    dio={params.dio}
-    broj={params.broj}
-  />
-) : (
-  <div className="py-12 text-center space-y-3">
-    <div className="mx-auto w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-      <Search className="w-6 h-6 text-muted-foreground" />
+{/* Mobile: title on separate row */}
+{isMobile ? (
+  <>
+    <h1 className="text-lg font-bold text-foreground mb-3">
+      Rezultati pretrage
+      {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
+    </h1>
+    <div className="flex items-center justify-between mb-5">
+      <Sheet>
+        <SheetTrigger asChild>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm hover:bg-accent transition-colors">
+            <SlidersHorizontal className="w-4 h-4" />
+            Filteri
+          </button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[280px] overflow-y-auto">
+          <SheetHeader><SheetTitle>Filteri</SheetTitle></SheetHeader>
+          <div className="mt-4"><SearchFilterSidebar /></div>
+        </SheetContent>
+      </Sheet>
+      <div className="flex items-center gap-2">
+        {/* grid/list toggle + sort select -- isti kao sada */}
+      </div>
     </div>
-    <h2 className="text-xl font-bold text-foreground">Nema rezultata</h2>
-    <p className="text-muted-foreground">
-      Pokušajte promijeniti filtere ili pretražiti po kataloškom broju.
-    </p>
+  </>
+) : (
+  /* Desktop: existing single-row layout unchanged */
+  <div className="flex items-center justify-between mb-5">
+    <h1 className="text-lg font-bold text-foreground">
+      Rezultati pretrage
+      {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
+    </h1>
+    <div className="flex items-center gap-2">
+      {/* grid/list toggle + sort select */}
+    </div>
   </div>
 )}
 ```
 
-Potrebno je dodati `Search` ikonu u import iz `lucide-react` u `SearchResults.tsx`.
+### Jedna datoteka
+- `src/pages/SearchResults.tsx` -- restrukturiranje header sekcije za mobilni prikaz
 
-### Jedna datoteka, jedna izmjena
-- `src/pages/SearchResults.tsx` -- uslovni prikaz NoResultsInquiry samo za kataloski broj
