@@ -1,37 +1,25 @@
 
-## Otvaranje ispravnog taba iz URL parametra
 
-### Problem
-Dashboard stranica koristi `defaultValue="orders"` na `Tabs` komponenti i potpuno ignorise `?tab=` query parametar iz URL-a. Zato klik na "Upiti", "Lista zelja" itd. iz header dropdown menija uvijek otvara tab "Narudžbe".
+## Problem
 
-### Rješenje
-U `src/pages/Dashboard.tsx`:
+The `Tabs` component uses `defaultValue` (uncontrolled mode) which means the tab state is only set on mount. Even with `key={activeTab}`, React may optimize and not fully remount when navigating between the same route with different query params. This causes the header dropdown links to not switch tabs correctly.
 
-1. Importovati `useSearchParams` iz `react-router-dom`
-2. Procitati `tab` parametar iz URL-a
-3. Koristiti ga kao `defaultValue` umjesto hardkodiranog `"orders"`
-4. Mapirati header linkove na ispravne tab vrijednosti (orders, inquiries, wishlist, profile)
+## Solution
 
-### Tehnicke izmjene
+Switch from uncontrolled (`defaultValue`) to controlled (`value` + `onValueChange`) Tabs in `src/pages/Dashboard.tsx`. This ensures the active tab always reflects the URL parameter, and clicking a tab on the page also updates the URL.
 
-**Fajl: `src/pages/Dashboard.tsx`**
+### Changes in `src/pages/Dashboard.tsx`
 
-- Dodati `useSearchParams` u import iz `react-router-dom` (linija 3)
-- Dodati konstantu za citanje tab parametra:
-  ```typescript
-  const [searchParams] = useSearchParams();
-  const activeTab = searchParams.get("tab") || "orders";
-  ```
-- Promijeniti `<Tabs defaultValue="orders">` u `<Tabs defaultValue={activeTab}>` (linija 76)
+1. Import `useNavigate` from `react-router-dom`
+2. Replace `defaultValue={activeTab} key={activeTab}` with `value={activeTab}`
+3. Add `onValueChange` handler that updates the URL search params:
+   ```typescript
+   const navigate = useNavigate();
+   
+   const handleTabChange = (value: string) => {
+     navigate(`/profil?tab=${value}`, { replace: true });
+   };
+   ```
+4. Apply to Tabs: `<Tabs value={activeTab} onValueChange={handleTabChange}>`
 
-**Fajl: `src/components/Header.tsx`**
-
-- Promijeniti link "Moj profil" sa `/profil` na `/profil?tab=profile` u oba menija (desktop i mobilni) kako bi i taj link otvarao ispravan tab
-
-### Mapiranje linkova
-| Meni stavka | URL | Tab vrijednost |
-|---|---|---|
-| Narudžbe | /profil?tab=orders | orders |
-| Upiti | /profil?tab=inquiries | inquiries |
-| Lista želja | /profil?tab=wishlist | wishlist |
-| Moj profil | /profil?tab=profile | profile |
+This makes the tabs fully controlled by the URL, so header links and direct tab clicks both work consistently.
