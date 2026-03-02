@@ -249,6 +249,16 @@ export type Database = {
         Args: { p_order_id: number; p_user_id: string }
         Returns: boolean
       }
+      create_inquiry: {
+        Args: {
+          p_customer_email?: string
+          p_customer_name?: string
+          p_customer_phone?: string
+          p_search_query?: string
+          p_user_id?: string
+        }
+        Returns: number
+      }
       search_parts: {
         Args: {
           p_broj?: string
