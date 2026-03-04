@@ -1,61 +1,39 @@
 
+## Plan za brendiranje sajta na ILMA AUTO
 
-## Razdvojiti "Rezultati pretrage" naslov u poseban red na mobilnom prikazu
+Na osnovu tvog odgovora, uradiću samo branding u javnom interfejsu i metadata sloju, bez mijenjanja vidljivog logotipa u headeru/footeru.
 
-Trenutno su naslov "Rezultati pretrage", dugme "Filteri", grid/list ikonice i select za sortiranje svi u jednom redu (`flex items-center justify-between`). Na mobilnom ekranu to je pretrpano.
+### Šta ću promijeniti
 
-### Izmjena u `src/pages/SearchResults.tsx` (linije 108-165)
+#### 1. Browser title
+U `index.html` ću promijeniti:
+- `title` u: `ILMA AUTO - originalni autodijelovi`
 
-Restrukturirati layout tako da:
-1. **Naslov "Rezultati pretrage" (sa brojem rezultata)** bude u svom redu -- puni width, iznad svega
-2. **Ispod naslova** -- red sa: Filteri dugme (lijevo), grid/list ikonice + sort select (desno)
+#### 2. Favicon
+Iskoristiću uploadani znak kao favicon:
+- kopirati `user-uploads://Screenshot_1-2.png` u `public/`
+- povezati ga u `index.html` preko `<link rel="icon" ...>`
 
-Ovo se primjenjuje samo na mobilni prikaz (`isMobile`). Na desktopu ostaje kao sada.
+#### 3. Uklanjanje svih javno vidljivih Lovable tragova iz metadata
+U `index.html` ću zamijeniti sve default vrijednosti koje sada spominju Lovable:
+- `meta description`
+- `meta author`
+- `og:title`
+- `og:description`
+- `og:image` (ukloniti Lovable preview sliku i zamijeniti lokalnim favicon/brand assetom ili neutralnom ILMA varijantom)
+- `twitter:site`
+- `twitter:image`
 
-### Konkretna izmjena
+### Šta neću dirati
+- neću mijenjati postojeći tekstualni logo u headeru
+- neću dirati README i interne developerske fajlove
+- neću dirati auto-generisane integracione fajlove
 
-Zamijeniti blok linija 108-165 sa:
+### Tehnički detalji
+- Glavna izmjena je u `index.html`
+- Favicon asset će biti dodat u `public/` kako bi bio dostupan direktno iz browsera
+- Pošto želiš da se “Lovable” nigdje ne spominje javno, ukloniću i preostale default social/share meta reference iz head sekcije
 
-```tsx
-{/* Mobile: title on separate row */}
-{isMobile ? (
-  <>
-    <h1 className="text-lg font-bold text-foreground mb-3">
-      Rezultati pretrage
-      {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
-    </h1>
-    <div className="flex items-center justify-between mb-5">
-      <Sheet>
-        <SheetTrigger asChild>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm hover:bg-accent transition-colors">
-            <SlidersHorizontal className="w-4 h-4" />
-            Filteri
-          </button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-[280px] overflow-y-auto">
-          <SheetHeader><SheetTitle>Filteri</SheetTitle></SheetHeader>
-          <div className="mt-4"><SearchFilterSidebar /></div>
-        </SheetContent>
-      </Sheet>
-      <div className="flex items-center gap-2">
-        {/* grid/list toggle + sort select -- isti kao sada */}
-      </div>
-    </div>
-  </>
-) : (
-  /* Desktop: existing single-row layout unchanged */
-  <div className="flex items-center justify-between mb-5">
-    <h1 className="text-lg font-bold text-foreground">
-      Rezultati pretrage
-      {data && <span className="text-muted-foreground font-normal ml-2 text-sm">({data.totalCount})</span>}
-    </h1>
-    <div className="flex items-center gap-2">
-      {/* grid/list toggle + sort select */}
-    </div>
-  </div>
-)}
-```
-
-### Jedna datoteka
-- `src/pages/SearchResults.tsx` -- restrukturiranje header sekcije za mobilni prikaz
-
+### Datoteke obuhvaćene planom
+- `index.html`
+- `public/...` (novi favicon fajl iz dostavljenog uploada)
