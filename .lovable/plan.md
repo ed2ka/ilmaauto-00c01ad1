@@ -1,91 +1,94 @@
 
-# Plan: Statični HTML/CSS/JS export sa lokalnim Poppins fontom i izrezanim Supabase pozivima
+# Plan: Pre-render React aplikacije u prave HTML fajlove
 
-## Cilj
-Generisati 100% samostalan ZIP koji radi na Apache/cPanel hostingu bez ikakvog poziva ka Lovable, Google ili Supabase serverima. UI ostaje vizuelno identičan, backend funkcije izrezane sa jasnim TODO komentarima.
+## Problem
+Trenutni `index.html` ima prazan `<body><div id="root"></div></body>`. Cijeli sadržaj (header, hero, kartice, footer, tekstovi) se generiše tek kad browser pokrene JS bundle. "View source" pokazuje prazan div.
+
+## Rješenje: Pre-rendering (Static Site Generation)
+Pokrenuću build-ovani sajt u headless Chromium-u, sačekam da React iscrta DOM, pa snimim kompletan HTML svake rute u poseban `.html` fajl. Rezultat: pravi HTML sa sadržajem u `<body>` koji se vidi i bez JavaScript-a.
 
 ## Koraci
 
-### 1. Lokalizacija Poppins fonta
-- Skinem Poppins weight 300/400/500/600/700/800/900 (latin + latin-ext) `.woff2` fajlove
-- Smjestim ih u `public/fonts/poppins/`
-- U `src/index.css` zamijenim `@import url('https://fonts.googleapis.com/...')` sa lokalnim `@font-face` deklaracijama koje pokazuju na `/fonts/poppins/*.woff2`
+### 1. Boot built sajta lokalno
+- Pokrenem `python3 -m http.server` u `dist/` folderu
+- Dodam fallback rewrite preko mini Express servera tako da `/pretraga`, `/dio/1`, itd. svi vraćaju `index.html` (kao Apache `.htaccess`)
 
-### 2. Izrezivanje backend poziva
-Sve pozive ka Supabase (`supabase.from(...)`, `supabase.auth.*`, `supabase.functions.invoke(...)`) zamijenim sa:
-```ts
-// TODO: SUPABASE — vratiti kad backend bude spreman
-// const { data, error } = await supabase.from('parts').select(...)
-const data: any[] = [];
-const error = null;
+### 2. Headless render svake rute
+Koristim Playwright (već je u sandbox-u dostupan kao `nix run`) ili Puppeteer. Za svaku rutu:
+- `await page.goto('http://localhost:8080/<route>')`
+- `await page.waitForLoadState('networkidle')` + dodatnih 500ms da animacije završe
+- `const html = await page.content()` — uzima cijeli `<html>` sa renderovanim `<body>`
+- Snimim u `dist-static/<route>/index.html`
+
+Rute koje pre-renderujem:
+- `/` → `index.html`
+- `/pretraga` → `pretraga/index.html`
+- `/support` → `support/index.html`
+- `/auth` → `auth/index.html`
+- `/dashboard` → `dashboard/index.html`
+- `/reset-password` → `reset-password/index.html`
+- `/404` → `404.html`
+
+(Dynamic rute poput `/dio/:id` ne mogu pre-renderovati jer ovise o ID-u iz baze koja je izrezana — ostaviće se SPA fallback preko .htaccess.)
+
+### 3. Post-processing svakog HTML-a
+- `<html lang="en">` → `<html lang="bs">`
+- Uklanjam Helmet/React komentare i `data-reactroot` atribute
+- Inline-ujem rendered DOM tako da `<body>` sadrži stvarne `<header>`, `<section>`, `<footer>` elemente sa tekstom
+- **Zadržavam `<script src="/assets/index-*.js">` tag** — tako da kad korisnik klikne dugme ili otvori meni, React hidrira i preuzima kontrolu (interaktivnost ostaje)
+- Stripujem inline Vite HMR scripts ako se pojave
+
+### 4. Apache config za pretty URL-ove
+Update `.htaccess` da `/pretraga` prvo proba `pretraga/index.html`, pa tek onda SPA fallback:
 ```
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}/index.html -f
+RewriteRule ^(.*)$ $1/index.html [L]
 
-Pogođeni fajlovi:
-- `src/hooks/useAuth.tsx` — login/register/logout stub-ovi
-- `src/hooks/useParts.ts` — prazan niz dijelova
-- `src/hooks/useOrders.ts` — prazne narudžbe
-- `src/hooks/useInquiries.ts` — no-op submit
-- `src/hooks/useWishlist.ts` — localStorage fallback ili prazno
-- `src/components/ChatAssistant.tsx` — AI poziv → poruka "AI chat trenutno nedostupan"
-- `src/components/VinInput.tsx` — decode poziv → no-op
-- `src/pages/Auth.tsx`, `Dashboard.tsx`, `SearchResults.tsx`, `PartDetail.tsx` — prazna stanja umjesto rezultata
-
-UI ostaje vidljiv svuda (forme, dugmad, layout) — samo akcije ne rade i ne bacaju greške u konzoli.
-
-### 3. Production build
-- `npm run build` → generiše `dist/`
-- Verifikujem da u `dist/assets/*.js` nema string-ova `supabase.co`, `lovable.app`, `lovable.dev`, `fonts.googleapis.com`
-
-### 4. Apache SPA routing
-Dodam `dist/.htaccess`:
-```apache
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
+# fallback za dinamičke rute (/dio/:id)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 ```
-Da deep linkovi (`/pretraga`, `/dio/123`, `/support`) rade na refresh.
 
-### 5. Pakovanje
-- ZIP cijeli `dist/` folder kao `/mnt/documents/ilma-auto-static.zip`
-- Dodam `README.txt` unutra sa uputstvom za upload u cPanel (`public_html/` → Extract)
-- Prikažem ga kao `<presentation-artifact>` za download
+### 5. Verifikacija
+Za svaki generisani HTML provjerim:
+- `<body>` više nije prazan (sadrži stvarne elemente)
+- Pojavljuju se ključni stringovi: "ILMA AUTO", "Pretraga", "Podrška"
+- `lang="bs"` postavljen
+- Nema poziva ka `lovable.app` / `supabase.co` / `googleapis`
+
+### 6. Re-pack ZIP
+- Brišem stari `ilma-auto-static.zip`
+- Pakujem novi kao `ilma-auto-static-v2.zip` u `/mnt/documents/`
+- README ažuriram da opiše šta je gdje
 
 ## Šta dobijaš
-
 ```
-ilma-auto-static.zip
-└── dist/
-    ├── index.html
-    ├── .htaccess              ← SPA routing za Apache
-    ├── favicon-ilma.png
-    ├── robots.txt
-    ├── README.txt             ← uputstvo za cPanel upload
-    ├── fonts/poppins/         ← 7 weight-ova .woff2 lokalno
-    └── assets/
-        ├── index-[hash].css   ← Tailwind + custom, minified
-        ├── index-[hash].js    ← React bundle, minified, BEZ Supabase poziva
-        └── [slike, ikone]
+dist/
+├── index.html              ← HOME, pun sadržaj u <body>
+├── pretraga/index.html     ← pun sadržaj
+├── support/index.html      ← pun sadržaj
+├── auth/index.html
+├── dashboard/index.html
+├── 404.html
+├── .htaccess               ← pretty URL routing
+├── assets/                 ← JS + CSS bundle (za interaktivnost)
+├── fonts/poppins/
+└── README.txt
 ```
 
-## Garancija nezavisnosti
-- ✅ 0 poziva ka `lovable.app` / `lovable.dev`
-- ✅ 0 poziva ka `fonts.googleapis.com` / `fonts.gstatic.com`
-- ✅ 0 poziva ka `supabase.co`
-- ✅ Brisanje Lovable projekta ne utiče na hostovani sajt
-- ✅ Radi na običnom Apache-u bez Node.js/PHP-a (samo static file serving + mod_rewrite)
+Sad kad otvoriš bilo koji `.html` fajl u editoru ili "View source", **vidiš stvarni HTML kod sa tekstom, naslovima, klasama, strukturom** — ne prazan div.
 
-## Šta NE radi (po dogovoru, kod je sačuvan u komentarima)
-- Pretraga dijelova iz baze
-- Login / registracija
-- Slanje narudžbi i upita
-- ILMA AI chat
-- VIN decode
-- Wishlist persistencija između sesija
+## Tehnički detalji
+- Pre-rendering alat: Playwright preko `nix run nixpkgs#playwright-driver -- ...` ili `npm install -D playwright` u radnoj kopiji (van glavnog projekta)
+- JS bundle se **zadržava** za hidraciju — sajt ostaje interaktivan (mobile menu, accordions, tabs rade)
+- Backend stubovi i lokalni fontovi iz prethodnog ZIP-a ostaju identični
+- Vrijeme generisanja: ~2-3 minuta (Playwright instalacija + 7 ruta render)
 
-Svuda gdje je kod izrezan, ostavljen je `// TODO: SUPABASE — ...` komentar sa originalnim kodom u komentaru ispod, tako da kad podigneš svoj Supabase samo odkomentarišeš.
-
-## Napomena
-Build i ZIP traju 1-2 minuta. Nakon odobrenja kreneem odmah i daću ti download link na kraju.
+## Ograničenje koje treba znati
+Dinamičke rute (`/dio/123`, `/dio/456`) **ne mogu** biti pre-renderovane jer:
+- nema baze sa stvarnim ID-evima dijelova
+- broj kombinacija beskonačan
+Te rute padaju na SPA fallback (kao i sad) — body opet prazan dok JS ne učita. Ako kasnije podigneš svoj Supabase, mogu se pre-renderovati i one (treba lista ID-eva).
