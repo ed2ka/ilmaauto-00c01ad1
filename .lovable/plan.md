@@ -1,222 +1,110 @@
-# Plan konverzije ILMA AUTO → vanilla HTML/CSS/JS
+## Problem
 
-Cilj: identičan dizajn i ponašanje, bez React/Vite/TS/Supabase, spreman za PHP/MySQL backend. Isporuka kao ZIP u `/mnt/documents/ilma-vanilla.zip`. Postojeći React projekat ostaje netaknut.
+Trenutni `/tmp/ilma-vanilla/` paket koristi pogrešan pristup: svaka HTML stranica je prazan skelet sa par `<div id="mount">` elemenata, a sav sadržaj (header, footer, hero tekst, search panel, tabovi, brand grid, FAQ, rating bar, dashboard tabovi, forme) crta JavaScript u runtime.
 
-## 1. Struktura izlaznog projekta
+Posljedice:
+- Otvaranje `index.html` direktno (file:// ili statički preview) prikazuje praznu stranicu — to vidiš na screenshot-u.
+- PHP programer otvori `index.html` i ne vidi gotovo ništa — mora čitati i prevoditi JS module da bi razumio strukturu.
+- SEO ne postoji (Google crawler vidi prazan body).
+- Nema graceful degradation ako JS pukne.
 
-```text
-ilma-vanilla/
-├── index.html              (Po\u010detna - hero + SearchPanel + brendovi + FAQ)
-├── pretraga.html           (SearchResults - sidebar filteri, grid/list)
-├── detalj-dijela.html      (PartDetail - galerija, OrderSheet, Viber/WhatsApp)
-├── prijava.html            (Auth - login + registracija tabovi)
-├── reset-password.html
-├── profil.html             (Dashboard - tabovi: orders/wishlist/inquiries/profile)
-├── podrska.html            (Support)
-├── 404.html
-│
-├── assets/
-│   ├── css/
-│   │   ├── styles.css      (Tailwind kompajliran, sve klase koje se koriste)
-│   │   └── fonts.css       (Poppins @font-face ili Google Fonts link)
-│   ├── js/
-│   │   ├── api.js          (servisni sloj: getParts, getPartById, getOrders, ...)
-│   │   ├── mock-data.js    (~25 dijelova, 3 narud\u017ebe, 2 upita, wishlist)
-│   │   ├── auth.js         (login/register/logout - localStorage mock session)
-│   │   ├── format.js       (formatPrice BAM format, formatDate DD.MM.YYYY)
-│   │   ├── ui.js           (modali, dropdown, tabovi, mobile menu, accordion)
-│   │   ├── header.js       (renderuje header + announcement bar na svaku stranicu)
-│   │   ├── footer.js       (renderuje footer)
-│   │   ├── search-panel.js (tabovi pretrage, VIN input maska, vehicle selector)
-│   │   ├── search-results.js
-│   │   ├── part-detail.js  (galerija, order sheet)
-│   │   ├── dashboard.js
-│   │   ├── chat.js         (ChatAssistant widget, mock streaming odgovori)
-│   │   └── pages/...       (po potrebi specifi\u010dna logika)
-│   ├── images/
-│   │   ├── hero-bg.jpg
-│   │   ├── brand-logos/*.webp
-│   │   └── icons/*.svg
-│   └── vendor/
-│       └── (opcionalno: alpine.js ili sli\u010dno - NE\u0106E se koristiti, sve vanilla)
-│
-├── README.md               (kratak vodi\u010d za PHP dev-a)
-└── API.md                  (puni ugovor svih endpointa)
+## Rješenje
+
+Preokrenuti pristup: **sav statički sadržaj se piše direktno u HTML**, a JavaScript koristi se samo za:
+- interakciju (tab switching, modali, dropdown, accordion toggle gdje treba progressive enhancement)
+- API pozive (`getParts`, `createOrder`, `chat`, itd.)
+- dinamičke liste koje stvarno dolaze iz baze (rezultati pretrage, narudžbe, wishlist)
+
+Sve ostalo (header markup, footer markup, hero, statička FAQ pitanja, statička lista brendova, dashboard nav, auth forme, podrška kartice) ide direktno u HTML kao gotov kod.
+
+## Šta se mijenja u svakom fajlu
+
+### `index.html` (početna)
+Inline HTML za:
+- Announcement bar (crveni baner sa porukom o dostavi)
+- TopBar (social ikone, "ILMA AUTODIJELOVI..." tekst)
+- Header (logo, nav linkovi: Početna, Pretraga, Podrška, Profil/Prijava)
+- Hero sekcija (slika + overlay)
+- Search panel (sva 3 taba sa formama: Po vozilu, Po broju, Po VIN-u)
+- Rating bar
+- Brand grid (svih 18 brendova kao `<a>` linkovi sa logoima)
+- FAQ akordeon (10 stavki sa pitanjima i odgovorima, koristi `<details><summary>`)
+- Footer (4-level: CTA + benefits + glavni footer + copyright)
+
+JS samo: dismiss announcement bar, mobile menu toggle, tab switching unutar search panela, popunjavanje modela kad se odabere marka (čita iz `mock-data.js`), AI chat widget.
+
+### `pretraga.html`
+Inline HTML: header, sidebar filteri (sa svih 18 brendova kao `<option>`), grid/list toggle dugmad, footer.
+
+JS samo: čita `?marka=...` iz URL-a, zove `getParts()`, renderuje rezultate u `#results-list`, handle "Pošalji upit" modal.
+
+### `detalj-dijela.html`
+Inline HTML: header, breadcrumbs skeleton, galerija placeholder (3 slike), info blok layout, Viber/WhatsApp dugmad, footer, `<dialog>` za narudžbu sa kompletnom formom (full_name, phone, email, address, breakdown cijene).
+
+JS samo: čita `?id=...`, zove `getPartById()`, popunjava postojeće `<span>`/`<img>` elemente (npr. `document.getElementById('part-title').textContent = p.dio`), otvara dialog.
+
+### `prijava.html`
+Inline HTML: kompletna login forma i register forma sa svim poljima (skrivena dok se ne odabere tab), tab dugmad, Google dugme, link za reset.
+
+JS samo: tab toggle (show/hide), submit handler koji zove `login()`/`register()`.
+
+### `reset-password.html`
+Inline HTML: cijela forma već postoji — samo dodati header/footer markup.
+
+### `profil.html`
+Inline HTML: header, dashboard nav sa 4 taba + logout dugme, kontejneri za svaku tab sekciju sa skeleton/loading porukama:
+- "Moje narudžbe" — prazna tabela sa kolonama
+- "Lista želja" — grid kontejner
+- "Moji upiti" — lista kontejner
+- "Podaci profila" — forma sa svim poljima (full_name, phone, address)
+
+JS samo: tab show/hide, popunjavanje dinamičkih lista (`getMyOrders`, `getWishlist`, `getMyInquiries`), profile update.
+
+### `podrska.html`
+Inline HTML: hero sekcija, 3 kontakt kartice, mapa placeholder, kontakt forma, header, footer. Već je skoro kompletno — proširiti sa formom i radnim vremenom.
+
+### `404.html`
+Već je OK — samo dodati pravi header/footer markup umjesto `<div id="shared-header">`.
+
+## Šta se izbacuje
+
+- `assets/js/header.js` — više ne ubacuje markup, postaje mali fajl koji samo radi mobile menu toggle, announcement dismiss, active link highlight.
+- `assets/js/pages/home.js` — postaje 30-40 linija (samo tab switch + form submit redirekt + popunjavanje modela select-a).
+- `<div id="shared-header">`, `<div id="rating-bar-mount">`, `<div id="brand-grid-mount">`, `<div id="faq-mount">`, `<div id="shared-footer">` — sve uklonjeno iz HTML-a, zamijenjeno pravim markupom.
+
+## Šta se zadržava iz trenutnog ZIP-a
+
+- `assets/css/styles.css` (Tailwind build) — radi kako treba.
+- `assets/js/api.js` — servisni sloj (mock + fetch wrapper) ostaje 1:1.
+- `assets/js/mock-data.js` — ostaje 1:1.
+- `assets/js/auth.js`, `format.js`, `chat.js`, `ui.js` — ostaju 1:1.
+- `assets/images/` — sve slike i ikone ostaju.
+- `README.md`, `API.md` — ostaju, dopunjava se napomena da je sav statički markup u HTML-u i da PHP može direktno ubaciti `<?php include 'header.html'; ?>` ako želi.
+
+## Bonus za PHP
+
+Header i footer markup će postojati i kao samostalni fajlovi:
+- `partials/header.html`
+- `partials/footer.html`
+
+Tako PHP programer može jednostavno:
+```php
+<?php include __DIR__ . '/partials/header.html'; ?>
 ```
 
-## 2. CSS strategija - Tailwind → statički CSS
+I izbjegne dupliranje. (Trenutno HTML stranice će imati inline markup jer otvaranje `.html` direktno mora raditi bez PHP-a.)
 
-- Pokrenem jednokratan Tailwind CLI build nad postojećim React izvorom da generišem **jedan `styles.css**` sa svim klasama koje aplikacija koristi.
-- Custom HSL design tokeni iz `src/index.css` (background, primary, header, tab-inactive, rating itd.) prenose se kao `:root` CSS varijable.
-- Custom fontovi (Poppins) i animacije (fade-in, fade-in-up) prenose se kao @keyframes u istom fajlu.
-- Rezultat: PHP dev linkuje `<link rel="stylesheet" href="/assets/css/styles.css">` i ne treba Node.js.
+## Procjena obima
 
-## 3. Servisni sloj (`api.js`) — ugovor sa PHP backendom
+8 HTML stranica, svaka 200-400 linija inline markup-a + linkovi na CSS/JS. Cijela isporuka:
+- HTML: ~2500 linija ukupno
+- JS smanjen za ~40% (jer markup-render funkcije nestaju)
+- Identičan vizuelni rezultat
 
-Sve funkcije prvo gađaju mock, ali su pripremljene za `fetch()` zamjenu. Primjer:
+## Izlaz
 
-```js
-// api.js
-const API_BASE = ""; // PHP dev postavi npr. "/api"
-const USE_MOCK = true; // PHP dev postavi false
-
-export async function getParts({ marka, tip, dio, broj, page = 1 } = {}) {
-  if (USE_MOCK) return mockSearchParts({ marka, tip, dio, broj, page });
-  const url = new URL(`${API_BASE}/parts`, location.origin);
-  Object.entries({ marka, tip, dio, broj, page }).forEach(([k,v]) => v && url.searchParams.set(k,v));
-  const r = await fetch(url); if (!r.ok) throw new Error(r.statusText);
-  return r.json();
-}
-```
-
-Funkcije koje API sloj izlaže (1:1 sa postojećim Supabase pozivima):
-
-
-| Funkcija                                   | PHP endpoint         | Method              |
-| ------------------------------------------ | -------------------- | ------------------- |
-| `getParts(filters)`                        | `/api/parts`         | GET                 |
-| `getPartById(id)`                          | `/api/parts/{id}`    | GET                 |
-| `getPartsCount()`                          | `/api/parts/count`   | GET                 |
-| `createOrder(payload)`                     | `/api/orders`        | POST                |
-| `getMyOrders()`                            | `/api/orders`        | GET                 |
-| `createInquiry(payload)`                   | `/api/inquiries`     | POST                |
-| `getMyInquiries()`                         | `/api/inquiries`     | GET                 |
-| `getWishlist()` / `toggleWishlist(partId)` | `/api/wishlist`      | GET/POST/DELETE     |
-| `login(email, password)`                   | `/api/auth/login`    | POST                |
-| `register(payload)`                        | `/api/auth/register` | POST                |
-| `logout()`                                 | `/api/auth/logout`   | POST                |
-| `getProfile()` / `updateProfile(payload)`  | `/api/profile`       | GET/PUT             |
-| `resetPassword(email)`                     | `/api/auth/reset`    | POST                |
-| `decodeVin(vin)`                           | `/api/decode-vin`    | POST                |
-| `chat(messages)`                           | `/api/chat`          | POST (SSE ili JSON) |
-
-
-Svaki endpoint detaljno dokumentovan u `API.md` (request body, response shape, primjeri).
-
-## 4. Mock podaci (`mock-data.js`)
-
-- 25 dijelova sa svim poljima: `id, dio, broj, marka, tip, model, slika1..3, is_available, cijena, opis`.
-- 3 narudžbe sa različitim statusima (4-step stepper).
-- 2 upita (part_inquiries) sa različitim statusima.
-- 1 testni user u localStorage (email/password: `test@ilma.ba` / `test123`).
-- Wishlist od 4 dijela.
-- Brendovi sa logo path-ovima (.webp) i fallback tekstom.
-
-## 5. Vanilla zamjene za React komponente
-
-
-| React komponenta                        | Vanilla pristup                                                |
-| --------------------------------------- | -------------------------------------------------------------- |
-| `Header` + `AnnouncementBar` + `TopBar` | `header.js` injectuje HTML u `<header data-shared>`            |
-| `Footer`                                | `footer.js` injectuje HTML u `<footer data-shared>`            |
-| `SearchPanel` tabovi                    | `data-tab` atributi + click handler u `search-panel.js`        |
-| `VehicleSelector` (2 koraka)            | Modalni popover sa scrollable listom marki/modela              |
-| `VinInput` (3-6-8 grupisanje)           | 3 input polja sa auto-advance i paste handler                  |
-| `Dropdown menu` (header profil)         | `<details>` ili custom click+outside-click handler             |
-| `Dialog`/`Sheet` (OrderSheet, modali)   | `<dialog>` element + `showModal()`                             |
-| `Accordion` (FAQ)                       | `<details><summary>`                                           |
-| `Toast` (sonner)                        | Mini vanilla toast u `ui.js` (queue + auto-dismiss)            |
-| `react-router`                          | Obične HTML stranice, query params preko `URLSearchParams`     |
-| `useAuth` context                       | `auth.js` sa localStorage + custom `authChange` event          |
-| `tanstack-query`                        | Direktni `await api.getX()` pozivi, manual loading state       |
-| `framer-motion`                         | CSS animacije/transitions (fade-in već definisane)             |
-| `lucide-react` ikone                    | Inline SVG snippets izvučeni iz Lucide (ili `<i data-lucide>`) |
-| `ChatAssistant`                         | Floating widget sa mock streaming (setInterval chunkovi)       |
-
-
-## 6. AI Chat — mock implementacija + API ugovor
-
-Frontend ostaje vizuelno identičan (floating button, panel, history u localStorage `ilma-ai-messages`, animirani border, prompt opcije). 
-
-Umjesto Supabase edge funkcije, `api.chat(messages)` simulira streaming:
-
-- Ako poruka sadrži "audi", "bmw", "far", itd. → vraća mock odgovor sa `[SEARCH_LINK:MARKA:TIP:DIO:timestamp]` markerom.
-- Frontend parser ostaje isti i renderuje dugme za pretragu.
-- Loading dots i postupno ispisivanje teksta zadržani.
-
-PHP ugovor (u `API.md`):
-
-```
-POST /api/chat
-Body: { messages: [{role:"user"|"assistant", content:"..."}] }
-Response (SSE preporu\u010deno): event-stream sa "data: {delta:'...'}\n\n" + finalni "data: [DONE]"
-Alternativa: JSON { content: "..." } - frontend podr\u017eava oba.
-
-POST /api/decode-vin
-Body: { vin: "17-char-string" }
-Response: { marka: "AUDI", tip: "A6", godina: 2015 } ili { error: "..." }
-```
-
-## 7. Funkcionalnosti koje se zadržavaju 1:1
-
-- Responsive (mobile menu hamburger, mobile sticky elements).
-- Bosanski cjenovni format (`formatPrice` portovan u JS).
-- DD.MM.YYYY datumi.
-- Round-to-5 KM logika.
-- Wishlist heart toggle (localStorage + sinhronizacija sa dashboard tabom).
-- Tab sinhronizacija sa URL (`?tab=orders` itd.) preko `URLSearchParams` + `history.replaceState`.
-- Glassmorphism efekti, hover stanja bez sjenki, `rounded-[9px]`.
-- Animirani crveni underline na nav linkovima.
-- FAQ akordeon.
-- Order stepper (4 koraka).
-- Fake brojači (parts found 24h, view counters) — preko `sessionStorage`.
-
-## 8. Šta se uklanja
-
-- Cijeli `src/integrations/supabase/`, `supabase/functions/`, `supabase/config.toml`.
-- Sve Lovable-specifične zavisnosti (`@lovable.dev/*` ako postoje).
-- Vite/Tailwind/TS/ESLint config — PHP dev ne treba ništa od ovoga.
-- `package.json`, `bun.lock`, `node_modules` — nema.
-- Google OAuth dugme prikazano je, ali otvara modal "Konfigurisati na backendu" jer OAuth zahtijeva server-side flow (dokumentovano u API.md kao `GET /api/auth/google`).
-
-## 9. Tehnički detalji izvršenja
-
-1. Pokrenem Tailwind CLI nad React izvorom da generišem `styles.css` koji obuhvata sve klase (bez purge greški).
-2. Skinem koristene fontove i sve slike (hero, brand logoi, ikone) u `assets/`.
-3. Za svaku stranicu ručno portujem JSX → semantički HTML (zadržavam iste Tailwind klase pa CSS samo radi).
-4. Portujem hooks/utility u plain JS module (ES modules sa `<script type="module">`).
-5. Napišem `README.md` (instalacija na Apache/Nginx, kako uključiti PHP) i `API.md` (svi endpointi).
-6. QA: otvorim svaki `.html` fajl, provjerim layout, mobile prikaz, klikove (modali, tabovi, dropdown, formaze, chat widget).
-7. Spakujem sve u `/mnt/documents/ilma-vanilla.zip` i isporučim kao artefakt.
-
-## 10. Ograničenja koja je dobro znati
-
-- **Google OAuth** ne može raditi čisto frontend — PHP backend mora implementirati OAuth callback.
-- **AI chat** će vraćati samo mock odgovore dok PHP ne implementira `/api/chat`.
-- **VIN decoder** mock vraća pseudo-rezultat za poznate VIN-ove iz mock liste; pravi decode zahtijeva PHP+vanjski API (npr. NHTSA).
-- **Realtime** (Supabase realtime) — nema vanlla zamjene; PHP dev može dodati WebSocket/SSE po potrebi.
-- **Slike dijelova** — mock koristi placeholder URL-ove; pravi sistem zahtijeva PHP upload endpoint.
-
-## 11. Procjena obima
-
-~8 HTML fajlova, ~15 JS modula, 1 CSS bundle, ~25-40 slika/ikona. Tipovan ZIP ~3-6 MB. Generišem sve u jednom prolazu i isporučim kao download.
+Novi ZIP: `/mnt/documents/ilma-vanilla-v2.zip` (ostavljam i v1 za poređenje), spreman za download. Otvaranje bilo koje HTML stranice direktno u browseru prikazuje kompletan dizajn — bez praznih ekrana.
 
 ---
 
-**Nakon "Implement plan"**: krećem od Tailwind builda, pa skeleta HTML stranica, pa JS modula, pa QA, pa ZIP. Sve unutar projekta u privremenom folderu `/tmp/ilma-vanilla/`, a finalni rezultat u `/mnt/documents/`. Postojeći React projekat se ne dira.  
-  
-  
-  
-
-
-**Potvrđujem sve navedeno.**
-
-**Molim te da sada generišeš kompletan ZIP paket vanilla HTML/CSS/JS verzije projekta u /mnt/documents/ za download.**
-
-**Važno:**
-
-**konvertuj cijelu aplikaciju, ne samo home page**
-
-**uključi sve stranice koje postoje u React projektu**
-
-**uključi sve modale, forme, dropdown menije, tabove i UI interakcije**
-
-**zadrži dizajn što bliže 1:1 postojećoj React verziji**
-
-**uključi mock podatke i fetch wrapper servisni sloj**
-
-**uključi API dokumentaciju za PHP backend**
-
-**postojeći React projekat ne dirati**
-
-**Konačni ZIP treba biti spreman za PHP programera kao samostalni HTML/CSS/JS frontend paket.**
+**Pitanje prije implementacije:** Da li želiš da i dalje koristim Tailwind klase u HTML-u (kao što sada radi), ili da migriram na semantičke klase u CSS-u (npr. `.btn-primary` umjesto `bg-primary text-primary-foreground rounded-[9px] py-2.5`)? Tailwind je brži za mene da napišem 1:1, ali semantičke klase su čistije za PHP dev-a. **Preporučujem da ostanemo na Tailwind klasama** jer CSS bundle je već izgrađen i radi.
