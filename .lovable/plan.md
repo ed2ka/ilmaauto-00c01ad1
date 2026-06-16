@@ -1,22 +1,49 @@
-## Zašto se razlikuje
+## Cilj
 
-Globalni `Footer` komponent (`src/components/Footer.tsx`) renderuje se na svim stranicama i sadrži donju traku sa:
-- `© 2024 ILMA AUTO d.o.o. Sva prava zadržana.`
-- Linkovi: `Privatnost i zaštita podataka | Uslovi korištenja | Uslovi kupovine | Politika povrata | Kolačići`
+Kreirati 5 pravnih stranica sa lorem ipsum sadržajem koji se lako mijenja, povezati ih sa footerom i sa checkbox linkovima na `/prijava`.
 
-Stranica `/prijava` (i `/registracija`) NE koristi `<Footer />` — umjesto toga `src/pages/Auth.tsx` ima vlastiti, ručno napisan mini-footer (linije 285–311) sa drugačijim tekstom (`Copyright © 1998-2025 ...`), drugačijim labelama linkova (`Politika privatnosti`, `Opći uslovi poslovanja`, ...) i ikonama društvenih mreža. To je istorijski uvedeno da bi se ispod auth forme prikazala kompaktna traka preko pozadinske slike, ali rezultat je nedosljednost.
+## Rute i slug-ovi
 
-## Plan
+| Stranica | Ruta | Naslov |
+|---|---|---|
+| Privatnost i zaštita podataka | `/privatnost` | Politika privatnosti i zaštite podataka |
+| Uslovi korištenja | `/uslovi-koristenja` | Uslovi korištenja |
+| Uslovi kupovine | `/uslovi-kupovine` | Uslovi kupovine |
+| Politika povrata | `/politika-povrata` | Politika povrata |
+| Kolačići | `/kolacici` | Politika kolačića |
 
-Uskladiti donju traku na Auth stranici sa onom iz `Footer.tsx`, bez dodavanja punog tamnog Footer komponenta (da bi pozadinska slika ostala vidljiva).
+## Komponenta layouta
 
-U `src/pages/Auth.tsx`, zamijeniti postojeći `<footer>` blok (linije 285–311) sa kompaktnom verzijom koja:
+Kreirati `src/components/LegalPageLayout.tsx`:
+- TopBar + Header + AnnouncementBar (kao ostale stranice)
+- Hero traka sa naslovom + zadnji datum izmjene (`Posljednje izmjene: 16.06.2026`)
+- Container `max-w-3xl`, `prose`-stil tipografija (h2 sekcije, p paragrafi, ul liste)
+- Footer komponent na dnu
+- Props: `title`, `lastUpdated`, `children`
 
-1. Koristi ista 2 elementa kao globalni footer:
-   - lijevo: `© 2024 ILMA AUTO d.o.o. Sva prava zadržana.`
-   - desno: ista lista `legalLinks` sa istim redoslijedom, labelama i `|` razdjelnicima kao u `Footer.tsx`.
-2. Uklanja društvene ikone iz auth footera (nema ih u globalnom).
-3. Zadržava trenutni stil prikladan za tamnu pozadinu: `border-t border-white/10`, `text-white/55`, `hover:text-white`, `text-xs`, container i padding identični globalnom (`py-5`, `gap-4`, `flex-col md:flex-row`).
-4. Lista linkova se duplira inline (kratka), ili se ekstraktuje u `src/lib/footer-links.ts` i importuje u oba mjesta. Predlog: ekstraktovati u `src/lib/footer-links.ts` kao `export const legalLinks = [...]`, pa import u `Footer.tsx` i `Auth.tsx` — jedan izvor istine, buduće promjene se rade na jednom mjestu.
+Svaka stranica je vlastiti fajl u `src/pages/legal/` tako da korisnik može sadržaj mijenjati nezavisno bez ikakve apstrakcije:
+- `src/pages/legal/Privatnost.tsx`
+- `src/pages/legal/UsloviKoristenja.tsx`
+- `src/pages/legal/UsloviKupovine.tsx`
+- `src/pages/legal/PolitikaPovrata.tsx`
+- `src/pages/legal/Kolacici.tsx`
 
-Nema promjena na ostalim stranicama — one već koriste globalni `Footer` i ostaju identične.
+Sadržaj svake = `<LegalPageLayout title="..." lastUpdated="16.06.2026">` sa 4–6 sekcija lorem ipsuma (`<section><h2>1. Naslov sekcije</h2><p>Lorem ipsum dolor sit amet...</p></section>`). Markirati na vrhu fajla komentarom `// ✏️ Uredi sadržaj ispod`.
+
+## Linkovanje
+
+1. **`src/lib/footer-links.ts`** — zamijeniti `href: "#"` sa pravim rutama:
+   ```ts
+   { label: "Privatnost i zaštita podataka", href: "/privatnost" },
+   { label: "Uslovi korištenja", href: "/uslovi-koristenja" },
+   { label: "Uslovi kupovine", href: "/uslovi-kupovine" },
+   { label: "Politika povrata", href: "/politika-povrata" },
+   { label: "Kolačići", href: "/kolacici" },
+   ```
+2. **`src/components/Footer.tsx`** i **`src/pages/Auth.tsx`** — promijeniti `<a href>` na `<Link to>` za legal linkove (SPA navigacija, bez full reload).
+3. **`src/pages/Auth.tsx`** — checkboxovi:
+   - `Prihvatam <Link to="/uslovi-koristenja">uslove korištenja</Link>`
+   - `Slažem se sa <Link to="/privatnost">politikom privatnosti</Link>`
+4. **`src/App.tsx`** — dodati 5 novih `<Route>` zapisa i importe iznad `Routes`.
+
+Nema promjena u ostalim komponentama; nijedan poslovni logički kod nije diran.
