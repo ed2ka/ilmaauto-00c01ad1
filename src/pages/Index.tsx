@@ -52,6 +52,9 @@ const Index = () => {
         </div>
       </section>
 
+      <TrustBar />
+      <HowToOrder />
+      <InquiryCTA />
       <FAQ />
 
       <Footer />
