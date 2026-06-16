@@ -11,6 +11,8 @@ import { usePartsCount } from "@/hooks/useParts";
 
 type SearchTab = "filter" | "naziv" | "kataloski" | "sasija";
 
+const SHOW_VIN_TAB = false; // postaviti na true za reaktivaciju VIN taba
+
 const tabs: {id: SearchTab;label: React.ReactNode;icon: string;}[] = [
 { id: "filter", label: <>Filter<br />pretraga dijelova</>, icon: "SlidersHorizontal" },
 { id: "naziv", label: <>Pretraga po<br />nazivu dijela</>, icon: "Type" },
@@ -180,8 +182,12 @@ const SearchPanel = () => {
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-2 md:grid-cols-4">
-        {tabs.map((tab, i) =>
+      {(() => {
+        const visibleTabs = tabs.filter((t) => SHOW_VIN_TAB || t.id !== "sasija");
+        const gridCols = visibleTabs.length === 4 ? "grid-cols-2 md:grid-cols-4" : "grid-cols-3";
+        return (
+        <div className={`grid ${gridCols}`}>
+        {visibleTabs.map((tab, i) =>
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
@@ -197,6 +203,8 @@ const SearchPanel = () => {
           </button>
         )}
       </div>
+      );
+      })()}
 
       {/* Form fields */}
       <div className="px-6 md:px-8 pb-2 pt-6 bg-card">
