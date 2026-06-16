@@ -3,7 +3,8 @@ import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useClaimGuestInquiry } from "@/hooks/useInquiries";
 import { lovable } from "@/integrations/lovable/index";
-import authBg from "@/assets/auth-bg.jpg";
+import authBgAsset from "@/assets/hero-bg-ilma.png.asset.json";
+const authBg = authBgAsset.url;
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -163,7 +164,7 @@ const Auth = () => {
     <div className="min-h-screen flex flex-col pt-[128px] lg:pt-[136px] relative">
       <TopBar />
       <Header />
-      <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover blur-md scale-110" />
       <div className="absolute inset-0 bg-header/70" />
       <main className="flex-1 relative z-10 flex flex-col items-center px-4 py-8 pt-[12vh]">
         <div className="w-full max-w-md flex flex-col items-center">
