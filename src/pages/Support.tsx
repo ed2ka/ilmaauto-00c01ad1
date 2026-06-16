@@ -70,7 +70,7 @@ const faqs = [
   },
   {
     q: "Šta ako dio nije ispravan?",
-    a: "Svaki dio ima garanciju. U slučaju problema, zamjena ili povrat sredstava se rješava u roku od 48h.",
+    a: "Svaki dio ima garanciju. U slučaju problema, zamjena ili povrat sredstava se rješava u najkraćem mogućem roku.",
   },
 ];
 
