@@ -8,6 +8,7 @@ import olxIcon from "@/assets/olx-icon.svg";
 import njuskaloIcon from "@/assets/njuskalo-icon.svg";
 import ebayIcon from "@/assets/ebay-icon.svg";
 import ilmaLogo from "@/assets/ilma-auto-logo-round.png.asset.json";
+import { legalLinks } from "@/lib/footer-links";
 
 const categories = [
   "Motor",
@@ -40,14 +41,6 @@ const socials = [
   { icon: olxIcon, alt: "OLX.ba", href: "https://autootpadilma.olx.ba/" },
   { icon: njuskaloIcon, alt: "Njuškalo.hr", href: "https://www.njuskalo.hr/trgovina/ilmaauto" },
   { icon: ebayIcon, alt: "eBay", href: "https://www.ebay.com/str/ilmaautosb" },
-];
-
-const legalLinks = [
-  { label: "Privatnost i zaštita podataka", href: "#" },
-  { label: "Uslovi korištenja", href: "#" },
-  { label: "Uslovi kupovine", href: "#" },
-  { label: "Politika povrata", href: "#" },
-  { label: "Kolačići", href: "#" },
 ];
 
 const Footer = () => {
