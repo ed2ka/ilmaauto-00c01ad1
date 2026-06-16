@@ -1,14 +1,29 @@
-## Ispravka Language Switcher-a — zamjena tekstualnih kodova zastavicama
+## Plan: Zamjena emoji zastavica s pravim slikama u LanguageSwitcher
 
-### Cilj
-U `LanguageSwitcher` komponenti zamijeniti tekstualne prefikse jezika (BA, CRO, SRB, EN, DE) emoji zastavicama, tako da se nigdje ne prikazuje tekstualni kod već isključivo zastavica.
+### Problem
+Trenutno LanguageSwitcher prikazuje emoji zastavice (🇧🇦, 🇭🇷, 🇷🇸, 🇬🇧, 🇩🇪) koje ne izgledaju profesionalno na svim platformama i browserima.
 
-### Promjene
+### Rješenje
+Zamijeniti emoji znakove s pravim PNG slikama zastavica.
 
-1. **`src/components/LanguageSwitcher.tsx`**
-   - **Trigger (otvarajući gumb):** ukloniti `<span>{active.code}</span>` — ostaviti samo zastavicu + strelicu.
-   - **Dropdown stavke:** ukloniti `<span className="font-semibold w-10">{lang.code}</span>` — ostaviti samo zastavicu + puni naziv zemlje/jezika.
-   - Prilagoditi razmake/klase ako je potrebno radi ravnoteže bez tekstualnog koda.
+### Koraci implementacije
 
-### Izlaz
-Language switcher prikazuje isključivo zastavice bez tekstualnih prefiksa tipa "BA", "CRO" itd.
+1. **Generirati 5 PNG slika zastavica** i spremiti ih u `public/flags/`:
+   - `ba.png` — Bosna i Hercegovina (20x14px)
+   - `hr.png` — Hrvatska (20x14px)
+   - `rs.png` — Srbija (20x14px)
+   - `gb.png` — Velika Britanija (20x14px)
+   - `de.png` — Njemačka (20x14px)
+
+2. **Izmijeniti `src/components/LanguageSwitcher.tsx`**:
+   - Zamijeniti `flag: string` (emoji) s `flag: string` (putanja do slike, npr. `/flags/ba.png`)
+   - Zamijeniti `<span className="text-sm">{active.flag}</span>` s `<img src={active.flag} alt="" className="w-5 h-3.5 object-cover rounded-[2px]" />`
+   - Zamijeniti isto za dropdown item zastavice
+   - Dodati odgovarajuće `alt` tekstove za pristupačnost
+
+3. **Testirati** da zastavice ispravno renderiraju u triggeru i dropdownu na desktopu i mobilnom pregledniku.
+
+### Napomena
+- Slike će biti male (~20x14px) kako ne bi opteretile stranicu
+- Koristit će se CSS `object-cover` za pravilno skaliranje
+- Držat će se isti layout i ponašanje dropdowna
