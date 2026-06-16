@@ -43,6 +43,8 @@ const Index = () => {
         </div>
       </main>
 
+      <HowToOrder />
+
       {/* Brands section */}
       <section className="bg-background py-12">
         <div className="container mx-auto px-4">
@@ -53,7 +55,6 @@ const Index = () => {
       </section>
 
       <TrustBar />
-      <HowToOrder />
       <InquiryCTA />
       <FAQ />
 
