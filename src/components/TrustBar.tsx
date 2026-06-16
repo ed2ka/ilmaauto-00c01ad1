@@ -9,7 +9,7 @@ const items = [
   {
     icon: Truck,
     title: "BRZA I SIGURNA DOSTAVA",
-    desc: "Dostava na adresu širom Bosne i Hercegovine u najkraćem roku.",
+    desc: "Brza dostava dijelova u BiH, zemlje Balkana i EU.",
   },
   {
     icon: BadgeCheck,
