@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import viberIcon from "@/assets/viber-icon.svg";
 import instagramIcon from "@/assets/instagram-icon.svg";
@@ -46,13 +45,6 @@ const legalLinks = [
 ];
 
 const Footer = () => {
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEmail("");
-  };
-
   return (
     <footer className="bg-header text-header-foreground">
       <div className="container mx-auto px-4 lg:px-8 pt-14 pb-8">
@@ -64,14 +56,7 @@ const Footer = () => {
               alt="ILMA AUTO"
               className="w-20 h-20 mb-4"
             />
-            <div className="font-bold text-2xl tracking-tight">
-              <span className="text-white">ILMA</span>{" "}
-              <span className="text-white">AUTO</span>
-            </div>
-            <p className="text-[10px] tracking-[0.25em] text-header-foreground/60 mt-1">
-              ORIGINALNI AUTODIJELOVI
-            </p>
-            <p className="text-sm text-header-foreground/70 mt-6 leading-relaxed">
+            <p className="text-sm text-header-foreground/70 leading-relaxed">
               Pouzdan izvor originalnih autodijelova za vaše vozilo. Kvalitet,
               sigurnost i brza usluga na prvom mjestu.
             </p>
@@ -126,6 +111,9 @@ const Footer = () => {
               ))}
             </ul>
           </div>
+
+          {/* Spacer column */}
+          <div className="hidden lg:block" />
 
           {/* Contact */}
           <div>
@@ -185,35 +173,6 @@ const Footer = () => {
                 </div>
               </li>
             </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div className="md:col-span-2 lg:col-span-1">
-            <div className="rounded-[12px] bg-white/[0.04] border border-white/10 p-5">
-              <h4 className="text-sm font-bold tracking-[0.15em] mb-3">
-                BUDITE U TOKU
-              </h4>
-              <p className="text-xs text-header-foreground/70 mb-4 leading-relaxed">
-                Prijavite se za novosti, akcije i korisne savjete o održavanju
-                vozila.
-              </p>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Unesite e-mail adresu"
-                  className="w-full rounded-[9px] bg-white/[0.06] border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-header-foreground/40 focus:outline-none focus:border-primary/60 transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="w-full rounded-[9px] bg-primary text-primary-foreground font-bold tracking-wide px-4 py-2.5 text-xs hover:bg-primary/90 transition-colors"
-                >
-                  PRIJAVI SE
-                </button>
-              </form>
-            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
-U `src/components/Footer.tsx`, u BRAND koloni (prva lijeva), iznad teksta "ILMA AUTO / ORIGINALNI AUTODIJELOVI" dodati priloženi okrugli logo.
+U `src/components/Footer.tsx`:
 
-Koraci:
-1. Upload `user-uploads://logo-2.png` kao Lovable asset → `src/assets/ilma-auto-logo-round.png.asset.json`.
-2. Import pointera u `Footer.tsx`.
-3. Iznad `<div className="font-bold text-2xl ...">ILMA AUTO</div>` (linija 61) dodati `<img src={logo.url} alt="ILMA AUTO" className="w-16 h-16 mb-3" />`.
+1. **Ukloniti tekst** "ILMA AUTO" + "ORIGINALNI AUTODIJELOVI" iz brand kolone (linije 67–73). Ostaje samo logo (i postojeći opisni tekst + social ikone ispod).
 
-Ništa drugo se ne mijenja.
+2. **Ukloniti Newsletter kolonu** "BUDITE U TOKU" (linije 190–217) i s njom nepotrebni `useState`, `email`, `handleSubmit`.
+
+3. **Dodati praznu kolonu** između PODRŠKA i KONTAKT (`<div />`) — broj kolona ostaje 5 (Brand, Kategorije, Podrška, prazno, Kontakt).
