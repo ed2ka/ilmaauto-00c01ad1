@@ -198,12 +198,12 @@ const Footer = () => {
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {legalLinks.map((link, i) => (
               <span key={link.label} className="flex items-center gap-5">
-                <a
-                  href={link.href}
+                <Link
+                  to={link.href}
                   className="hover:text-white transition-colors"
                 >
                   {link.label}
-                </a>
+                </Link>
                 {i < legalLinks.length - 1 && (
                   <span className="hidden md:inline text-header-foreground/20">|</span>
                 )}

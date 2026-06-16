@@ -252,13 +252,13 @@ const Auth = () => {
                       <div className="flex items-start gap-2">
                         <Checkbox id="terms" checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} />
                         <label htmlFor="terms" className="text-xs leading-tight cursor-pointer">
-                          Prihvatam <a href="#" className="text-primary hover:underline">uslove korištenja</a>
+                          Prihvatam <Link to="/uslovi-koristenja" className="text-primary hover:underline">uslove korištenja</Link>
                         </label>
                       </div>
                       <div className="flex items-start gap-2">
                         <Checkbox id="privacy" checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} />
                         <label htmlFor="privacy" className="text-xs leading-tight cursor-pointer">
-                          Slažem se sa <a href="#" className="text-primary hover:underline">politikom privatnosti</a>
+                          Slažem se sa <Link to="/privatnost" className="text-primary hover:underline">politikom privatnosti</Link>
                         </label>
                       </div>
                       <div className="flex items-start gap-2">
@@ -286,9 +286,9 @@ const Auth = () => {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {legalLinks.map((link, i) => (
                 <span key={link.label} className="flex items-center gap-5">
-                  <a href={link.href} className="hover:text-white transition-colors">
+                  <Link to={link.href} className="hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                   {i < legalLinks.length - 1 && (
                     <span className="hidden md:inline text-white/20">|</span>
                   )}

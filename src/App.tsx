@@ -12,6 +12,11 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Support from "./pages/Support";
+import Privatnost from "./pages/legal/Privatnost";
+import UsloviKoristenja from "./pages/legal/UsloviKoristenja";
+import UsloviKupovine from "./pages/legal/UsloviKupovine";
+import PolitikaPovrata from "./pages/legal/PolitikaPovrata";
+import Kolacici from "./pages/legal/Kolacici";
 import ChatAssistant from "./components/ChatAssistant";
 
 const queryClient = new QueryClient();
@@ -31,6 +36,11 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/profil" element={<Dashboard />} />
             <Route path="/podrska" element={<Support />} />
+            <Route path="/privatnost" element={<Privatnost />} />
+            <Route path="/uslovi-koristenja" element={<UsloviKoristenja />} />
+            <Route path="/uslovi-kupovine" element={<UsloviKupovine />} />
+            <Route path="/politika-povrata" element={<PolitikaPovrata />} />
+            <Route path="/kolacici" element={<Kolacici />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ChatAssistant />
