@@ -13,8 +13,8 @@
 }
 
 @keyframes pulse-glow-soft {
-  0%, 100% { box-shadow: 0 0 12px 2px rgba(220, 38, 38, 0.25); }
-  50% { box-shadow: 0 0 18px 4px rgba(220, 38, 38, 0.4); }
+  0%, 100% { box-shadow: 0 0 12px 2px rgba(208, 0, 0, 0.25); }
+  50% { box-shadow: 0 0 18px 4px rgba(208, 0, 0, 0.4); }
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
@@ -22,45 +22,52 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 220 20% 10%;
+    --foreground: 0 100% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 0 100% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 0 100% 8%;
 
-    --primary: 0 72% 51%;
+    --primary: 0 100% 41%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 20% 10%;
+    --secondary: 12 30% 96%;
+    --secondary-foreground: 0 100% 8%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 12 30% 96%;
+    --muted-foreground: 0 15% 40%;
 
-    --accent: 220 14% 96%;
-    --accent-foreground: 220 20% 10%;
+    --accent: 44 99% 51%;
+    --accent-foreground: 0 100% 8%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 359 97% 31%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 0 72% 51%;
+    --border: 0 20% 90%;
+    --input: 0 20% 90%;
+    --ring: 0 100% 41%;
 
     --radius: 0.625rem;
 
-    --header-bg: 207 32% 16%;
+    --header-bg: 0 100% 8%;
     --header-foreground: 0 0% 100%;
 
-    --hero-overlay: 220 30% 8%;
+    --hero-overlay: 0 100% 8%;
 
     --search-panel: 0 0% 100%;
-    --search-panel-foreground: 220 20% 10%;
+    --search-panel-foreground: 0 100% 8%;
 
-    --rating: 43 96% 56%;
+    --rating: 44 99% 51%;
     --tab-inactive: 0 0% 98%;
+
+    /* ILMA AUTO brand palette */
+    --brand-noir: 0 100% 8%;        /* #2B0000 */
+    --brand-bordeaux: 355 96% 22%;  /* #6A040F */
+    --brand-blood: 359 97% 31%;     /* #9D0208 */
+    --brand-red: 0 100% 41%;        /* #D00000 */
+    --brand-yellow: 44 99% 51%;     /* #FFBA08 */
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -74,25 +81,25 @@
   }
 
   .dark {
-    --background: 220 20% 6%;
+    --background: 0 100% 5%;
     --foreground: 0 0% 95%;
-    --card: 220 20% 10%;
+    --card: 0 100% 8%;
     --card-foreground: 0 0% 95%;
-    --popover: 220 20% 10%;
+    --popover: 0 100% 8%;
     --popover-foreground: 0 0% 95%;
-    --primary: 0 72% 51%;
+    --primary: 0 100% 41%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 16%;
+    --secondary: 355 96% 22%;
     --secondary-foreground: 0 0% 95%;
-    --muted: 220 14% 16%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 220 14% 16%;
+    --muted: 355 30% 18%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 44 99% 51%;
     --accent-foreground: 0 0% 95%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 359 97% 31%;
     --destructive-foreground: 0 0% 95%;
-    --border: 220 14% 20%;
-    --input: 220 14% 20%;
-    --ring: 0 72% 51%;
+    --border: 355 40% 22%;
+    --input: 355 40% 22%;
+    --ring: 0 100% 41%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
