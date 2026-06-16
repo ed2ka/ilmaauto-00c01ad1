@@ -9,6 +9,7 @@ import FAQ from "@/components/FAQ";
 import TrustBar from "@/components/TrustBar";
 import HowToOrder from "@/components/HowToOrder";
 import InquiryCTA from "@/components/InquiryCTA";
+import MarketplaceGrid from "@/components/MarketplaceGrid";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
@@ -57,6 +58,8 @@ const Index = () => {
       <TrustBar />
       <InquiryCTA />
       <FAQ />
+
+      <MarketplaceGrid />
 
       <Footer />
     </div>
