@@ -14,7 +14,6 @@ const categories = [
   "Karoserija",
   "Rasvjeta",
   "Klimatizacija",
-  "Ulje i hemija",
 ];
 
 const support = [
