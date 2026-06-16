@@ -88,7 +88,7 @@ const FAQ = () => {
         <div className="text-center mb-10">
           <p className="text-primary text-xs font-bold tracking-[0.2em] mb-2">FAQ</p>
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-            Najčešća pitanja
+            Najčešće postavljena pitanja
           </h2>
         </div>
 
