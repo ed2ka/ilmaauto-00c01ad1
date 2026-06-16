@@ -54,7 +54,7 @@ const ResetPassword = () => {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+      <div className="min-h-screen flex flex-col bg-background pt-[128px] lg:pt-[136px]">
         <TopBar />
         <Header />
         <main className="flex-1 flex items-center justify-center px-4">
@@ -65,7 +65,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+    <div className="min-h-screen flex flex-col bg-background pt-[128px] lg:pt-[136px]">
       <TopBar />
       <Header />
       <main className="flex-1 flex items-center justify-center px-4">

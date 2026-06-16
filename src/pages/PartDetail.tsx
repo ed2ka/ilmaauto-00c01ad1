@@ -47,7 +47,7 @@ const PartDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px]">
+      <div className="min-h-screen flex flex-col pt-[128px] lg:pt-[136px]">
         <TopBar />
         <Header />
         <div className="flex-1 flex items-center justify-center">
@@ -59,7 +59,7 @@ const PartDetail = () => {
 
   if (!part) {
     return (
-      <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px]">
+      <div className="min-h-screen flex flex-col pt-[128px] lg:pt-[136px]">
         <TopBar />
         <Header />
         <div className="flex-1 flex items-center justify-center">
@@ -82,7 +82,7 @@ const PartDetail = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+    <div className="min-h-screen flex flex-col bg-background pt-[128px] lg:pt-[136px]">
       <TopBar />
       <Header />
 

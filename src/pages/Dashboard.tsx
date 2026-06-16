@@ -66,7 +66,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+    <div className="min-h-screen flex flex-col bg-background pt-[128px] lg:pt-[136px]">
       <TopBar />
       <Header />
       <main className="flex-1 container mx-auto px-4 py-6 max-w-3xl">
