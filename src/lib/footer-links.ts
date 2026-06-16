@@ -1,7 +1,7 @@
 export const legalLinks = [
-  { label: "Privatnost i zaštita podataka", href: "#" },
-  { label: "Uslovi korištenja", href: "#" },
-  { label: "Uslovi kupovine", href: "#" },
-  { label: "Politika povrata", href: "#" },
-  { label: "Kolačići", href: "#" },
+  { label: "Privatnost i zaštita podataka", href: "/privatnost" },
+  { label: "Uslovi korištenja", href: "/uslovi-koristenja" },
+  { label: "Uslovi kupovine", href: "/uslovi-kupovine" },
+  { label: "Politika povrata", href: "/politika-povrata" },
+  { label: "Kolačići", href: "/kolacici" },
 ];
