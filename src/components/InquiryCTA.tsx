@@ -9,7 +9,7 @@ const InquiryCTA = () => {
         <div
           className="relative rounded-[14px] overflow-hidden bg-[#0a0a0a] text-white"
           style={{
-            backgroundImage: `url(${bg})`,
+            backgroundImage: `url(${bg.url})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
