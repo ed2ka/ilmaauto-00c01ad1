@@ -66,7 +66,7 @@ const faqs = [
   },
   {
     q: "Dostavljate li u cijelu BiH i region ili zemlje EU?",
-    a: "Da, dostavljamo na cijelom Balkanu i u EU. Standardna dostava unutar BiH je 10 KM.",
+    a: "Da, dostava naručenih dijelova dostupna je za zemlje Balkana (BIH, HR, SRB, CG) kao i za sve druge zemlje regiona i Svijeta. Naplata se obračunava po važećem cjenovniku i težini paketa.\n\ndostavljamo na cijelom Balkanu i u EU. Standardna dostava unutar BiH je 10 KM.",
   },
   {
     q: "Šta ako dio nije ispravan?",
