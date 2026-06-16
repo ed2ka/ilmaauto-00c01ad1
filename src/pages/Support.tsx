@@ -62,7 +62,7 @@ const faqs = [
   },
   {
     q: "Mogu li poslati sliku dijela ili kataloški broj dijela?",
-    a: "Da — najlakše je preko Vibera ili WhatsApp-a. Pošaljite sliku, VIN ili broj sa dijela i mi ćemo provjeriti dostupnost.",
+    a: "Da - najlakše je preko Vibera ili WhatsApp-a. Pošaljite sliku, VIN ili broj sa dijela (kataloški broj dijela) i mi ćemo provjeriti dostupnost te vam javiti odmah.",
   },
   {
     q: "Dostavljate li u cijelu BiH i region ili zemlje EU?",
