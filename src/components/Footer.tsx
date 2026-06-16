@@ -5,6 +5,9 @@ import viberIcon from "@/assets/viber-icon.svg";
 import instagramIcon from "@/assets/instagram-icon.svg";
 import facebookIcon from "@/assets/facebook-icon.svg";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
+import olxIcon from "@/assets/olx-icon.svg";
+import njuskaloIcon from "@/assets/njuskalo-icon.svg";
+import ebayIcon from "@/assets/ebay-icon.svg";
 
 const categories = [
   "Motor",
@@ -28,8 +31,9 @@ const support = [
 const socials = [
   { icon: facebookIcon, alt: "Facebook", href: "#" },
   { icon: instagramIcon, alt: "Instagram", href: "#" },
-  { icon: whatsappIcon, alt: "WhatsApp", href: "#" },
-  { icon: viberIcon, alt: "Viber", href: "#" },
+  { icon: olxIcon, alt: "OLX.ba", href: "https://autootpadilma.olx.ba/" },
+  { icon: njuskaloIcon, alt: "Njuškalo.hr", href: "https://www.njuskalo.hr/trgovina/ilmaauto" },
+  { icon: ebayIcon, alt: "eBay", href: "https://www.ebay.com/str/ilmaautosb" },
 ];
 
 const legalLinks = [
@@ -150,6 +154,29 @@ const Footer = () => {
                   <br />
                   Nedjelja: Zatvoreno
                 </span>
+              </li>
+              <li className="pt-1">
+                <p className="text-xs text-header-foreground/50 mb-2 tracking-wide">Pišite nam:</p>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="viber://chat?number=%2B38762667700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Viber"
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  >
+                    <img src={viberIcon} alt="Viber" className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="https://wa.me/38762667700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="WhatsApp"
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  >
+                    <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4" />
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
