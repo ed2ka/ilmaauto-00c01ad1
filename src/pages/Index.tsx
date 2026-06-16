@@ -10,7 +10,8 @@ import TrustBar from "@/components/TrustBar";
 import HowToOrder from "@/components/HowToOrder";
 import InquiryCTA from "@/components/InquiryCTA";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBgAsset from "@/assets/hero-bg-ilma.png.asset.json";
+const heroBg = heroBgAsset.url;
 
 const Index = () => {
   return (
@@ -25,7 +26,7 @@ const Index = () => {
         <div className="absolute inset-0">
           <img
             src={heroBg}
-            alt="Muškarac u automobilu"
+            alt="ILMA AUTO salon"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
