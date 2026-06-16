@@ -18,6 +18,7 @@ import {
   Users,
   ArrowRight,
 } from "lucide-react";
+import heroBgAsset from "@/assets/hero-bg-ilma.png.asset.json";
 import viberIcon from "@/assets/viber-icon.svg";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
 import { Link } from "react-router-dom";
