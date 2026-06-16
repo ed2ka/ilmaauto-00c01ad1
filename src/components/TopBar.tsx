@@ -12,7 +12,7 @@ const TopBar = () => {
 
         {/* Right: language switcher */}
         <div className="flex items-center gap-2">
-          <span className="text-white/60 text-[10px] tracking-wide">izaberite jezik</span>
+          <span className="text-white/70 text-xs md:text-sm tracking-wide">izaberite jezik</span>
           <LanguageSwitcher />
         </div>
       </div>
