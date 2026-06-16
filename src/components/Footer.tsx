@@ -155,6 +155,29 @@ const Footer = () => {
                   Nedjelja: Zatvoreno
                 </span>
               </li>
+              <li className="pt-1">
+                <p className="text-xs text-header-foreground/50 mb-2 tracking-wide">Pišite nam:</p>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="viber://chat?number=%2B38762667700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Viber"
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  >
+                    <img src={viberIcon} alt="Viber" className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="https://wa.me/38762667700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="WhatsApp"
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  >
+                    <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4" />
+                  </a>
+                </div>
+              </li>
             </ul>
           </div>
 
