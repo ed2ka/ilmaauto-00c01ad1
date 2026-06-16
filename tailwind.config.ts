@@ -92,7 +92,10 @@ export default {
   				bordeaux: 'hsl(var(--brand-bordeaux))',
   				blood: 'hsl(var(--brand-blood))',
   				red: 'hsl(var(--brand-red))',
-  				yellow: 'hsl(var(--brand-yellow))'
+  				yellow: 'hsl(var(--brand-yellow))',
+  				gray: 'hsl(var(--brand-gray))',
+  				light: 'hsl(var(--brand-light))',
+  				bg: 'hsl(var(--brand-bg))'
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
