@@ -18,7 +18,7 @@ const InquiryCTA = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/50 to-black/60" />
 
           <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center px-6 lg:px-12 py-12 lg:py-16 min-h-[280px]">
-            <div className="lg:col-start-5 lg:col-span-6 text-center lg:text-left">
+            <div className="lg:col-span-7 text-left">
               <h2 className="text-2xl lg:text-3xl font-bold leading-tight">
                 Niste sigurni koji dio odgovara vašem vozilu?
               </h2>
