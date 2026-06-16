@@ -25,15 +25,6 @@ const HowToOrder = () => {
   return (
     <section className="bg-background py-14 lg:py-16">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center mb-12">
-          <p className="text-primary text-xs font-bold tracking-[0.2em] mb-2">
-            KAKO NARUČITI?
-          </p>
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-            Jednostavno do potrebnog dijela
-          </h2>
-        </div>
-
         <div className="relative grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-6 max-w-6xl mx-auto">
           {steps.map((s, i) => (
             <div key={s.num} className="relative flex items-center gap-5">
