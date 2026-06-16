@@ -108,7 +108,7 @@ const Support = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-10 max-w-2xl mx-auto">
               {[
-                { icon: Zap, label: "< 5 min odgovor" },
+                { icon: Zap, label: "< 25 min odgovor" },
                 { icon: CheckCircle2, label: "5.000+ riješenih upita" },
                 { icon: Users, label: "PON - SUB dostupni" },
               ].map(({ icon: Icon, label }) => (
