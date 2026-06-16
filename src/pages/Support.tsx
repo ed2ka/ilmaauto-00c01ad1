@@ -256,10 +256,11 @@ const Support = () => {
       <section className="container mx-auto px-4 my-20">
         <div className="relative overflow-hidden rounded-[9px] bg-[#e1e1e1] p-8 md:p-12 text-center">
           <div className="relative">
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-[#8a8989] mb-3">
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-black mb-3">
               Niste pronašli ono što tražite?
             </h2>
-            <p className="text-[#8a8989] mb-6 max-w-lg mx-auto">
+            <p className="text-black mb-6 max-w-lg mx-auto">
+
               Pošaljite nam upit sa detaljima o dijelu — odgovaramo i van standardnih kataloških artikala.
             </p>
             <Button asChild size="lg" className="rounded-[9px] bg-brand-red hover:bg-brand-red/90 text-white">
