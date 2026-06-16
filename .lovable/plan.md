@@ -1,29 +1,57 @@
-## Plan: Zamjena emoji zastavica s pravim slikama u LanguageSwitcher
+## Nova sekcija: "Pronađite nas online" (poslije FAQ)
 
-### Problem
-Trenutno LanguageSwitcher prikazuje emoji zastavice (🇧🇦, 🇭🇷, 🇷🇸, 🇬🇧, 🇩🇪) koje ne izgledaju profesionalno na svim platformama i browserima.
+Dodajem novu sekciju na homepage ispod "Najčešće postavljena pitanja", identičnu uploadanom dizajnu.
 
-### Rješenje
-Zamijeniti emoji znakove s pravim PNG slikama zastavica.
+### Struktura (5 kartica u grid layoutu)
 
-### Koraci implementacije
+Layout: 2 kolone gore (4 kartice) + 1 široka kartica dolje. Svaka kartica `rounded-[9px]`, visine ~220px, sa pozadinskim vizualom/logom desno i tekstualnim sadržajem lijevo.
 
-1. **Generirati 5 PNG slika zastavica** i spremiti ih u `public/flags/`:
-   - `ba.png` — Bosna i Hercegovina (20x14px)
-   - `hr.png` — Hrvatska (20x14px)
-   - `rs.png` — Srbija (20x14px)
-   - `gb.png` — Velika Britanija (20x14px)
-   - `de.png` — Njemačka (20x14px)
+```
+┌─────────────────┬─────────────────┐
+│  INSTAGRAM      │  FACEBOOK       │
+├─────────────────┼─────────────────┤
+│  OLX SHOP       │  NJUŠKALO       │
+├─────────────────┴─────────────────┤
+│  EBAY STORE (full width)          │
+└───────────────────────────────────┘
+```
 
-2. **Izmijeniti `src/components/LanguageSwitcher.tsx`**:
-   - Zamijeniti `flag: string` (emoji) s `flag: string` (putanja do slike, npr. `/flags/ba.png`)
-   - Zamijeniti `<span className="text-sm">{active.flag}</span>` s `<img src={active.flag} alt="" className="w-5 h-3.5 object-cover rounded-[2px]" />`
-   - Zamijeniti isto za dropdown item zastavice
-   - Dodati odgovarajuće `alt` tekstove za pristupačnost
+### Kartice — sadržaj
 
-3. **Testirati** da zastavice ispravno renderiraju u triggeru i dropdownu na desktopu i mobilnom pregledniku.
+1. **Instagram** — crna pozadina, IG gradient logo desno
+   - "Pratite nove dijelove, vozila za rastavljanje i dnevne objave."
+   - @ilmaauto
+   - CTA žuti button: "ZAPRATI NAS →"
+   - Link: instagram.com/ilmaauto
 
-### Napomena
-- Slike će biti male (~20x14px) kako ne bi opteretile stranicu
-- Koristit će se CSS `object-cover` za pravilno skaliranje
-- Držat će se isti layout i ponašanje dropdowna
+2. **Facebook** — tamno plava pozadina, FB "f" logo desno
+   - "Novosti, akcije, dolazak novih vozila i komunikacija sa kupcima."
+   - CTA žuti: "POSJETI STRANICU →"
+
+3. **OLX Shop** — tamno zelena, OLX logo desno
+   - "Pogledajte kompletnu ponudu polovnih i novih auto dijelova."
+   - CTA tirkizni: "PREGLEDAJ OGLASE →"
+
+4. **Njuškalo** — žuta pozadina + njuškalo maskota
+   - "ILMA AUTO ponuda za kupce iz Hrvatske."
+   - CTA žuti (tamni tekst): "POSJETI TRGOVINU →"
+
+5. **eBay Store** (široka) — tamno plava sa svjetskom mapom + slika dijelova/kutije
+   - Naslov: "**EBAY** STORE" (EBAY žuto, STORE bijelo)
+   - "Auto dijelovi dostupni kupcima širom Europe i svijeta."
+   - Checklist: Globalna dostava, eBay Buyer Protection, Hiljade dostupnih dijelova
+   - CTA žuti: "POSJETI EBAY STORE →"
+
+### Tehnički detalji
+
+- Novi file: `src/components/MarketplaceGrid.tsx`
+- Import i ubacivanje u `src/pages/Index.tsx` poslije `<FAQ />`, prije `<Footer />`
+- Tipografija: Poppins (postojeća), uppercase tracking za naslove
+- Border radius: `rounded-[9px]` (project standard)
+- Generiram potrebne pozadinske vizuale (auto far, ebay scene, njuškalo maskota itd.) preko imagegen — premium tier za eBay karticu (sadrži tekst/logo detalje); ili koristim CSS gradient + tekst-only logo overlay ako želite uštedu
+- Logo gradijenti (IG/FB/OLX/eBay/Njuškalo) renderirani kao veliki vodeni žigovi desno na svakoj kartici
+
+### Pitanja prije implementacije
+
+1. **URL-ovi** — koje su tačne adrese za Instagram, Facebook, OLX shop, Njuškalo trgovinu i eBay store? (Trebam ih za href-ove)
+2. **Pozadinski vizuali** — da generišem nove slike (premium, ~5 generacija) ili da koristim čistu boju + veliki logo kao prozirni vodeni žig (besplatno, brže)?
