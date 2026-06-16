@@ -6,6 +6,9 @@ import AppRatingBar from "@/components/AppRatingBar";
 import BrandGrid from "@/components/BrandGrid";
 import Footer from "@/components/Footer";
 import FAQ from "@/components/FAQ";
+import TrustBar from "@/components/TrustBar";
+import HowToOrder from "@/components/HowToOrder";
+import InquiryCTA from "@/components/InquiryCTA";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
