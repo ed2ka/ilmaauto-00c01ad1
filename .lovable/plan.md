@@ -1,10 +1,6 @@
-U `src/components/Footer.tsx`:
+U `src/pages/Index.tsx` hero pozadina se učitava iz `@/assets/hero-bg.jpg`.
 
-1. Zamijeniti `categories` niz sa novim popisom (13 stavki):
-   `Motor, Elektrika, Karoserija, Rasvjeta, Ovjes i pogon, Kočnice, Hlađenje i klima, Upravljanje, Točkovi, Kabina, Stakla, Ispuh, Ostalo`.
-
-2. Podijeliti stavke na dvije kolone:
-   - **Kolona KATEGORIJE** (prvih 7): Motor, Elektrika, Karoserija, Rasvjeta, Ovjes i pogon, Kočnice, Hlađenje i klima
-   - **Prazna kolona** se mijenja u drugu kategorije-kolonu (bez naslova, prazan razmak gdje stoji `<h4>`) sa preostalih 6: Upravljanje, Točkovi, Kabina, Stakla, Ispuh, Ostalo
-
-Stavke ostaju kao `<Link to="/pretraga">` u istom stilu kao postojeće.
+Koraci:
+1. Upload priložene slike (`user-uploads://ova-ChatGPT_Image_Jun_16_2026_04_53_51_PM.png`) kao Lovable asset → `src/assets/hero-bg-ilma.jpg.asset.json`.
+2. U `src/pages/Index.tsx` zamijeniti import `heroBg` da pokazuje na novi asset pointer i koristiti `heroBg.url` u `<img src=...>`.
+3. Ukloniti stari `src/assets/hero-bg.jpg` ako se nigdje drugdje ne koristi (provjera grep-om).
