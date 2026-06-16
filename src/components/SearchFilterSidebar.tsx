@@ -163,7 +163,7 @@ const SearchFilterSidebar = () => {
         </div>
         <a
           href="tel:+38762667700"
-          className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black rounded-lg text-sm font-bold transition-all"
+          className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-brand-yellow to-brand-yellow hover:from-brand-yellow/90 hover:to-brand-yellow/90 text-brand-noir rounded-lg text-sm font-bold transition-all"
         >
           <Phone className="w-4 h-4" />
           +387 62 667 700

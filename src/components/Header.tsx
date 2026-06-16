@@ -20,11 +20,11 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Left nav */}
           <nav className="hidden lg:flex items-center gap-6">
-            <Link to="/pretraga" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+            <Link to="/pretraga" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-brand-red after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
               <Search className="w-4 h-4" />
               Pretraži
             </Link>
-            <Link to="/podrska" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+            <Link to="/podrska" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-brand-red after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
               <Headset className="w-4 h-4" />
               Korisnička podrška
             </Link>
