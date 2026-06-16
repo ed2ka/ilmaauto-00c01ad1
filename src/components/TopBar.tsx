@@ -3,6 +3,7 @@ import facebookIcon from "@/assets/facebook-icon.svg";
 import instagramIcon from "@/assets/instagram-icon.svg";
 import viberIcon from "@/assets/viber-icon.svg";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const TopBar = () => {
   return (
@@ -14,8 +15,9 @@ const TopBar = () => {
         </p>
         <p className="md:hidden text-[10px]">ILMA AUTODIJELOVI</p>
 
-        {/* Right social icons */}
-        <div className="flex items-center gap-1">
+        {/* Right: social icons + language switcher */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="OLX">
             <img src={olxIcon} alt="OLX" className="w-4 h-4" />
           </a>
@@ -35,6 +37,9 @@ const TopBar = () => {
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="WhatsApp">
             <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4" />
           </a>
+          </div>
+          <div className="w-px h-3 bg-background/20" />
+          <LanguageSwitcher />
         </div>
       </div>
     </div>
