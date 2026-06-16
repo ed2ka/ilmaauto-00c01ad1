@@ -2,6 +2,7 @@ import { Heart, User, Menu, X, LogOut, Search, Headset, ShoppingBag, MessageSqua
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import ilmaLogo from "@/assets/ilma-auto-logo.png.asset.json";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,11 +40,13 @@ const Header = () => {
           </button>
 
           {/* Logo */}
-          <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-1 lg:text-center">
-            <Link to="/">
-              <h1 className="font-display text-lg lg:text-2xl font-bold tracking-wider text-header-foreground">
-                ILMA AUTO DIJELOVI
-              </h1>
+          <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-1 lg:flex lg:justify-center">
+            <Link to="/" aria-label="ILMA AUTO - Početna">
+              <img
+                src={ilmaLogo.url}
+                alt="ILMA AUTO"
+                className="h-14 lg:h-20 w-auto -my-2"
+              />
             </Link>
           </div>
 
