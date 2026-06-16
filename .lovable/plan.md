@@ -1,59 +1,63 @@
-## Rebrand UI — ILMA AUTO crveno/žuta paleta
+## Nove ILMA AUTO boje — rebrand
 
-### Checkpoint
-Lovable automatski čuva svaki korak. Vraćanje: dugme **Revert** ispod bilo koje moje poruke, ili `View History` na vrhu chata. Nema potrebe za ručnim checkpointom.
-
-### Brand paleta (iz prilogu)
+### Nova paleta
 | Token | Hex | HSL | Namjena |
 |---|---|---|---|
-| `--brand-noir` | `#2B0000` | `0 100% 8%` | Header, dark sections, footer pozadina |
-| `--brand-bordeaux` | `#6A040F` | `355 96% 22%` | Hover stanja, sekundarne tamne površine |
-| `--brand-blood` | `#9D0208` | `359 97% 31%` | Naslovi accent, badges, gradijenti |
-| `--brand-red` | `#D00000` | `0 100% 41%` | **Primary** — CTA, linkovi, aktivna stanja |
-| `--brand-yellow` | `#FFBA08` | `44 99% 51%` | **Accent** — sekundarni CTA, oznake, highlights |
+| `--brand-red` | `#d30f13` | `359 86% 44%` | **Primary** — CTA, linkovi, aktivna stanja, accenti |
+| `--brand-yellow` | `#feef01` | `56 99% 50%` | **Accent** — sekundarni CTA, highlights, žute oznake |
+| `--brand-gray` | `#8a8989` | `0 0% 54%` | Tekst muted, sekundarne ivice |
+| `--brand-light` | `#e1e1e1` | `0 0% 88%` | Border, separator, kartice |
+| `--brand-bg` | `#f9f9f9` | `0 0% 98%` | Pozadinski svjetli neutralni (sekcije) |
 
-### Strategija — centralni izvor istine
-Sve mijenjam u `src/index.css` (HSL tokeni) — automatski propagira kroz cijelu aplikaciju jer 95% komponenti već koristi semantičke tokene (`bg-primary`, `text-primary`, `bg-header`, itd.).
+Stara tamno-bordo paleta (`#2B0000`, `#6A040F`, `#9D0208`) **izbacuje se**. Header više nije tamno bordo — biće čisto crni/tamno sivi ili bijeli s crvenim accentom (predlažem **crni header `#1a1a1a`** za kontrast s crvenom/žutom; ako želiš bijeli javi).
 
-**Mapiranje tokena:**
+### Mapiranje semantičkih tokena (`src/index.css`)
 ```
---primary           = #D00000     (bilo #DC2626 — vrlo blisko)
---ring              = #D00000
---destructive       = #9D0208
---header-bg         = #2B0000     (bilo #1b2835 tamno plava)
---rating            = #FFBA08     (bilo #FACC15)
---hero-overlay      = #2B0000
---background        = bijela (ostaje)
---foreground        = #2B0000 (umjesto tamno sive — suptilno toplije)
---muted             = #f5ebeb (toplo nude umjesto hladne sive)
---border            = vrlo svijetla bordo nijansa
+--primary           = #d30f13   (brand red)
+--ring              = #d30f13
+--destructive       = #d30f13
+--accent            = #feef01   (brand yellow)
+--header-bg         = #1a1a1a   (neutralna crna — siguran kontrast)
+--hero-overlay      = #1a1a1a
+--foreground        = #1a1a1a
+--muted             = #f9f9f9
+--muted-foreground  = #8a8989
+--border            = #e1e1e1
+--input             = #e1e1e1
+--secondary         = #f9f9f9
+--rating            = #feef01
 ```
 
-Dark mode tokeni dobijaju `--background: #2B0000` paletu.
+Dark mode: pozadina `#1a1a1a`, surface `#2a2a2a`, primary ostaje crvena, accent žuta.
 
-### Hardcoded vrijednosti koje takođe ažuriram
-- `bg-[#1b2835]` → već je tokenizirano kao `--header-bg`, automatski radi
-- `bg-[#facc15]` u `MarketplaceGrid.tsx` (6×) → `bg-[#FFBA08]` (žuti CTA buttoni)
-- `bg-[#ececec]` (TrustBar, InquiryCTA, MarketplaceGrid) — **zadržavam** kao neutralni svjetli separator između sekcija; lijepo razdvaja crvene/žute akcente. Mogu ga promijeniti u toplo bež `#F7EFEA` ako želiš — reci.
-- `AnnouncementBar` (crvena traka) → ostaje, sad koristi `--brand-blood` umjesto tailwind `red-600`
-- Auth/Login pozadina, dropdown highlights, focus ringovi → automatski preko tokena
+### Komponente koje vizuelno mijenjaju izgled (automatski preko tokena)
+Header (sad crn umjesto bordo), TopBar, Footer, Hero overlay, SearchPanel, BrandGrid, TrustBar, InquiryCTA, FAQ, PartCard, OrderSheet, OrderStatusStepper, Dashboard, Auth, ChatAssistant gradient, AppRatingBar zvjezdice (sad još jače žute).
 
-### Komponente koje vizuelno mijenjaju izgled (sve preko tokena)
-Header, TopBar, Footer, Hero overlay, SearchPanel tabovi, BrandGrid hover, TrustBar, HowToOrder ikonice, InquiryCTA card, FAQ accordion accenti, PartCard cijene/warranty, OrderSheet, OrderStatusStepper, Dashboard, Auth, SearchResults filteri, ChatAssistant ILMA AI border gradient, AppRatingBar zvjezdice.
+### Hardcoded fixevi
+- `MarketplaceGrid.tsx` — `#FFBA08` (6×) → `#feef01`
+- `ChatAssistant.tsx` — gradient `#D00000`/`#6A040F` → `#d30f13`/`#1a1a1a`
+- Header/SearchPanel/PartDetail/SearchFilterSidebar utility klase (`brand-red`, `brand-bordeaux`, `brand-yellow`) → nove vrijednosti propagiraju automatski jer su tokenizirane; bordo se mapira na crnu/sivu, žuta na novu žutu, crvena na novu crvenu
+- `tailwind.config.ts` — `brand.bordeaux` i `brand.blood` ostaju kao alias na nove HSL vrijednosti (bordeaux→noir crna, blood→red) ili ih uklanjam i zamijenim s `brand-gray`/`brand-light`/`brand-bg`
 
 ### Što NE diram
-- `MarketplaceGrid` brand kartice (Instagram pink, Facebook plava, OLX tirkizna, Njuškalo žuta, eBay multicolor) — to su tuđi brendovi, moraju ostati prepoznatljivi
-- Google OAuth dugme (Google brand boje)
-- ILMA logo (`ilma-logo.svg` već crveno-žuti, perfektno pasuje)
-- Layout, typography, spacing, sve funkcionalno
+- `MarketplaceGrid` brand kartice (Instagram, Facebook, OLX, Njuškalo, eBay)
+- Google OAuth dugme
+- ILMA logo
+- Layout, typography, spacing
+- `#ececec` separator u `InquiryCTA` (mogu zamijeniti s `#e1e1e1` iz nove palete za konzistentnost — predlažem da)
 
-### Plan u koracima
-1. Update `src/index.css` — svi HSL tokeni + light i dark mode
-2. Update `MarketplaceGrid.tsx` — 6× `#facc15` → `#FFBA08`
-3. Update `ChatAssistant.tsx` gradient border — koristiti nove brand crvene
-4. Update `AnnouncementBar.tsx` — koristi `bg-[hsl(var(--brand-blood))]` ili token
-5. Quick scan ostalih hardcoded crvenih (`#dc2626`, `#7f1d1d`) → zamijeniti s novim brand crvenim
+### Koraci
+1. Prepiši HSL tokene u `src/index.css` (light + dark)
+2. Update `tailwind.config.ts` — dodaj `gray`, `light`, `bg`; preusmjeri `bordeaux`/`blood`/`noir` na nove neutralne tako da postojeće utility klase i dalje rade
+3. `MarketplaceGrid.tsx` — žuti CTA na `#feef01`, tekst dugmeta crn (`#1a1a1a`) jer je nova žuta jako svijetla
+4. `ChatAssistant.tsx` — gradient na nove crvene
+5. Zamijeni `#ececec` → `#e1e1e1` u `InquiryCTA`, `TrustBar`, `MarketplaceGrid` separator
+6. Brzi pregled: Auth, Dashboard, PartDetail, SearchResults — provjera kontrasta žutog teksta
 
-Nakon završetka, otvori homepage i nekoliko podstranica (Auth, Dashboard, PartDetail, SearchResults) i ako nešto ne paše javi mi, pa polirujemo.
+### Pitanje prije izvršenja
+**Header boja** — preferiraš:
+- (A) **Crni `#1a1a1a`** s crvenim accentom (moja preporuka — najjači brand kontrast, kao Ferrari/Shell)
+- (B) **Bijeli `#ffffff`** s crvenim logom (svjetliji, prozračniji)
+- (C) **Crveni `#d30f13`** (full brand, ali težak za navigaciju)
 
-Da krenem?
+Kad potvrdiš header boju, krećem.
