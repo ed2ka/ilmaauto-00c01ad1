@@ -6,7 +6,7 @@ import ebayLogo from "@/assets/ebay-logo.png.asset.json";
 const cards = [
   {
     title: "OLX SHOP",
-    description: "Kratki opis",
+    description: "Pogledajte kompletnu ponudu polovnih i novih auto dijelova.",
     cta: "PREGLEDAJ OGLASE",
     href: "https://autootpadilma.olx.ba/",
     logo: olxLogo.url,
@@ -15,7 +15,7 @@ const cards = [
   },
   {
     title: "NJUŠKALO",
-    description: "Kratki opis",
+    description: "ILMA AUTO ponuda za kupce iz Hrvatske.",
     cta: "POSJETI TRGOVINU",
     href: "https://www.njuskalo.hr/trgovina/ilmaauto",
     logo: njuskaloLogo.url,
@@ -24,7 +24,7 @@ const cards = [
   },
   {
     title: "EBAY STORE",
-    description: "Kratki opis",
+    description: "Auto dijelovi dostupni kupcima širom Europe i svijeta.",
     cta: "POSJETI EBAY STORE",
     href: "https://www.ebay.com/str/ilmaautosb",
     logo: ebayLogo.url,
