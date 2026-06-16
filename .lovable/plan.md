@@ -1,49 +1,22 @@
-## Cilj
+## Problem
 
-Kreirati 5 pravnih stranica sa lorem ipsum sadržajem koji se lako mijenja, povezati ih sa footerom i sa checkbox linkovima na `/prijava`.
+Na homepageu, kad mijenjaš tabove u SearchPanel-u (Filter pretraga / Pretraga po nazivu / Pretraga po kataloškom broju), izgleda kao da se mijenja background slika salona iza pretrage.
 
-## Rute i slug-ovi
+Razlog: hero `main` koristi `flex-1` unutar `min-h-screen flex flex-col` layouta. SearchPanel ima različitu visinu za svaki tab (Filter ima više polja od „Pretrage po nazivu"). Kad se panel smanji, smanji se i `main` visina, a `<img>` koristi `object-cover` koji onda iskadrira drugi dio iste slike — pa izgleda kao da je slika promijenjena.
 
-| Stranica | Ruta | Naslov |
-|---|---|---|
-| Privatnost i zaštita podataka | `/privatnost` | Politika privatnosti i zaštite podataka |
-| Uslovi korištenja | `/uslovi-koristenja` | Uslovi korištenja |
-| Uslovi kupovine | `/uslovi-kupovine` | Uslovi kupovine |
-| Politika povrata | `/politika-povrata` | Politika povrata |
-| Kolačići | `/kolacici` | Politika kolačića |
+Slika je zapravo ista (`/src/assets/hero-bg-ilma.png`), samo se mijenja vidljivi isječak.
 
-## Komponenta layouta
+## Rješenje
 
-Kreirati `src/components/LegalPageLayout.tsx`:
-- TopBar + Header + AnnouncementBar (kao ostale stranice)
-- Hero traka sa naslovom + zadnji datum izmjene (`Posljednje izmjene: 16.06.2026`)
-- Container `max-w-3xl`, `prose`-stil tipografija (h2 sekcije, p paragrafi, ul liste)
-- Footer komponent na dnu
-- Props: `title`, `lastUpdated`, `children`
+Postaviti fiksnu minimalnu visinu hero `main` sekcije na `/` tako da varijacije visine SearchPanel-a ne utiču na visinu hero kontejnera. Tako će `object-cover` uvijek prikazivati isti isječak slike.
 
-Svaka stranica je vlastiti fajl u `src/pages/legal/` tako da korisnik može sadržaj mijenjati nezavisno bez ikakve apstrakcije:
-- `src/pages/legal/Privatnost.tsx`
-- `src/pages/legal/UsloviKoristenja.tsx`
-- `src/pages/legal/UsloviKupovine.tsx`
-- `src/pages/legal/PolitikaPovrata.tsx`
-- `src/pages/legal/Kolacici.tsx`
+### Promjene
 
-Sadržaj svake = `<LegalPageLayout title="..." lastUpdated="16.06.2026">` sa 4–6 sekcija lorem ipsuma (`<section><h2>1. Naslov sekcije</h2><p>Lorem ipsum dolor sit amet...</p></section>`). Markirati na vrhu fajla komentarom `// ✏️ Uredi sadržaj ispod`.
+**`src/pages/Index.tsx`** — na `<main>` elementu (hero sekcija):
+- Dodati `min-h-[820px] lg:min-h-[860px]` (vrijednost dovoljna da pokrije i najviši Filter tab bez skakanja).
+- Ukloniti `flex-1` da sadržaj ispod ne razvlači hero.
+- Zadržati `flex flex-col` i postojeće pozicioniranje SearchPanel-a i rating bara.
 
-## Linkovanje
+Tako hero ostaje vizualno fiksne visine, slika ne „skače", a SearchPanel se mijenja unutar istog okvira.
 
-1. **`src/lib/footer-links.ts`** — zamijeniti `href: "#"` sa pravim rutama:
-   ```ts
-   { label: "Privatnost i zaštita podataka", href: "/privatnost" },
-   { label: "Uslovi korištenja", href: "/uslovi-koristenja" },
-   { label: "Uslovi kupovine", href: "/uslovi-kupovine" },
-   { label: "Politika povrata", href: "/politika-povrata" },
-   { label: "Kolačići", href: "/kolacici" },
-   ```
-2. **`src/components/Footer.tsx`** i **`src/pages/Auth.tsx`** — promijeniti `<a href>` na `<Link to>` za legal linkove (SPA navigacija, bez full reload).
-3. **`src/pages/Auth.tsx`** — checkboxovi:
-   - `Prihvatam <Link to="/uslovi-koristenja">uslove korištenja</Link>`
-   - `Slažem se sa <Link to="/privatnost">politikom privatnosti</Link>`
-4. **`src/App.tsx`** — dodati 5 novih `<Route>` zapisa i importe iznad `Routes`.
-
-Nema promjena u ostalim komponentama; nijedan poslovni logički kod nije diran.
+Nema promjena u `SearchPanel.tsx`, `AnnouncementBar.tsx`, `Header.tsx` niti u tailwind/CSS konfiguraciji.
