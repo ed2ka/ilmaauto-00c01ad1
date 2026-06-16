@@ -60,7 +60,7 @@ const SearchResults = () => {
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 0;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+    <div className="min-h-screen flex flex-col bg-background pt-[128px] lg:pt-[136px]">
       <TopBar />
       <Header />
 
@@ -201,7 +201,7 @@ const SearchResults = () => {
           {/* Desktop sidebar */}
           {!isMobile && (
             <aside className="w-60 flex-shrink-0">
-              <div className="sticky top-[120px] border rounded-lg p-4 bg-card">
+              <div className="sticky top-[148px] border rounded-lg p-4 bg-card">
                 <SearchFilterSidebar />
               </div>
             </aside>

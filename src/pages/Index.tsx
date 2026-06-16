@@ -32,7 +32,7 @@ const Index = () => {
         </div>
 
         {/* Content */}
-        <div className="relative flex-1 flex items-center pt-[120px] lg:pt-[140px] pb-8">
+        <div className="relative flex-1 flex items-center pt-[148px] lg:pt-[168px] pb-8">
           <div className="container mx-auto px-4 lg:px-8">
             <SearchPanel />
           </div>

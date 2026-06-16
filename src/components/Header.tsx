@@ -16,9 +16,9 @@ const Header = () => {
   const { user, profile, signOut } = useAuth();
 
   return (
-    <header className="fixed top-9 left-0 right-0 z-50 bg-brand-gray">
+    <header className="fixed top-12 left-0 right-0 z-50 bg-brand-gray">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-[72px]">
+        <div className="relative flex items-center justify-between h-20 lg:h-[88px]">
           {/* Left nav */}
           <nav className="hidden lg:flex items-center gap-6">
             <Link to="/pretraga" className="relative inline-flex items-center gap-1.5 text-sm font-medium text-header-foreground/90 hover:text-header-foreground transition-colors pb-1 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-brand-red after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
@@ -39,13 +39,13 @@ const Header = () => {
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
-          {/* Logo */}
-          <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-1 lg:flex lg:justify-center">
+          {/* Logo - straddles top bar and main header */}
+          <div className="absolute left-1/2 -translate-x-1/2 -top-6 lg:-top-8 z-10">
             <Link to="/" aria-label="ILMA AUTO - Početna">
               <img
                 src={ilmaLogo.url}
                 alt="ILMA AUTO"
-                className="h-14 lg:h-20 w-auto -my-2"
+                className="h-20 lg:h-24 w-auto"
               />
             </Link>
           </div>

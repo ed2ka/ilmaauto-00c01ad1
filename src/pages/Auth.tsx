@@ -130,7 +130,7 @@ const Auth = () => {
 
   if (showForgot) {
     return (
-      <div className="min-h-screen flex flex-col bg-background pt-[100px] lg:pt-[108px]">
+      <div className="min-h-screen flex flex-col bg-background pt-[128px] lg:pt-[136px]">
         <TopBar />
         <Header />
         <main className="flex-1 flex items-center justify-center px-4">
@@ -160,7 +160,7 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col pt-[100px] lg:pt-[108px] relative">
+    <div className="min-h-screen flex flex-col pt-[128px] lg:pt-[136px] relative">
       <TopBar />
       <Header />
       <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
