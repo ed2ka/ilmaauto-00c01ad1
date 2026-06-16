@@ -8,6 +8,7 @@ import whatsappIcon from "@/assets/whatsapp-icon.svg";
 import olxIcon from "@/assets/olx-icon.svg";
 import njuskaloIcon from "@/assets/njuskalo-icon.svg";
 import ebayIcon from "@/assets/ebay-icon.svg";
+import ilmaLogo from "@/assets/ilma-auto-logo-round.png.asset.json";
 
 const categories = [
   "Motor",
@@ -58,6 +59,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
+            <img
+              src={ilmaLogo.url}
+              alt="ILMA AUTO"
+              className="w-20 h-20 mb-4"
+            />
             <div className="font-bold text-2xl tracking-tight">
               <span className="text-white">ILMA</span>{" "}
               <span className="text-white">AUTO</span>
