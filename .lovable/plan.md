@@ -1,15 +1,22 @@
-## Problem
+## Zašto se razlikuje
 
-On `/prijava`, the blurred ILMA background image is positioned with `absolute inset-0` inside the page wrapper (`min-h-screen`). The Registracija tab is taller than Prijava, so when the user switches tabs the wrapper height changes, the `<img>` (with `h-full object-cover scale-110`) gets re-sized/re-cropped, and the visible background composition jumps.
+Globalni `Footer` komponent (`src/components/Footer.tsx`) renderuje se na svim stranicama i sadrži donju traku sa:
+- `© 2024 ILMA AUTO d.o.o. Sva prava zadržana.`
+- Linkovi: `Privatnost i zaštita podataka | Uslovi korištenja | Uslovi kupovine | Politika povrata | Kolačići`
 
-## Fix
+Stranica `/prijava` (i `/registracija`) NE koristi `<Footer />` — umjesto toga `src/pages/Auth.tsx` ima vlastiti, ručno napisan mini-footer (linije 285–311) sa drugačijim tekstom (`Copyright © 1998-2025 ...`), drugačijim labelama linkova (`Politika privatnosti`, `Opći uslovi poslovanja`, ...) i ikonama društvenih mreža. To je istorijski uvedeno da bi se ispod auth forme prikazala kompaktna traka preko pozadinske slike, ali rezultat je nedosljednost.
 
-In `src/pages/Auth.tsx`, decouple the background from the content height by anchoring it to the viewport instead of the wrapper:
+## Plan
 
-1. Change the background `<img>` from `absolute inset-0 w-full h-full object-cover blur-md scale-110` to `fixed inset-0 w-screen h-screen object-cover blur-md scale-110` (and add `pointer-events-none`).
-2. Change the dark overlay from `absolute inset-0 bg-header/70` to `fixed inset-0 bg-header/70 pointer-events-none`.
-3. Keep `main` with `relative z-10` so the form sits above the fixed layers.
+Uskladiti donju traku na Auth stranici sa onom iz `Footer.tsx`, bez dodavanja punog tamnog Footer komponenta (da bi pozadinska slika ostala vidljiva).
 
-Result: the background fills the viewport and stays identical in size/crop regardless of which tab (Prijava / Registracija / Zaboravljena lozinka) is active or how tall the card grows.
+U `src/pages/Auth.tsx`, zamijeniti postojeći `<footer>` blok (linije 285–311) sa kompaktnom verzijom koja:
 
-No other files change.
+1. Koristi ista 2 elementa kao globalni footer:
+   - lijevo: `© 2024 ILMA AUTO d.o.o. Sva prava zadržana.`
+   - desno: ista lista `legalLinks` sa istim redoslijedom, labelama i `|` razdjelnicima kao u `Footer.tsx`.
+2. Uklanja društvene ikone iz auth footera (nema ih u globalnom).
+3. Zadržava trenutni stil prikladan za tamnu pozadinu: `border-t border-white/10`, `text-white/55`, `hover:text-white`, `text-xs`, container i padding identični globalnom (`py-5`, `gap-4`, `flex-col md:flex-row`).
+4. Lista linkova se duplira inline (kratka), ili se ekstraktuje u `src/lib/footer-links.ts` i importuje u oba mjesta. Predlog: ekstraktovati u `src/lib/footer-links.ts` kao `export const legalLinks = [...]`, pa import u `Footer.tsx` i `Auth.tsx` — jedan izvor istine, buduće promjene se rade na jednom mjestu.
+
+Nema promjena na ostalim stranicama — one već koriste globalni `Footer` i ostaju identične.
