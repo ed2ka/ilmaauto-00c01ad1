@@ -164,8 +164,8 @@ const Auth = () => {
     <div className="min-h-screen flex flex-col pt-[128px] lg:pt-[136px] relative">
       <TopBar />
       <Header />
-      <img src={authBg} alt="" className="absolute inset-0 w-full h-full object-cover blur-md scale-110" />
-      <div className="absolute inset-0 bg-header/70" />
+      <img src={authBg} alt="" className="fixed inset-0 w-screen h-screen object-cover blur-md scale-110 pointer-events-none" />
+      <div className="fixed inset-0 bg-header/70 pointer-events-none" />
       <main className="flex-1 relative z-10 flex flex-col items-center px-4 py-8 pt-[12vh]">
         <div className="w-full max-w-md flex flex-col items-center">
           <h1 className="text-3xl font-bold text-white mb-2 text-center">Pristup korisničkom nalogu</h1>
