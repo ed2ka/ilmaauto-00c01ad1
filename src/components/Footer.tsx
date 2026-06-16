@@ -11,12 +11,18 @@ import ilmaLogo from "@/assets/ilma-auto-logo-round.png.asset.json";
 
 const categories = [
   "Motor",
-  "Kočioni sistem",
-  "Ovjes i upravljanje",
-  "Elektronika",
+  "Elektrika",
   "Karoserija",
   "Rasvjeta",
-  "Klimatizacija",
+  "Ovjes i pogon",
+  "Kočnice",
+  "Hlađenje i klima",
+  "Upravljanje",
+  "Točkovi",
+  "Kabina",
+  "Stakla",
+  "Ispuh",
+  "Ostalo",
 ];
 
 const support = [
@@ -82,7 +88,7 @@ const Footer = () => {
               KATEGORIJE
             </h4>
             <ul className="space-y-2.5">
-              {categories.map((c) => (
+              {categories.slice(0, 7).map((c) => (
                 <li key={c}>
                   <Link
                     to="/pretraga"
@@ -94,8 +100,22 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          {/* Spacer column */}
-          <div className="hidden lg:block" />
+          {/* Categories continued */}
+          <div>
+            <h4 className="text-sm font-bold tracking-[0.15em] mb-5 invisible">.</h4>
+            <ul className="space-y-2.5">
+              {categories.slice(7).map((c) => (
+                <li key={c}>
+                  <Link
+                    to="/pretraga"
+                    className="text-sm text-header-foreground/70 hover:text-white transition-colors"
+                  >
+                    {c}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* Support */}
           <div>

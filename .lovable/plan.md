@@ -1,7 +1,10 @@
 U `src/components/Footer.tsx`:
 
-1. **Ukloniti tekst** "ILMA AUTO" + "ORIGINALNI AUTODIJELOVI" iz brand kolone (linije 67–73). Ostaje samo logo (i postojeći opisni tekst + social ikone ispod).
+1. Zamijeniti `categories` niz sa novim popisom (13 stavki):
+   `Motor, Elektrika, Karoserija, Rasvjeta, Ovjes i pogon, Kočnice, Hlađenje i klima, Upravljanje, Točkovi, Kabina, Stakla, Ispuh, Ostalo`.
 
-2. **Ukloniti Newsletter kolonu** "BUDITE U TOKU" (linije 190–217) i s njom nepotrebni `useState`, `email`, `handleSubmit`.
+2. Podijeliti stavke na dvije kolone:
+   - **Kolona KATEGORIJE** (prvih 7): Motor, Elektrika, Karoserija, Rasvjeta, Ovjes i pogon, Kočnice, Hlađenje i klima
+   - **Prazna kolona** se mijenja u drugu kategorije-kolonu (bez naslova, prazan razmak gdje stoji `<h4>`) sa preostalih 6: Upravljanje, Točkovi, Kabina, Stakla, Ispuh, Ostalo
 
-3. **Dodati praznu kolonu** između PODRŠKA i KONTAKT (`<div />`) — broj kolona ostaje 5 (Brand, Kategorije, Podrška, prazno, Kontakt).
+Stavke ostaju kao `<Link to="/pretraga">` u istom stilu kao postojeće.
