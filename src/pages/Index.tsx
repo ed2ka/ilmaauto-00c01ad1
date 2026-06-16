@@ -48,8 +48,8 @@ const Index = () => {
       {/* Brands section */}
       <section className="bg-background py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-2">Marka vozila</h2>
-          <p className="text-center text-muted-foreground mb-8">Pronađite odgovarajuće autodijelove za željenu marku i model vozila</p>
+          <h2 className="text-2xl font-bold text-center mb-2">Dostupne marke vozila</h2>
+          <p className="text-center text-muted-foreground mb-8">Pronađite odgovarajuće autodijelove za željenu marku i model vašeg vozila.</p>
           <BrandGrid />
         </div>
       </section>
