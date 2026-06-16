@@ -4,7 +4,7 @@ import bg from "@/assets/inquiry-cta-bg.png.asset.json";
 
 const InquiryCTA = () => {
   return (
-    <section className="bg-[#ececec] pb-14 lg:pb-16">
+    <section className="bg-[#e1e1e1] pb-14 lg:pb-16">
       <div className="container mx-auto px-4 lg:px-8">
         <div
           className="relative rounded-[14px] overflow-hidden bg-[#0a0a0a] text-white"

@@ -25,7 +25,7 @@ const items = [
 
 const TrustBar = () => {
   return (
-    <section className="bg-[#ececec] py-10 lg:py-12">
+    <section className="bg-[#e1e1e1] py-10 lg:py-12">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-8 lg:gap-y-0 lg:divide-x lg:divide-border">
           {items.map((it) => (

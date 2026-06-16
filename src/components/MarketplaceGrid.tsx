@@ -3,7 +3,7 @@ import { Instagram, Facebook } from "lucide-react";
 
 const MarketplaceGrid = () => {
   return (
-    <section className="bg-[#ececec] py-12">
+    <section className="bg-[#e1e1e1] py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Instagram */}
@@ -29,7 +29,7 @@ const MarketplaceGrid = () => {
               </div>
             </div>
             <div className="relative z-10">
-              <span className="inline-flex items-center gap-2 bg-[#FFBA08] text-black text-xs font-bold tracking-wider px-4 py-2.5 rounded-[9px]">
+              <span className="inline-flex items-center gap-2 bg-[#feef01] text-[#1a1a1a] text-xs font-bold tracking-wider px-4 py-2.5 rounded-[9px]">
                 ZAPRATI NAS <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
@@ -54,7 +54,7 @@ const MarketplaceGrid = () => {
               </p>
             </div>
             <div className="relative z-10">
-              <span className="inline-flex items-center gap-2 bg-[#FFBA08] text-black text-xs font-bold tracking-wider px-4 py-2.5 rounded-[9px]">
+              <span className="inline-flex items-center gap-2 bg-[#feef01] text-[#1a1a1a] text-xs font-bold tracking-wider px-4 py-2.5 rounded-[9px]">
                 POSJETI STRANICU <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
@@ -132,7 +132,7 @@ const MarketplaceGrid = () => {
 
           <div className="relative z-10 max-w-[45%]">
             <h3 className="text-4xl font-bold tracking-wide mb-3">
-              <span className="text-[#FFBA08]">EBAY</span>{" "}
+              <span className="text-[#feef01]">EBAY</span>{" "}
               <span className="text-white">STORE</span>
             </h3>
             <p className="text-white/80 text-sm leading-relaxed mb-4">
@@ -141,8 +141,8 @@ const MarketplaceGrid = () => {
             <ul className="space-y-2 mb-5">
               {["Globalna dostava", "eBay Buyer Protection", "Hiljade dostupnih dijelova"].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-white text-sm">
-                  <span className="w-5 h-5 rounded-full border border-[#FFBA08] flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-[#FFBA08]" strokeWidth={3} />
+                  <span className="w-5 h-5 rounded-full border border-[#feef01] flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-[#feef01]" strokeWidth={3} />
                   </span>
                   {item}
                 </li>
@@ -151,7 +151,7 @@ const MarketplaceGrid = () => {
           </div>
 
           <div className="relative z-10">
-            <span className="inline-flex items-center gap-2 bg-[#FFBA08] text-black text-xs font-bold tracking-wider px-4 py-2.5 rounded-[9px]">
+            <span className="inline-flex items-center gap-2 bg-[#feef01] text-[#1a1a1a] text-xs font-bold tracking-wider px-4 py-2.5 rounded-[9px]">
               POSJETI EBAY STORE <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </div>

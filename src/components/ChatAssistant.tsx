@@ -415,7 +415,7 @@ const ChatAssistant = () => {
         <div
           className="fixed bottom-6 right-6 z-50 rounded-full p-[3px] cursor-pointer"
           style={{
-            background: 'conic-gradient(from var(--gradient-angle), #D00000, #FFBA08, #ffffff, #6A040F, #D00000)',
+            background: 'conic-gradient(from var(--gradient-angle), #d30f13, #feef01, #ffffff, #1a1a1a, #d30f13)',
             animation: 'spin-gradient 3s linear infinite, pulse-glow-soft 2.5s ease-in-out infinite',
           }}
           onClick={() => setIsOpen(true)}
