@@ -50,44 +50,76 @@ const faqItems = [
   },
 ];
 
-const FAQ = () => {
-  return (
-    <section className="bg-background py-12">
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold text-center mb-2">Često postavljana pitanja</h2>
-        <p className="text-center text-muted-foreground mb-8">
-          Odgovori na najčešća pitanja naših kupaca
+const renderAnswer = (item: typeof faqItems[number]) => {
+  if (item.isPaymentList) {
+    return (
+      <div>
+        <p className="mb-2">Plaćanje je moguće:</p>
+        <ul className="list-disc list-inside space-y-1 ml-2">
+          <li>Karticama</li>
+          <li>Gotovinski pri preuzimanju</li>
+        </ul>
+        <p className="mt-3 text-muted-foreground text-sm">
+          Dozvoljen je pregled paketa prilikom uručenja
         </p>
-        <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
-          {faqItems.map((item, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left font-bold">{item.question}</AccordionTrigger>
-              <AccordionContent className="font-light">
-                {item.isPaymentList ? (
-                  <div>
-                    <p className="mb-2">Plaćanje je moguće:</p>
-                    <ul className="list-disc list-inside space-y-1 ml-2">
-                      <li>Karticama</li>
-                      <li>Gotovinski pri preuzimanju</li>
-                    </ul>
-                    <p className="mt-3 text-muted-foreground text-sm">
-                      Dozvoljen je pregled paketa prilikom uručenja
-                    </p>
-                  </div>
-                ) : item.hasFunFact ? (
-                  <div>
-                    <p>U sistemu imamo preko 700.000 dostupnih autodijelova.</p>
-                    <p className="mt-3 bg-muted/50 rounded-md p-3 text-sm">
-                      <span className="font-semibold">Fun fact:</span> Na lageru imamo više od 1.000.000 dijelova koji još nisu uneseni u sistem zbog obima posla.
-                    </p>
-                  </div>
-                ) : (
-                  <p>{item.answer}</p>
-                )}
-              </AccordionContent>
-            </AccordionItem>
+      </div>
+    );
+  }
+  if (item.hasFunFact) {
+    return (
+      <div>
+        <p>U sistemu imamo preko 700.000 dostupnih autodijelova.</p>
+        <p className="mt-3 bg-muted/50 rounded-md p-3 text-sm">
+          <span className="font-semibold">Fun fact:</span> Na lageru imamo više od 1.000.000 dijelova koji još nisu uneseni u sistem zbog obima posla.
+        </p>
+      </div>
+    );
+  }
+  return <p>{item.answer}</p>;
+};
+
+const FAQ = () => {
+  const mid = Math.ceil(faqItems.length / 2);
+  const columns = [faqItems.slice(0, mid), faqItems.slice(mid)];
+
+  return (
+    <section className="bg-background py-14 lg:py-16">
+      <div className="container mx-auto px-4 lg:px-8">
+        <div className="text-center mb-10">
+          <p className="text-primary text-xs font-bold tracking-[0.2em] mb-2">FAQ</p>
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
+            Najčešća pitanja
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-0 max-w-6xl mx-auto">
+          {columns.map((col, colIdx) => (
+            <Accordion
+              key={colIdx}
+              type="single"
+              collapsible
+              className="w-full"
+            >
+              {col.map((item, index) => {
+                const globalIndex = colIdx * mid + index;
+                return (
+                  <AccordionItem
+                    key={globalIndex}
+                    value={`item-${globalIndex}`}
+                    className="border-b border-border"
+                  >
+                    <AccordionTrigger className="text-left font-semibold text-sm hover:no-underline py-4 [&[data-state=open]>svg]:text-primary [&>svg]:text-primary">
+                      {item.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="font-light text-sm">
+                      {renderAnswer(item)}
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
           ))}
-        </Accordion>
+        </div>
       </div>
     </section>
   );
