@@ -21,14 +21,18 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <main className="relative flex flex-col min-h-[820px] lg:min-h-[860px]">
+      <main className="relative flex-1 flex flex-col">
         {/* Background */}
-        <div className="absolute inset-0">
-          <img
-            src={heroBg}
-            alt="ILMA AUTO salon"
-            className="w-full h-full object-cover"
-          />
+        <div
+          className="absolute inset-0 bg-no-repeat"
+          style={{
+            backgroundImage: `url(${heroBg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center top",
+          }}
+          aria-label="ILMA AUTO salon"
+          role="img"
+        >
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
         </div>
 
