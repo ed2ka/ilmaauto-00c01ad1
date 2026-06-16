@@ -13,7 +13,7 @@ const items = [
   },
   {
     icon: BadgeCheck,
-    title: "PROVJERENA KOMPATIBILNOST",
+    title: "PROVJERENO I TESTIRANO",
     desc: "Dijelovi su provjereni prema podacima proizvođača vašeg vozila.",
   },
   {
