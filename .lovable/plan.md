@@ -1,57 +1,59 @@
-## Nova sekcija: "Pronađite nas online" (poslije FAQ)
+## Rebrand UI — ILMA AUTO crveno/žuta paleta
 
-Dodajem novu sekciju na homepage ispod "Najčešće postavljena pitanja", identičnu uploadanom dizajnu.
+### Checkpoint
+Lovable automatski čuva svaki korak. Vraćanje: dugme **Revert** ispod bilo koje moje poruke, ili `View History` na vrhu chata. Nema potrebe za ručnim checkpointom.
 
-### Struktura (5 kartica u grid layoutu)
+### Brand paleta (iz prilogu)
+| Token | Hex | HSL | Namjena |
+|---|---|---|---|
+| `--brand-noir` | `#2B0000` | `0 100% 8%` | Header, dark sections, footer pozadina |
+| `--brand-bordeaux` | `#6A040F` | `355 96% 22%` | Hover stanja, sekundarne tamne površine |
+| `--brand-blood` | `#9D0208` | `359 97% 31%` | Naslovi accent, badges, gradijenti |
+| `--brand-red` | `#D00000` | `0 100% 41%` | **Primary** — CTA, linkovi, aktivna stanja |
+| `--brand-yellow` | `#FFBA08` | `44 99% 51%` | **Accent** — sekundarni CTA, oznake, highlights |
 
-Layout: 2 kolone gore (4 kartice) + 1 široka kartica dolje. Svaka kartica `rounded-[9px]`, visine ~220px, sa pozadinskim vizualom/logom desno i tekstualnim sadržajem lijevo.
+### Strategija — centralni izvor istine
+Sve mijenjam u `src/index.css` (HSL tokeni) — automatski propagira kroz cijelu aplikaciju jer 95% komponenti već koristi semantičke tokene (`bg-primary`, `text-primary`, `bg-header`, itd.).
 
+**Mapiranje tokena:**
 ```
-┌─────────────────┬─────────────────┐
-│  INSTAGRAM      │  FACEBOOK       │
-├─────────────────┼─────────────────┤
-│  OLX SHOP       │  NJUŠKALO       │
-├─────────────────┴─────────────────┤
-│  EBAY STORE (full width)          │
-└───────────────────────────────────┘
+--primary           = #D00000     (bilo #DC2626 — vrlo blisko)
+--ring              = #D00000
+--destructive       = #9D0208
+--header-bg         = #2B0000     (bilo #1b2835 tamno plava)
+--rating            = #FFBA08     (bilo #FACC15)
+--hero-overlay      = #2B0000
+--background        = bijela (ostaje)
+--foreground        = #2B0000 (umjesto tamno sive — suptilno toplije)
+--muted             = #f5ebeb (toplo nude umjesto hladne sive)
+--border            = vrlo svijetla bordo nijansa
 ```
 
-### Kartice — sadržaj
+Dark mode tokeni dobijaju `--background: #2B0000` paletu.
 
-1. **Instagram** — crna pozadina, IG gradient logo desno
-   - "Pratite nove dijelove, vozila za rastavljanje i dnevne objave."
-   - @ilmaauto
-   - CTA žuti button: "ZAPRATI NAS →"
-   - Link: instagram.com/ilmaauto
+### Hardcoded vrijednosti koje takođe ažuriram
+- `bg-[#1b2835]` → već je tokenizirano kao `--header-bg`, automatski radi
+- `bg-[#facc15]` u `MarketplaceGrid.tsx` (6×) → `bg-[#FFBA08]` (žuti CTA buttoni)
+- `bg-[#ececec]` (TrustBar, InquiryCTA, MarketplaceGrid) — **zadržavam** kao neutralni svjetli separator između sekcija; lijepo razdvaja crvene/žute akcente. Mogu ga promijeniti u toplo bež `#F7EFEA` ako želiš — reci.
+- `AnnouncementBar` (crvena traka) → ostaje, sad koristi `--brand-blood` umjesto tailwind `red-600`
+- Auth/Login pozadina, dropdown highlights, focus ringovi → automatski preko tokena
 
-2. **Facebook** — tamno plava pozadina, FB "f" logo desno
-   - "Novosti, akcije, dolazak novih vozila i komunikacija sa kupcima."
-   - CTA žuti: "POSJETI STRANICU →"
+### Komponente koje vizuelno mijenjaju izgled (sve preko tokena)
+Header, TopBar, Footer, Hero overlay, SearchPanel tabovi, BrandGrid hover, TrustBar, HowToOrder ikonice, InquiryCTA card, FAQ accordion accenti, PartCard cijene/warranty, OrderSheet, OrderStatusStepper, Dashboard, Auth, SearchResults filteri, ChatAssistant ILMA AI border gradient, AppRatingBar zvjezdice.
 
-3. **OLX Shop** — tamno zelena, OLX logo desno
-   - "Pogledajte kompletnu ponudu polovnih i novih auto dijelova."
-   - CTA tirkizni: "PREGLEDAJ OGLASE →"
+### Što NE diram
+- `MarketplaceGrid` brand kartice (Instagram pink, Facebook plava, OLX tirkizna, Njuškalo žuta, eBay multicolor) — to su tuđi brendovi, moraju ostati prepoznatljivi
+- Google OAuth dugme (Google brand boje)
+- ILMA logo (`ilma-logo.svg` već crveno-žuti, perfektno pasuje)
+- Layout, typography, spacing, sve funkcionalno
 
-4. **Njuškalo** — žuta pozadina + njuškalo maskota
-   - "ILMA AUTO ponuda za kupce iz Hrvatske."
-   - CTA žuti (tamni tekst): "POSJETI TRGOVINU →"
+### Plan u koracima
+1. Update `src/index.css` — svi HSL tokeni + light i dark mode
+2. Update `MarketplaceGrid.tsx` — 6× `#facc15` → `#FFBA08`
+3. Update `ChatAssistant.tsx` gradient border — koristiti nove brand crvene
+4. Update `AnnouncementBar.tsx` — koristi `bg-[hsl(var(--brand-blood))]` ili token
+5. Quick scan ostalih hardcoded crvenih (`#dc2626`, `#7f1d1d`) → zamijeniti s novim brand crvenim
 
-5. **eBay Store** (široka) — tamno plava sa svjetskom mapom + slika dijelova/kutije
-   - Naslov: "**EBAY** STORE" (EBAY žuto, STORE bijelo)
-   - "Auto dijelovi dostupni kupcima širom Europe i svijeta."
-   - Checklist: Globalna dostava, eBay Buyer Protection, Hiljade dostupnih dijelova
-   - CTA žuti: "POSJETI EBAY STORE →"
+Nakon završetka, otvori homepage i nekoliko podstranica (Auth, Dashboard, PartDetail, SearchResults) i ako nešto ne paše javi mi, pa polirujemo.
 
-### Tehnički detalji
-
-- Novi file: `src/components/MarketplaceGrid.tsx`
-- Import i ubacivanje u `src/pages/Index.tsx` poslije `<FAQ />`, prije `<Footer />`
-- Tipografija: Poppins (postojeća), uppercase tracking za naslove
-- Border radius: `rounded-[9px]` (project standard)
-- Generiram potrebne pozadinske vizuale (auto far, ebay scene, njuškalo maskota itd.) preko imagegen — premium tier za eBay karticu (sadrži tekst/logo detalje); ili koristim CSS gradient + tekst-only logo overlay ako želite uštedu
-- Logo gradijenti (IG/FB/OLX/eBay/Njuškalo) renderirani kao veliki vodeni žigovi desno na svakoj kartici
-
-### Pitanja prije implementacije
-
-1. **URL-ovi** — koje su tačne adrese za Instagram, Facebook, OLX shop, Njuškalo trgovinu i eBay store? (Trebam ih za href-ove)
-2. **Pozadinski vizuali** — da generišem nove slike (premium, ~5 generacija) ili da koristim čistu boju + veliki logo kao prozirni vodeni žig (besplatno, brže)?
+Da krenem?

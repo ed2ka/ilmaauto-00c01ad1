@@ -235,7 +235,7 @@ const PartDetail = () => {
                       <Check className="w-4 h-4" /> Dostupan
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-700 text-sm font-medium">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-yellow/20 text-brand-bordeaux text-sm font-medium">
                       <XIcon className="w-4 h-4" /> Nije dostupan
                     </span>
                   )}
