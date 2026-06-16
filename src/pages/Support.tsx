@@ -18,6 +18,7 @@ import {
   Users,
   ArrowRight,
 } from "lucide-react";
+import heroBgAsset from "@/assets/hero-bg-ilma.png.asset.json";
 import viberIcon from "@/assets/viber-icon.svg";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
 import { Link } from "react-router-dom";
@@ -82,6 +83,12 @@ const Support = () => {
 
       {/* Hero */}
       <section className="relative pt-[160px] lg:pt-[180px] pb-20 bg-[#1b2835] overflow-hidden">
+        <img
+          src={heroBgAsset.url}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-md scale-110"
+        />
+        <div className="absolute inset-0 bg-[#1b2835]/75" />
         <div
           className="absolute inset-0 opacity-40"
           style={{
