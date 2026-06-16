@@ -5,6 +5,9 @@ import viberIcon from "@/assets/viber-icon.svg";
 import instagramIcon from "@/assets/instagram-icon.svg";
 import facebookIcon from "@/assets/facebook-icon.svg";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
+import olxIcon from "@/assets/olx-icon.svg";
+import njuskaloIcon from "@/assets/njuskalo-icon.svg";
+import ebayIcon from "@/assets/ebay-icon.svg";
 
 const categories = [
   "Motor",
@@ -28,8 +31,9 @@ const support = [
 const socials = [
   { icon: facebookIcon, alt: "Facebook", href: "#" },
   { icon: instagramIcon, alt: "Instagram", href: "#" },
-  { icon: whatsappIcon, alt: "WhatsApp", href: "#" },
-  { icon: viberIcon, alt: "Viber", href: "#" },
+  { icon: olxIcon, alt: "OLX.ba", href: "https://autootpadilma.olx.ba/" },
+  { icon: njuskaloIcon, alt: "Njuškalo.hr", href: "https://www.njuskalo.hr/trgovina/ilmaauto" },
+  { icon: ebayIcon, alt: "eBay", href: "https://www.ebay.com/str/ilmaautosb" },
 ];
 
 const legalLinks = [
