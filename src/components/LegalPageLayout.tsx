@@ -16,10 +16,10 @@ const LegalPageLayout = ({ title, lastUpdated, children }: LegalPageLayoutProps)
       <Header />
       <main className="flex-1 pt-[128px] lg:pt-[136px]">
         {/* Hero */}
-        <div className="bg-[#1b2835] text-white">
+        <div className="bg-white border-b border-border/50">
           <div className="container mx-auto px-4 lg:px-8 py-14 max-w-3xl">
-            <h1 className="text-3xl md:text-4xl font-bold mb-3">{title}</h1>
-            <p className="text-sm text-white/60">Posljednje izmjene: {lastUpdated}</p>
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[#262626]">{title}</h1>
+            <p className="text-sm text-[#262626]/60">Posljednje izmjene: {lastUpdated}</p>
           </div>
         </div>
 
