@@ -15,7 +15,7 @@ const Header = () => {
   const { user, profile, signOut } = useAuth();
 
   return (
-    <header className="fixed top-9 left-0 right-0 z-50 bg-header">
+    <header className="fixed top-9 left-0 right-0 z-50 bg-brand-gray">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Left nav */}
@@ -92,7 +92,7 @@ const Header = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-header border-t border-header-foreground/10 animate-fade-in">
+        <div className="lg:hidden bg-brand-gray border-t border-white/10 animate-fade-in">
           <div className="container mx-auto px-4 py-4 space-y-3">
             <Link to="/pretraga" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Search className="w-4 h-4" /> Pretraži</Link>
             <Link to="/podrska" className="flex items-center gap-2 text-sm font-medium text-header-foreground/90 py-2" onClick={() => setMobileMenuOpen(false)}><Headset className="w-4 h-4" /> Korisnička podrška</Link>

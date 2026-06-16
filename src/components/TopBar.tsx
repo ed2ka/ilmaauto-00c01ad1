@@ -7,7 +7,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 
 const TopBar = () => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-header text-header-foreground/70 text-xs">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-brand-light text-brand-noir/70 text-xs">
       <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between h-9">
         {/* Left text */}
         <p className="hidden md:block text-[11px] tracking-wide">
@@ -21,24 +21,24 @@ const TopBar = () => {
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="OLX">
             <img src={olxIcon} alt="OLX" className="w-4 h-4" />
           </a>
-          <div className="w-px h-3 bg-background/20" />
+          <div className="w-px h-3 bg-brand-noir/15" />
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="Facebook">
             <img src={facebookIcon} alt="Facebook" className="w-4 h-4" />
           </a>
-          <div className="w-px h-3 bg-background/20" />
+          <div className="w-px h-3 bg-brand-noir/15" />
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="Instagram">
             <img src={instagramIcon} alt="Instagram" className="w-4 h-4" />
           </a>
-          <div className="w-px h-3 bg-background/20" />
+          <div className="w-px h-3 bg-brand-noir/15" />
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="Viber">
             <img src={viberIcon} alt="Viber" className="w-4 h-4" />
           </a>
-          <div className="w-px h-3 bg-background/20" />
+          <div className="w-px h-3 bg-brand-noir/15" />
           <a href="#" className="p-1.5 opacity-90 hover:opacity-100 transition-opacity" aria-label="WhatsApp">
             <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4" />
           </a>
           </div>
-          <div className="w-px h-3 bg-background/20" />
+          <div className="w-px h-3 bg-brand-noir/15" />
           <LanguageSwitcher />
         </div>
       </div>
