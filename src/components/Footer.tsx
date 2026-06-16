@@ -94,6 +94,8 @@ const Footer = () => {
               ))}
             </ul>
           </div>
+          {/* Spacer column */}
+          <div className="hidden lg:block" />
 
           {/* Support */}
           <div>
@@ -112,8 +114,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Spacer column */}
-          <div className="hidden lg:block" />
+
 
           {/* Contact */}
           <div>
