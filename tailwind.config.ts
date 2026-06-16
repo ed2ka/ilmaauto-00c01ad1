@@ -87,6 +87,13 @@ export default {
   			},
   			rating: 'hsl(var(--rating))',
   			'tab-inactive': 'hsl(var(--tab-inactive))',
+  			brand: {
+  				noir: 'hsl(var(--brand-noir))',
+  				bordeaux: 'hsl(var(--brand-bordeaux))',
+  				blood: 'hsl(var(--brand-blood))',
+  				red: 'hsl(var(--brand-red))',
+  				yellow: 'hsl(var(--brand-yellow))'
+  			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
