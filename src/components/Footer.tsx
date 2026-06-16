@@ -137,9 +137,9 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-header-foreground/50 shrink-0 mt-0.5" />
                 <span>
-                  Lukavačka cesta bb
+                  Ljetinić br8
                   <br />
-                  75250 Lukavac, BiH
+                  74264 Jelah Tešanj, BiH
                 </span>
               </li>
               <li className="flex items-start gap-3">
@@ -148,6 +148,8 @@ const Footer = () => {
                   Pon - Pet: 08:00 - 16:00
                   <br />
                   Sub: 08:00 - 13:00
+                  <br />
+                  Nedjelja: Zatvoreno
                 </span>
               </li>
             </ul>
