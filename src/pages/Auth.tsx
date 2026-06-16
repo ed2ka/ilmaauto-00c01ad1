@@ -16,10 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
-import facebookIcon from "@/assets/facebook-icon.svg";
-import instagramIcon from "@/assets/instagram-icon.svg";
-import viberIcon from "@/assets/viber-icon.svg";
-import whatsappIcon from "@/assets/whatsapp-icon.svg";
+import { legalLinks } from "@/lib/footer-links";
 
 const Auth = () => {
   const { user, loading, signIn, signUp, resetPassword } = useAuth();
@@ -282,30 +279,22 @@ const Auth = () => {
         </Card>
         </div>
       </main>
-      <footer className="relative z-10 py-4 px-4">
-        <div className="container mx-auto border-t border-[#ffffff33] pt-4 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-1 text-[11px] text-white/60">
-            <a href="#" className="hover:text-white/90 transition-colors">Politika privatnosti</a>
-            <a href="#" className="hover:text-white/90 transition-colors">Politika kolačića</a>
-            <a href="#" className="hover:text-white/90 transition-colors">Opći uslovi poslovanja</a>
-            <a href="#" className="hover:text-white/90 transition-colors">Uslovi prodaje i garancija povrata</a>
-          </div>
-          <p className="text-[11px] text-white/70 text-center whitespace-nowrap">
-            Copyright &copy; 1998-2025 ILMA AUTO d.o.o – Sva prava zadržana
-          </p>
-          <div className="flex items-center gap-2">
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity" aria-label="Facebook">
-              <img src={facebookIcon} alt="Facebook" className="w-4 h-4" />
-            </a>
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity" aria-label="Instagram">
-              <img src={instagramIcon} alt="Instagram" className="w-4 h-4" />
-            </a>
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity" aria-label="Viber">
-              <img src={viberIcon} alt="Viber" className="w-4 h-4" />
-            </a>
-            <a href="#" className="opacity-70 hover:opacity-100 transition-opacity" aria-label="WhatsApp">
-              <img src={whatsappIcon} alt="WhatsApp" className="w-4 h-4" />
-            </a>
+      <footer className="relative z-10">
+        <div className="border-t border-white/10">
+          <div className="container mx-auto px-4 lg:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/55">
+            <p>© 2024 ILMA AUTO d.o.o. Sva prava zadržana.</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              {legalLinks.map((link, i) => (
+                <span key={link.label} className="flex items-center gap-5">
+                  <a href={link.href} className="hover:text-white transition-colors">
+                    {link.label}
+                  </a>
+                  {i < legalLinks.length - 1 && (
+                    <span className="hidden md:inline text-white/20">|</span>
+                  )}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
