@@ -41,7 +41,6 @@ const LanguageSwitcher = () => {
         aria-label="Promijeni jezik"
       >
         <span className="text-sm leading-none">{active.flag}</span>
-        <span>{active.code}</span>
         <ChevronDown className="w-3 h-3" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[220px] z-[100]">
@@ -52,8 +51,7 @@ const LanguageSwitcher = () => {
             className="flex items-center gap-2 cursor-pointer"
           >
             <span className="text-base leading-none">{lang.flag}</span>
-            <span className="font-semibold w-10">{lang.code}</span>
-            <span className="text-muted-foreground text-xs flex-1">{lang.name}</span>
+            <span className="text-xs flex-1">{lang.name}</span>
             {current === lang.code && <Check className="w-3.5 h-3.5 text-primary" />}
           </DropdownMenuItem>
         ))}

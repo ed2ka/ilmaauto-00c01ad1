@@ -1,27 +1,14 @@
-# Language switcher u TopBar-u
+## Ispravka Language Switcher-a — zamjena tekstualnih kodova zastavicama
 
-## Cilj
-Odmah desno od social media ikona dodati dropdown za odabir jezika sa zastavicama i kodovima: **BIH, CRO, SRB, EN, DE**.
+### Cilj
+U `LanguageSwitcher` komponenti zamijeniti tekstualne prefikse jezika (BA, CRO, SRB, EN, DE) emoji zastavicama, tako da se nigdje ne prikazuje tekstualni kod već isključivo zastavica.
 
-## Implementacija
+### Promjene
 
-### 1. Zastavice
-Koristim **emoji zastavice** (🇧🇦 🇭🇷 🇷🇸 🇬🇧 🇩🇪) — bez dodatnih asseta, native rendering na svim modernim OS-ima, jednostavno. (Ako želiš SVG zastavice umjesto emojija, javi i prebacujem.)
+1. **`src/components/LanguageSwitcher.tsx`**
+   - **Trigger (otvarajući gumb):** ukloniti `<span>{active.code}</span>` — ostaviti samo zastavicu + strelicu.
+   - **Dropdown stavke:** ukloniti `<span className="font-semibold w-10">{lang.code}</span>` — ostaviti samo zastavicu + puni naziv zemlje/jezika.
+   - Prilagoditi razmake/klase ako je potrebno radi ravnoteže bez tekstualnog koda.
 
-### 2. Nova komponenta `src/components/LanguageSwitcher.tsx`
-- shadcn `DropdownMenu` (već postoji u projektu).
-- Trigger: trenutna zastava + kod (npr. "🇧🇦 BIH") + chevron, stilizovan da se uklopi u TopBar (tekst-xs, opacity-90, hover-100).
-- Items: zastava + kod + puni naziv države (BIH — Bosna i Hercegovina, CRO — Hrvatska, SRB — Srbija, EN — English, DE — Deutsch).
-- State u `useState` lokalno za sad, perzistira u `localStorage` pod ključem `ilma_lang`. Default: `BIH`.
-- **Ne** integrišem stvarni i18n (react-i18next) — samo UI switcher. Ako poslije zatražiš prevod sadržaja, dodajem i18n biblioteku tada.
-
-### 3. `TopBar.tsx` izmjena
-- Importuje `LanguageSwitcher`.
-- Wrapper-uje postojeću `<div className="flex items-center gap-1">` (social) i novi `<LanguageSwitcher />` u zajednički flex container sa gapom, tako da je switcher desno od WhatsApp ikone, sa vertikalnim separatorom između.
-
-### 4. Mobile
-TopBar je vidljiv i na mobile — switcher ostaje vidljiv (kompaktna verzija: samo zastava + kod, bez punog naziva, pun naziv samo u dropdown listi).
-
-## Šta NE radim
-- Ne prevodim postojeći sadržaj sajta (to je veći posao — react-i18next + sve string resurse). Samo dodajem switcher UI sa state-om.
-- Ne diram social ikone niti tekst lijevo.
+### Izlaz
+Language switcher prikazuje isključivo zastavice bez tekstualnih prefiksa tipa "BA", "CRO" itd.
