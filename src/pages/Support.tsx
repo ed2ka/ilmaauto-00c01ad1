@@ -25,9 +25,9 @@ import { Link } from "react-router-dom";
 const channels = [
   {
     name: "Viber",
-    tag: "Najbrži odgovor",
+    tag: "NAJBRŽI ODGOVOR SA SLIKOM DIJELA",
     handle: "+387 62 667 700",
-    description: "Pošaljite VIN, sliku ili broj dijela — odgovaramo za par minuta.",
+    description: "Pošaljite VIN, sliku ili kataloški broj dijela.\nodgovaramo za par minuta.",
     icon: viberIcon,
     iconBg: "bg-[#7360F2]/10",
     href: "viber://chat?number=%2B38762667700",
@@ -35,7 +35,7 @@ const channels = [
   },
   {
     name: "WhatsApp",
-    tag: "Sa slikom dijela",
+    tag: "NAJBRŽI ODGOVOR SA SLIKOM DIJELA",
     handle: "+387 62 667 700",
     description: "Idealno za slanje fotografija oštećenog dijela ili saobraćajne.",
     icon: whatsappIcon,
@@ -45,9 +45,9 @@ const channels = [
   },
   {
     name: "Direktan poziv",
-    tag: "Pon–Sub radno vrijeme",
+    tag: "PONEJDELJAK - SUBOTA",
     handle: "+387 62 667 700",
-    description: "Razgovarajte direktno sa našim timom — bez čekanja na red.",
+    description: "Razgovarajte direktno sa našim timom\nbez čekanja na red.",
     icon: null,
     iconBg: "bg-brand-red/10",
     href: "tel:+38762667700",
@@ -61,11 +61,11 @@ const faqs = [
     a: "Prosječno vrijeme odgovora je ispod 5 minuta tokom radnog vremena. Van radnog vremena javljamo se prvo sljedeće jutro.",
   },
   {
-    q: "Mogu li poslati sliku dijela?",
+    q: "Mogu li poslati sliku dijela ili kataloški broj dijela?",
     a: "Da — najlakše je preko Vibera ili WhatsApp-a. Pošaljite sliku, VIN ili broj sa dijela i mi ćemo provjeriti dostupnost.",
   },
   {
-    q: "Dostavljate li u cijelu BiH i region?",
+    q: "Dostavljate li u cijelu BiH i region ili zemlje EU?",
     a: "Da, dostavljamo na cijelom Balkanu i u EU. Standardna dostava unutar BiH je 10 KM.",
   },
   {
@@ -96,21 +96,21 @@ const Support = () => {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75 animate-ping" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red" />
               </span>
-              Podrška dostupna
+              PODRŠKA JE DOSTUPNA
             </span>
             <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4 leading-tight">
-              Tu smo za vas, <span className="text-brand-red">uvijek</span>
+              Tu smo za vas, <span className="text-brand-red">uvijek!</span>
             </h1>
-            <p className="text-white/70 text-base md:text-lg max-w-xl mx-auto">
-              Naš tim odgovara na pitanja o auto dijelovima, narudžbama i dostavi —
-              brzo, jasno i bez kompliciranja.
+            <p className="text-white/70 text-base md:text-lg max-w-xl mx-auto whitespace-pre-line">
+              Naš tim odgovara na pitanja o auto dijelovima, narudžbama i dostavi.
+              Brzo, jasno i bez kompliciranja.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-10 max-w-2xl mx-auto">
               {[
                 { icon: Zap, label: "< 5 min odgovor" },
                 { icon: CheckCircle2, label: "5.000+ riješenih upita" },
-                { icon: Users, label: "Pon–Sub dostupni" },
+                { icon: Users, label: "PON - SUB dostupni" },
               ].map(({ icon: Icon, label }) => (
                 <div
                   key={label}
@@ -144,7 +144,7 @@ const Support = () => {
                 {c.tag}
               </span>
               <h3 className="font-display font-bold text-lg text-foreground mb-2">{c.name}</h3>
-              <p className="text-sm text-muted-foreground mb-5 flex-1">{c.description}</p>
+              <p className="text-sm text-muted-foreground mb-5 flex-1 whitespace-pre-line">{c.description}</p>
               <div className="text-sm font-medium text-foreground mb-4">{c.handle}</div>
               <Button
                 asChild
@@ -259,9 +259,9 @@ const Support = () => {
             <h2 className="text-2xl md:text-3xl font-display font-bold text-black mb-3">
               Niste pronašli ono što tražite?
             </h2>
-            <p className="text-black mb-6 max-w-lg mx-auto">
-
-              Pošaljite nam upit sa detaljima o dijelu — odgovaramo i van standardnih kataloških artikala.
+            <p className="text-black mb-6 max-w-lg mx-auto whitespace-pre-line">
+              Pošaljite nam upit sa detaljima o dijelu - naš strulni tim odgovoriti
+              će vam u najkraćem mogućem roku. Na stanju imamo preko 1,7mil dijelova koji nisu uneseni u sistem.
             </p>
             <Button asChild size="lg" className="rounded-[9px] bg-brand-red hover:bg-brand-red/90 text-white">
               <Link to="/pretraga">
