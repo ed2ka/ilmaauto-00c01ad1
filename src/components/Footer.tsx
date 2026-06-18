@@ -9,6 +9,7 @@ import njuskaloIcon from "@/assets/njuskalo-icon.svg";
 import ebayIcon from "@/assets/ebay-icon.svg";
 import ilmaLogo from "@/assets/ilma-auto-logo-round.png.asset.json";
 import { legalLinks } from "@/lib/footer-links";
+import { CONTACT } from "@/lib/contact";
 
 const categories = [
   "Motor",
