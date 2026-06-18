@@ -64,6 +64,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Search, Send, UserPlus } from "lucide-react";
+import viberIcon from "@/assets/viber-icon.svg";
 
 export interface SearchNoResultsModuleProps {
   /** Slobodni tekst pretrage (npr. iz `?q=` parametra). */
@@ -136,6 +137,21 @@ const SearchNoResultsModule = ({
       toast.error("Greška pri slanju zahtjeva. Pokušajte ponovo.");
     }
   };
+
+  const buildViberHref = () => {
+    const pageUrl = typeof window !== "undefined" ? window.location.href : "";
+    const message =
+      `Pozdrav, šaljem zahtjev za provjeru dijela koji nije pronađen u sistemu:\n\n` +
+      `Tražim: ${buildSearchText()}\n\n` +
+      `Ime i prezime: ${name}\n` +
+      `Telefon: ${phone}\n` +
+      `Email: ${email}\n\n` +
+      `ILMA AUTO | originalni autodijelovi za sve marke vozila - ${pageUrl}`;
+    return `viber://chat?number=%2B38761454151&draft=${encodeURIComponent(message)}`;
+  };
+
+  const viberDisabled =
+    !confirmed || !name.trim() || !phone.trim() || !email.trim();
 
   if (submitted) {
     return (
@@ -247,13 +263,46 @@ const SearchNoResultsModule = ({
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!confirmed || createInquiry.isPending}
-            >
-              {createInquiry.isPending ? "Šaljem zahtjev..." : "Pošalji zahtjev"}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={!confirmed || createInquiry.isPending}
+              >
+                {createInquiry.isPending ? "Šaljem zahtjev..." : "Pošalji zahtjev"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                disabled={viberDisabled}
+                asChild={!viberDisabled}
+              >
+                {viberDisabled ? (
+                  <span>
+                    <img
+                      src={viberIcon}
+                      alt="Viber"
+                      className="w-4 h-4 mr-1 [filter:brightness(0)]"
+                    />
+                    Pošalji porukom na Viber
+                  </span>
+                ) : (
+                  <a
+                    href={buildViberHref()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={viberIcon}
+                      alt="Viber"
+                      className="w-4 h-4 mr-1 [filter:brightness(0)]"
+                    />
+                    Pošalji porukom na Viber
+                  </a>
+                )}
+              </Button>
+            </div>
 
             <p className="text-xs text-muted-foreground text-center">
               Kontaktirati ćemo vas na dostavljene kontakt podatke
