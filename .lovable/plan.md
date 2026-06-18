@@ -1,24 +1,17 @@
 ## Problem
+Hero pozadinska slika se "pomjera" kada korisnik mijenja tabove jer SearchPanel mijenja visinu (filter tab je najviši, naziv/kataloški su kraći). Pošto je `background-size: cover` vezan za visinu hero kontejnera, manja visina = drugačiji crop slike.
 
-Trenutno rješenje fiksira visinu sadržaja taba (`min-h-[236px]` u `SearchPanel.tsx`) i hero sekcije (`min-h-[820px] lg:min-h-[860px]` u `Index.tsx`) kako se pozadinska slika ne bi „pomjerala" pri promjeni tabova. To stvara prazan prostor i krutu visinu, što nije idealno.
+## Rješenje
+Fiksirati visinu hero sekcije na visinu koju ima kada je aktivan "Filter pretraga dijelova" tab (najviši sadržaj). Tako pozadina uvijek ima istu dimenziju kontejnera i crop ostaje identičan bez obzira na aktivni tab.
 
-## Bolje rješenje
+## Izmjene
 
-Umjesto fiksiranja visine, fiksirati samu pozadinsku sliku tako da njen kadar ne ovisi o visini hero kontejnera. Pozadina će uvijek prikazivati isti dio slike, bez obzira koliko je SearchPanel visok.
+**`src/pages/Index.tsx`** — hero `<main>`:
+- Dodati fiksni `min-h-[820px] lg:min-h-[880px]` nazad na `<main>` (vrijednost otprilike odgovara visini hero-a kada je filter tab aktivan — VehicleSelector + naziv + kategorija polja).
+- Zadržati postojeću pozadinu (`<div>` sa `backgroundImage`, `background-size: cover`, `background-position: center top`).
+- Pošto je visina hero-a sada konstantna, SearchPanel može mijenjati svoju visinu unutar centrirane content zone — pozadina ostaje vizuelno identična.
 
-## Promjene
-
-**`src/pages/Index.tsx`** — hero sekcija:
-- Vratiti `<main>` na fleksibilnu visinu: ukloniti `min-h-[820px] lg:min-h-[860px]`, vratiti `flex-1` kako bi se prirodno ponašao.
-- Background `<div className="absolute inset-0">` ostaje, ali `<img>` mijenjamo: umjesto `w-full h-full object-cover`, koristimo fiksne dimenzije bazirane na viewportu i fiksiramo poziciju.
-  - Pristup: zamijeniti `<img>` sa `<div>` koji koristi CSS `background-image`, `background-size: cover`, `background-position: center top`, `background-attachment: fixed` (ili `background-attachment: local` ako fixed pravi probleme na mobilnim). Time slika ima konzistentan kadar bez obzira na visinu kontejnera.
-  - Alternativa (ako je `background-attachment: fixed` problematičan na iOS): zadržati `<img>` sa `object-cover object-top` i dodati fiksnu `min-height` slici (npr. `min-h-[900px]`) — tako kontejner može biti manji ali slika ostaje istog kadra.
-
-**`src/components/SearchPanel.tsx`**:
-- Ukloniti `min-h-[236px]` sa sadržajnog `<div>`-a — panel će se opet prirodno skupljati po sadržaju tab-a.
+**`src/components/SearchPanel.tsx`** — bez izmjena (tabovi mogu slobodno mijenjati visinu, ne utiče više na pozadinu).
 
 ## Tehnička napomena
-
-Predlažem prvu varijantu (CSS `background-image` + `background-position: center top`) jer je najpouzdanija i radi i na mobilnim uređajima — kadar slike ostaje isti jer je sidren na vrh, a panel se može slobodno mijenjati po visini ispod njega.
-
-Nema promjena u ostalim komponentama ni tailwind konfiguraciji.
+Razlog zašto prethodno rješenje (`center top` + cover) nije dovoljno: cover skalira sliku da pokrije i širinu i visinu kontejnera. Kada se visina kontejnera smanji, slika se i dalje skalira da pokrije širinu, ali zoom level se mijenja → drugačiji vizuelni crop. Fiksiranjem `min-height` hero kontejnera, ulazni parametri za `cover` ostaju konstantni.
