@@ -276,12 +276,6 @@ const Support = () => {
               Pozovite nas - naš stručni tim odgovoriti
               će vam u najkraćem mogućem roku. Na stanju imamo preko milion dijelova koji nisu uneseni u sistem.
             </p>
-            <Button asChild size="lg" className="rounded-[9px] bg-brand-red hover:bg-brand-red/90 text-white">
-              <Link to="/pretraga">
-                Pošalji upit
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Link>
-            </Button>
           </div>
         </div>
       </section>
