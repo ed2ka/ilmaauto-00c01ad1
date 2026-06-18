@@ -9,6 +9,7 @@ import njuskaloIcon from "@/assets/njuskalo-icon.svg";
 import ebayIcon from "@/assets/ebay-icon.svg";
 import ilmaLogo from "@/assets/ilma-auto-logo-round.png.asset.json";
 import { legalLinks } from "@/lib/footer-links";
+import { CONTACT } from "@/lib/contact";
 
 const categories = [
   "Motor",
@@ -135,22 +136,29 @@ const Footer = () => {
             <ul className="space-y-3.5 text-sm text-header-foreground/70">
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-header-foreground/50 shrink-0" />
-                <a href="tel:+38762123456" className="hover:text-white transition-colors">
-                  +387 62 123 456
-                </a>
+                <div className="flex flex-col">
+                  <a href={CONTACT.phoneMobileHref} className="hover:text-white transition-colors">
+                    {CONTACT.phoneMobile}
+                  </a>
+                  <a href={CONTACT.phoneLandlineHref} className="hover:text-white transition-colors">
+                    {CONTACT.phoneLandline}
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-header-foreground/50 shrink-0" />
-                <a href="mailto:info@ilmaauto.ba" className="hover:text-white transition-colors">
-                  info@ilmaauto.ba
+                <a href={CONTACT.emailHref} className="hover:text-white transition-colors">
+                  {CONTACT.email}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-header-foreground/50 shrink-0 mt-0.5" />
                 <span>
-                  Ljetinić br8
+                  {CONTACT.company}
                   <br />
-                  74264 Jelah Tešanj, BiH
+                  {CONTACT.addressLine1}
+                  <br />
+                  {CONTACT.addressLine2}, {CONTACT.country}
                 </span>
               </li>
               <li className="flex items-start gap-3">
