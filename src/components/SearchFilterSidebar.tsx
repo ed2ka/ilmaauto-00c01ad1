@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Phone, RotateCcw, X } from "lucide-react";
+import { CONTACT } from "@/lib/contact";
 
 const SearchFilterSidebar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
