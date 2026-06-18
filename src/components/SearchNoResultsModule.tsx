@@ -1,3 +1,57 @@
+/**
+ * ============================================================================
+ * SearchNoResultsModule
+ * ============================================================================
+ *
+ * Samostalan, ponovo-iskoristiv MODUL koji se prikazuje kada pretraga dijelova
+ * ne vrati nijedan rezultat. Sastoji se iz dva dijela:
+ *
+ *   1. Informativni header — poruka korisniku da na lageru imamo preko
+ *      1.000.000 autodijelova koji nisu uneseni u sistem.
+ *   2. Forma za zahtjev (upit) — korisnik šalje upit s kontakt podacima;
+ *      ako je gost, ID upita se sprema u sessionStorage za naknadno
+ *      povezivanje s nalogom nakon registracije.
+ *
+ * ----------------------------------------------------------------------------
+ * Props
+ * ----------------------------------------------------------------------------
+ *  - searchQuery: string         → slobodni tekst pretrage (npr. q parametar)
+ *  - marka?:      string         → odabrana marka vozila
+ *  - tip?:        string         → odabrani tip / model
+ *  - dio?:        string         → naziv dijela
+ *  - broj?:       string         → kataloški broj
+ *
+ * Modul interno kombinuje sve dostupne parametre u jedan ljudski-čitljiv
+ * tekst koji se prikazuje korisniku i šalje kao `search_query` u inquiry.
+ *
+ * ----------------------------------------------------------------------------
+ * Primjer korištenja
+ * ----------------------------------------------------------------------------
+ *
+ *   import { SearchNoResultsModule } from "@/components";
+ *
+ *   {results.length === 0 && (
+ *     <SearchNoResultsModule
+ *       searchQuery={params.q ?? ""}
+ *       marka={params.marka}
+ *       tip={params.tip}
+ *       dio={params.dio}
+ *       broj={params.broj}
+ *     />
+ *   )}
+ *
+ * ----------------------------------------------------------------------------
+ * Bilješke za programera
+ * ----------------------------------------------------------------------------
+ *  - Koristi `useCreateInquiry` hook (Lovable Cloud / Supabase) za slanje upita.
+ *  - Toast notifikacije idu kroz `sonner`.
+ *  - Modul radi i za prijavljene korisnike (auto-popunjeni podaci iz profila)
+ *    i za goste.
+ *  - Nakon uspješnog slanja prikazuje se "thank you" stanje sa CTA za
+ *    otvaranje korisničkog naloga ako je korisnik gost.
+ * ============================================================================
+ */
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,15 +65,26 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Search, Send, UserPlus } from "lucide-react";
 
-interface NoResultsInquiryProps {
+export interface SearchNoResultsModuleProps {
+  /** Slobodni tekst pretrage (npr. iz `?q=` parametra). */
   searchQuery: string;
+  /** Odabrana marka vozila (opcionalno). */
   marka?: string;
+  /** Odabrani tip / model vozila (opcionalno). */
   tip?: string;
+  /** Naziv dijela (opcionalno). */
   dio?: string;
+  /** Kataloški broj (opcionalno). */
   broj?: string;
 }
 
-const NoResultsInquiry = ({ searchQuery, marka, tip, dio, broj }: NoResultsInquiryProps) => {
+const SearchNoResultsModule = ({
+  searchQuery,
+  marka,
+  tip,
+  dio,
+  broj,
+}: SearchNoResultsModuleProps) => {
   const { user, profile } = useAuth();
   const createInquiry = useCreateInquiry();
 
@@ -215,4 +280,5 @@ const NoResultsInquiry = ({ searchQuery, marka, tip, dio, broj }: NoResultsInqui
   );
 };
 
-export default NoResultsInquiry;
+export { SearchNoResultsModule };
+export default SearchNoResultsModule;
