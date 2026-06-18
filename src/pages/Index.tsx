@@ -21,7 +21,7 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <main className="relative flex-1 flex flex-col">
+      <main className="relative flex-1 flex flex-col min-h-[820px] lg:min-h-[880px]">
         {/* Background */}
         <div
           className="absolute inset-0 bg-no-repeat"
