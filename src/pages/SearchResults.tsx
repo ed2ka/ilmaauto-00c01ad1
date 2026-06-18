@@ -8,7 +8,7 @@ import CategoryGrid from "@/components/CategoryGrid";
 
 import PartListItem from "@/components/PartListItem";
 import SearchFilterSidebar from "@/components/SearchFilterSidebar";
-import NoResultsInquiry from "@/components/NoResultsInquiry";
+import { SearchNoResultsModule } from "@/components";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ChevronLeft, ChevronRight, LayoutGrid, List, Search, SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -260,7 +260,7 @@ const SearchResults = () => {
                 )}
               </>
             ) : (
-              <NoResultsInquiry
+              <SearchNoResultsModule
                 searchQuery={params.query || ""}
                 marka={params.marka}
                 tip={params.tip}
