@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import bg from "@/assets/inquiry-cta-bg.png.asset.json";
 
 const InquiryCTA = () => {
@@ -28,13 +28,6 @@ const InquiryCTA = () => {
                 dijela.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Link
-                  to="/podrska"
-                  className="inline-flex items-center justify-center gap-2 rounded-[9px] bg-primary text-primary-foreground font-bold tracking-wide px-7 py-3.5 text-sm hover:bg-primary/90 transition-colors"
-                >
-                  <Mail className="w-4 h-4" />
-                  POŠALJI UPIT
-                </Link>
                 <Link
                   to="/podrska"
                   className="inline-flex items-center justify-center gap-2 rounded-[9px] bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold tracking-wide px-7 py-3.5 text-sm transition-colors"
