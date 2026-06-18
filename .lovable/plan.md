@@ -1,39 +1,57 @@
-# Plan: HANDOFF.md – kompletna mapa frontenda
 
-Kreirati jedan markdown dokument u korijenu projekta koji programer može preuzeti i koristiti kao referencu za daljnji rad na frontendu.
+# Standalone statični frontend — lokalni export
 
-## Šta se radi
+Cilj: jedan folder/ZIP koji sadrži kompletan frontend (HTML + CSS + JS + svi assetovi) koji radi otvaranjem `index.html` u browseru, **bez** `npm install`, bez Node-a, bez dev servera.
 
-Novi fajl: `HANDOFF.md` (u root-u projekta, pored `README.md`).
+## Šta će biti uključeno
 
-## Sadržaj dokumenta
+- Produkcijski Vite build (`dist/`) — minifikovan HTML/CSS/JS.
+- Svi CDN assetovi (`/__l5e/assets-v1/...`) skinuti lokalno u `dist/assets-cdn/` i URL-ovi prepisani u JS/CSS bundleu na relativne putanje.
+- Svi `public/` fajlovi (favicon, manifest, robots, ikone).
+- README sa uputstvom kako pokrenuti lokalno.
 
-1. **Uvod** – kratki opis projekta (ILMA AUTO, B2C platforma za autodijelove, Balkans/EU), preview i published URL.
-2. **Tech stack** – React 18, Vite 5, TypeScript 5, Tailwind v3, shadcn/ui, React Router, TanStack Query, Lovable Cloud (Supabase).
-3. **Struktura projekta** – stablo glavnih foldera (`src/pages`, `src/components`, `src/components/ui`, `src/hooks`, `src/lib`, `src/assets`, `src/integrations/supabase`, `supabase/functions`).
-4. **Rute (stranice)** – tabela svih 12 ruta + 404, sa kolonama: path, fajl, opis, ko može pristupiti (javno / ulogovan).
-5. **Layout komponente** – `AnnouncementBar`, `TopBar`, `Header`, `Footer`, `LanguageSwitcher`, `NavLink` – sa opisom gdje se koriste.
-6. **Sekcije / moduli** – sve sekcijske komponente (SearchPanel, VehicleSelector, VinInput, BrandGrid, SearchBrandGrid, CategoryGrid, HowToOrder, TrustBar, InquiryCTA, FAQ, MarketplaceGrid, AppRatingBar, SearchFilterSidebar, PartCard, PartListItem, PartImageGallery, OrderStatusStepper, SearchNoResultsModule, LegalPageLayout, ChatAssistant) – sa kratkim opisom uloge.
-7. **Modali / sheetovi / overlay** – `OrderSheet`, `ChatAssistant`, profil dropdown, mobilni meni, `AnnouncementBar` dismiss, toaster/sonner, shadcn primitivi (dialog, alert-dialog, sheet, drawer, popover, dropdown-menu, itd.).
-8. **Autentikacija** – flowovi (email/password, Google OAuth, auto-login nakon registracije, reset password), zaštićene rute, hookovi.
-9. **Hookovi** – `useAuth`, `useWishlist`, `useOrders`, `useInquiries`, `useParts`, `usePwaInstall`, `use-mobile`, `use-toast`.
-10. **Lib helperi** – `formatPrice`, `brandLogos`, `contact`, `footer-links`, `utils`.
-11. **Backend touchpoints** – Supabase client, korištene tabele (parts, wishlist, orders, inquiries, profiles, user_roles), edge funkcije (`chat`, `decode-vin`, `import-parts`).
-12. **Assets** – logo, hero, inquiry CTA, ikone (viber, whatsapp, facebook, instagram, olx, ebay, njuskalo), logoi marki vozila.
-13. **Design system / konvencije** – Poppins, primarna boja `#1b2835`, header `#343535`, brand crvena, `rounded-[9px]`, hover bez shadowa, bosanski format cijena `1.000,00 KM`, zaokruženje na 5 KM, datumi `DD.MM.YYYY`.
-14. **Kontakt brojevi** – Viber/WhatsApp `+387 62 667 700` (centralizirano u `src/lib/contact.ts`), uz napomenu o nesinkronizovanom `+387 61 454 151` na `PartDetail` i `SearchNoResultsModule`.
-15. **SEO / meta** – `index.html`, manifest, robots, favicon.
-16. **Skripte za pokretanje** – `npm install`, `npm run dev`, `npm run build` (iz `package.json`).
-17. **Poznata otvorena pitanja / TODO** – npr. unifikacija Viber broja.
+## Šta neće raditi u standalone modu (i zašto)
+
+Pošto nema backenda kad se otvori lokalno bez interneta:
+- **Lovable Cloud / Supabase pozivi** (login, narudžbe, wishlist, dijelovi iz baze, AI chat, VIN decode) — frontend će se učitati i renderovati UI, ali svi pozivi prema `*.supabase.co` će failati ako nema interneta. Ako ima interneta, radiće normalno (klijent zove production Supabase URL iz `.env`).
+- **SPA routing pri otvaranju kroz `file://`** — React Router-u treba `http://`. Stoga je preporuka: koristiti bilo koji statički server (vidi README ispod), ili host na bilo kojem statičnom hostingu (Netlify/GitHub Pages/itd).
+
+## Koraci (build mode)
+
+1. **Build**
+   - `npm install` (samo jednom u sandboxu, ne na korisničkoj mašini)
+   - `npm run build` → generiše `dist/`
+
+2. **Skidanje CDN assetova lokalno**
+   - Skripta `scripts/localize-assets.mjs`:
+     - Rekurzivno skenira `dist/` (`.html`, `.css`, `.js`) za sve URL-ove `/__l5e/assets-v1/<id>/<file>`.
+     - Skida svaki preko `https://ilmaauto.lovable.app/__l5e/assets-v1/...` u `dist/assets-cdn/<id>/<file>`.
+     - Prepisuje sve pojave u bundle fajlovima na relativnu putanju `./assets-cdn/<id>/<file>` (i `assets-cdn/...` u `index.html`).
+   - Iste pretrage primijeniti i na `dist/index.html` i `dist/manifest.webmanifest`.
+
+3. **README**
+   - `dist/README.md` sa:
+     - „Dva načina pokretanja":
+       - **Najlakše:** `npx serve dist` ili Python `python3 -m http.server 8080` iz foldera, pa otvoriti `http://localhost:8080`.
+       - **Bez ičega instaliranog:** dupli klik na `index.html` (uz upozorenje da SPA rute i Supabase mogu praviti probleme).
+     - Napomena o backendu (radi samo uz internet, jer zove production Supabase).
+
+4. **Pakovanje**
+   - `cd dist && zip -r ../ilma-auto-static.zip .`
+   - Kopirati ZIP u `/mnt/documents/ilma-auto-static.zip` da ga korisnik može preuzeti.
 
 ## Tehnički detalji
 
-- Format: GitHub-flavored markdown, tabele, sekcije sa `##` naslovima.
-- Sva interna referenca koristi relativne putanje (`src/...`) tako da programer može direktno kliknuti u editoru.
-- Bez mijenjanja postojećeg koda – samo novi fajl.
+- Skripta koristi samo Node ugrađene module (`node:fs`, `node:fetch`, `node:path`). Bez novih dependencyja.
+- Bazni URL za skidanje: `https://ilmaauto.lovable.app` (production, ima sve uploadovane assetove).
+- `index.html` u Vite buildu već koristi relativne `/assets/...` putanje za bundle, pa SPA radi pod bilo kojim statičnim serverom.
+- Za apsolutne `/` URL-ove u manifestu/ikonama (`/favicon-ilma.png`, `/icons/apple-touch-icon.png`) — to su `public/` fajlovi, već su u `dist/` nakon builda; ne treba ih skidati.
 
-## Šta NIJE u planu
+## Deliverable
 
-- Ne mijenjam postojeće komponente.
-- Ne dodajem nove rute / funkcionalnosti.
-- Ne diram backend ni schema.
+- `/mnt/documents/ilma-auto-static.zip` — spreman za download.
+- Poruka korisniku sa linkom i kratkim how-to.
+
+## Ograničenja koja vrijedi eksplicitno reći korisniku
+
+- Ovo je **frontend snapshot**, ne self-hosted backend. Ako želi i backend lokalno (vlastiti Supabase + edge funkcije + baza + AI key), to je posebno veliki posao i nije u opsegu ovog plana.
