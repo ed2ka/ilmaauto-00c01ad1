@@ -30,13 +30,6 @@ const InquiryCTA = () => {
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link
                   to="/podrska"
-                  className="inline-flex items-center justify-center gap-2 rounded-[9px] bg-primary text-primary-foreground font-bold tracking-wide px-7 py-3.5 text-sm hover:bg-primary/90 transition-colors"
-                >
-                  <Mail className="w-4 h-4" />
-                  POŠALJI UPIT
-                </Link>
-                <Link
-                  to="/podrska"
                   className="inline-flex items-center justify-center gap-2 rounded-[9px] bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold tracking-wide px-7 py-3.5 text-sm transition-colors"
                 >
                   <Phone className="w-4 h-4" />
