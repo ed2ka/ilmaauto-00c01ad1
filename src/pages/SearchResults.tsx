@@ -259,7 +259,7 @@ const SearchResults = () => {
                   </div>
                 )}
               </>
-            ) : params.broj ? (
+            ) : (
               <NoResultsInquiry
                 searchQuery={params.query || ""}
                 marka={params.marka}
@@ -267,16 +267,6 @@ const SearchResults = () => {
                 dio={params.dio}
                 broj={params.broj}
               />
-            ) : (
-              <div className="py-12 text-center space-y-3">
-                <div className="mx-auto w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-                  <Search className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <h2 className="text-xl font-bold text-foreground">Nema rezultata</h2>
-                <p className="text-muted-foreground">
-                  Pokušajte promijeniti filtere ili pretražiti po kataloškom broju.
-                </p>
-              </div>
             )}
           </div>
         </div>

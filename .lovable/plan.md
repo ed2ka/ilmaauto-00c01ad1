@@ -1,42 +1,39 @@
-## Cilj
+## Problem
 
-Standardizirati kontakt podatke u cijeloj aplikaciji na:
+Na `/pretraga` stranici, kada nema rezultata, `NoResultsInquiry` (poruka "Na lageru imamo preko 1.000.000 autodijelova..." + forma za slanje zahtjeva) prikazuje se **samo** kada je pretraga rađena po kataloškom broju (`params.broj`). U svim ostalim slučajevima (pretraga po marki/tipu/nazivu dijela) korisnik vidi samo generičku poruku "Nema rezultata. Pokušajte promijeniti filtere...".
 
-- **Mobitel:** +387 62 667 700 (`tel:+38762667700`)
-- **Fiksni:** +387 32 667 700 (`tel:+38732667700`)
-- **Email:** [info@ilmaauto.com](mailto:info@ilmaauto.com) (`mailto:info@ilmaauto.com`)
-- **Adresa:** ILMA d.o.o, Ljetinić 8, 74264 Jelah – Tešanj, Bosna i Hercegovina
-- **Viber/WhatsApp:** ostaju na +387 62 667 700 (mobilni)
+## Rješenje
 
-## Izmjene po fajlu
+U `src/pages/SearchResults.tsx`, u bloku za prikaz rezultata, zamijeniti uslov tako da se `NoResultsInquiry` prikazuje **uvijek** kada nema rezultata, bez obzira na to da li je pretraga rađena po kataloškom broju, marki, tipu ili nazivu dijela.
 
-`**src/components/Footer.tsx**`
+Konkretno, ukloniti `params.broj ? (...) : (generička poruka)` granu i ostaviti samo `NoResultsInquiry` koji već dinamički gradi tekst zahtjeva iz svih dostupnih parametara (`marka`, `tip`, `dio`, `broj`, `query`) preko interne `buildSearchText()` funkcije — tako da radi za sve tipove pretraga.
 
-- Telefon: zamijeniti `+387 62 123 456` (`tel:+38762123456`) sa **dva reda**: mobitel `+387 62 667 700` i fiksni `+387 32 667 700`, oba klikabilna (`tel:` linkovi).
-- Email: `info@ilmaauto.ba` → `info@ilmaauto.com` (i `mailto:` link).
-- Adresa: `Ljetinić br8` / `74264 Jelah Tešanj, BiH` → `ILMA d.o.o`, `Ljetinić 8`, `74264 Jelah – Tešanj, Bosna i Hercegovina`.
-- Viber/WhatsApp linkovi (`38762667700`) — bez promjene.
+Generička poruka "Nema rezultata / Pokušajte promijeniti filtere" se uklanja jer je `NoResultsInquiry` korisniji (sadrži CTA za slanje zahtjeva).
 
-`**src/pages/Support.tsx**`
+## Tehnički detalji
 
-- Kartica "Telefon" (linija 47–55): zadržati `+387 62 667 700` kao primarni i dodati drugi `handle` red ili podnaslov sa `+387 32 667 700` (`tel:+38732667700`). Najjednostavnije: prikazati oba broja unutar iste kartice, oba klikabilna.
-- Sekcija sa kontakt detaljima (linije 217–228):
-  - Adresa: dodati prefiks `ILMA d.o.o, Ljetinić 8, 74264 Jelah – Tešanj, Bosna i Hercegovina` (puni oblik umjesto `BiH`).
-  - Email: već `info@ilmaauto.com` — bez promjene.
-  - Telefon: ispod postojećeg `+387 62 667 700` dodati drugi red `+387 32 667 700` sa `tel:+38732667700`.
-- Viber/WhatsApp kartice — bez promjene (ostaju na mobilnom 62).
+**Fajl:** `src/pages/SearchResults.tsx`
 
-`**src/components/SearchFilterSidebar.tsx**`
+Trenutni kod:
+```tsx
+) : params.broj ? (
+  <NoResultsInquiry searchQuery={...} marka={...} tip={...} dio={...} broj={...} />
+) : (
+  <div>Nema rezultata. Pokušajte promijeniti filtere...</div>
+)
+```
 
-- Već prikazuje `+387 62 667 700`. Dodati drugi red ispod sa `+387 32 667 700` (`tel:+38732667700`), istim stilom.
+Novi kod:
+```tsx
+) : (
+  <NoResultsInquiry
+    searchQuery={params.query || ""}
+    marka={params.marka}
+    tip={params.tip}
+    dio={params.dio}
+    broj={params.broj}
+  />
+)
+```
 
-## Bez izmjena
-
-- **Placeholderi** u input poljima (`Auth.tsx`, `OrderSheet.tsx`, `NoResultsInquiry.tsx` — `"+387 6x xxx xxx"`) — to su input hintovi za korisnika, ne kontakt podaci firme.
-- **Data fajlovi** (`src/data/export_7.json` itd.) — sadrže kataloške brojeve dijelova, ne kontakte.
-- **Supabase auto-gen fajlovi** i `chat/index.ts` ne sadrže kontakt podatke firme.
-
-## Napomena
-
-Nakon ovog koraka, ako kasnije želiš lakše održavanje, mogli bismo izvući kontakte u jedan modul (`src/lib/contact.ts`) — ali to nije u opsegu ovog zadatka osim ako tražiš.  
-- ok tražim, ubaci to tako u taj modul
+Nema drugih izmjena — `NoResultsInquiry` već podržava sve kombinacije parametara.
