@@ -273,8 +273,8 @@ const Support = () => {
               Niste pronašli ono što tražite?
             </h2>
             <p className="text-black mb-6 max-w-lg mx-auto whitespace-pre-line">
-              Pošaljite nam upit sa detaljima o dijelu - naš strulni tim odgovoriti
-              će vam u najkraćem mogućem roku. Na stanju imamo preko 1,7mil dijelova koji nisu uneseni u sistem.
+              Pošaljite nam upit sa detaljima o dijelu - naš stručni tim odgovoriti
+              će vam u najkraćem mogućem roku. Na stanju imamo preko milion dijelova koji nisu uneseni u sistem.
             </p>
             <Button asChild size="lg" className="rounded-[9px] bg-brand-red hover:bg-brand-red/90 text-white">
               <Link to="/pretraga">
