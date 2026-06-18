@@ -157,7 +157,7 @@ const SearchFilterSidebar = () => {
           </p>
         </div>
         <div>
-          <h4 className="font-bold text-sm text-foreground">EASY RETURN</h4>
+          <h4 className="font-bold text-sm text-foreground">POVRAT U&nbsp; ROKU 7 DANA</h4>
           <p className="text-xs text-muted-foreground mt-1">
             Sve kupljene dijelove možete vratiti u roku od <strong className="text-foreground">7 dana</strong>.
           </p>
