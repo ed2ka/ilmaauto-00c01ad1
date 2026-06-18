@@ -1,39 +1,20 @@
-## Problem
+## Cilj
+Pretvoriti `NoResultsInquiry` u jasno dokumentiran, preimenovan modul s barrel exportom.
 
-Na `/pretraga` stranici, kada nema rezultata, `NoResultsInquiry` (poruka "Na lageru imamo preko 1.000.000 autodijelova..." + forma za slanje zahtjeva) prikazuje se **samo** kada je pretraga rađena po kataloškom broju (`params.broj`). U svim ostalim slučajevima (pretraga po marki/tipu/nazivu dijela) korisnik vidi samo generičku poruku "Nema rezultata. Pokušajte promijeniti filtere...".
+## Koraci
 
-## Rješenje
+1. **Preimenovati komponentu** iz `NoResultsInquiry` u `SearchNoResultsModule` (fajl: `src/components/SearchNoResultsModule.tsx`).
+2. **Dodati opširnu dokumentaciju** na vrhu fajla — opis čemu služi, koje propse prima, primjer korištenja, i bilješke za programera.
+3. **Kreirati barrel export** `src/components/index.ts` (ako ne postoji) i izvesti `SearchNoResultsModule` iz njega, tako da se može uvoziti kao `import { SearchNoResultsModule } from "@/components"`.
+4. **Ažurirati sve importe** — u `src/pages/SearchResults.tsx` zamijeniti stari import i naziv komponente s novim.
 
-U `src/pages/SearchResults.tsx`, u bloku za prikaz rezultata, zamijeniti uslov tako da se `NoResultsInquiry` prikazuje **uvijek** kada nema rezultata, bez obzira na to da li je pretraga rađena po kataloškom broju, marki, tipu ili nazivu dijela.
+## Očekivani rezultat
+- Komponenta ima deskriptivno ime koje zvuči kao modul.
+- Unutar fajla postoji komentarska dokumentacija (JSDoc / header block) koja objašnjava svrhu, propse i primjer korištenja.
+- Postoji `src/components/index.ts` za centralizirane exporte komponenti.
+- Nijedan postojeći import nije slomljen.
 
-Konkretno, ukloniti `params.broj ? (...) : (generička poruka)` granu i ostaviti samo `NoResultsInquiry` koji već dinamički gradi tekst zahtjeva iz svih dostupnih parametara (`marka`, `tip`, `dio`, `broj`, `query`) preko interne `buildSearchText()` funkcije — tako da radi za sve tipove pretraga.
-
-Generička poruka "Nema rezultata / Pokušajte promijeniti filtere" se uklanja jer je `NoResultsInquiry` korisniji (sadrži CTA za slanje zahtjeva).
-
-## Tehnički detalji
-
-**Fajl:** `src/pages/SearchResults.tsx`
-
-Trenutni kod:
-```tsx
-) : params.broj ? (
-  <NoResultsInquiry searchQuery={...} marka={...} tip={...} dio={...} broj={...} />
-) : (
-  <div>Nema rezultata. Pokušajte promijeniti filtere...</div>
-)
-```
-
-Novi kod:
-```tsx
-) : (
-  <NoResultsInquiry
-    searchQuery={params.query || ""}
-    marka={params.marka}
-    tip={params.tip}
-    dio={params.dio}
-    broj={params.broj}
-  />
-)
-```
-
-Nema drugih izmjena — `NoResultsInquiry` već podržava sve kombinacije parametara.
+## Fajlovi koje ćemo dirnuti
+- `src/components/NoResultsInquiry.tsx` → preimenovati u `SearchNoResultsModule.tsx` + dokumentacija
+- `src/components/index.ts` → novi barrel export
+- `src/pages/SearchResults.tsx` → ažurirati import
