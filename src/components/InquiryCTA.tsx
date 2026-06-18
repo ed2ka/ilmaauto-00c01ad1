@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import bg from "@/assets/inquiry-cta-bg.png.asset.json";
 
 const InquiryCTA = () => {
