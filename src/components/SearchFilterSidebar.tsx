@@ -161,13 +161,22 @@ const SearchFilterSidebar = () => {
             Sve kupljene dijelove možete vratiti u roku od <strong className="text-foreground">7 dana</strong>.
           </p>
         </div>
-        <a
-          href="tel:+38762667700"
-          className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-brand-yellow to-brand-yellow hover:from-brand-yellow/90 hover:to-brand-yellow/90 text-brand-noir rounded-lg text-sm font-bold transition-all"
-        >
-          <Phone className="w-4 h-4" />
-          +387 62 667 700
-        </a>
+        <div className="flex flex-col gap-2">
+          <a
+            href={CONTACT.phoneMobileHref}
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-brand-yellow to-brand-yellow hover:from-brand-yellow/90 hover:to-brand-yellow/90 text-brand-noir rounded-lg text-sm font-bold transition-all"
+          >
+            <Phone className="w-4 h-4" />
+            {CONTACT.phoneMobile}
+          </a>
+          <a
+            href={CONTACT.phoneLandlineHref}
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-foreground/5 hover:bg-foreground/10 text-foreground rounded-lg text-sm font-bold transition-all"
+          >
+            <Phone className="w-4 h-4" />
+            {CONTACT.phoneLandline}
+          </a>
+        </div>
       </div>
     </>
   );

@@ -22,36 +22,37 @@ import heroBgAsset from "@/assets/hero-bg-ilma.png.asset.json";
 import viberIcon from "@/assets/viber-icon.svg";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
 import { Link } from "react-router-dom";
+import { CONTACT } from "@/lib/contact";
 
 const channels = [
   {
     name: "Viber",
     tag: "NAJBRŽI ODGOVOR SA SLIKOM DIJELA",
-    handle: "+387 62 667 700",
+    handle: CONTACT.phoneMobile,
     description: "Pošaljite VIN, sliku ili kataloški broj dijela.\nodgovaramo za par minuta.",
     icon: viberIcon,
     iconBg: "bg-[#7360F2]/10",
-    href: "viber://chat?number=%2B38762667700",
+    href: CONTACT.viberHref,
     primary: true,
   },
   {
     name: "WhatsApp",
     tag: "NAJBRŽI ODGOVOR SA SLIKOM DIJELA",
-    handle: "+387 62 667 700",
+    handle: CONTACT.phoneMobile,
     description: "Idealno za slanje fotografija oštećenog dijela ili saobraćajne.",
     icon: whatsappIcon,
     iconBg: "bg-[#25D366]/10",
-    href: "https://wa.me/38762667700",
+    href: CONTACT.whatsappHref,
     primary: false,
   },
   {
     name: "Direktan poziv",
     tag: "PONEJDELJAK - SUBOTA",
-    handle: "+387 62 667 700",
+    handle: `${CONTACT.phoneMobile} • ${CONTACT.phoneLandline}`,
     description: "Razgovarajte direktno sa našim timom\nbez čekanja na red.",
     icon: null,
     iconBg: "bg-brand-red/10",
-    href: "tel:+38762667700",
+    href: CONTACT.phoneMobileHref,
     primary: false,
   },
 ];
@@ -214,19 +215,24 @@ const Support = () => {
             <div className="space-y-3 text-sm">
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                <span className="text-foreground">Ljetinić 8, 74264 Jelah – Tešanj, BiH</span>
+                <span className="text-foreground">{CONTACT.addressFull}</span>
               </div>
               <div className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                <a href="mailto:info@ilmaauto.com" className="text-foreground hover:text-brand-red transition-colors">
-                  info@ilmaauto.com
+                <a href={CONTACT.emailHref} className="text-foreground hover:text-brand-red transition-colors">
+                  {CONTACT.email}
                 </a>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                <a href="tel:+38762667700" className="text-foreground hover:text-brand-red transition-colors">
-                  +387 62 667 700
-                </a>
+                <div className="flex flex-col">
+                  <a href={CONTACT.phoneMobileHref} className="text-foreground hover:text-brand-red transition-colors">
+                    {CONTACT.phoneMobile}
+                  </a>
+                  <a href={CONTACT.phoneLandlineHref} className="text-foreground hover:text-brand-red transition-colors">
+                    {CONTACT.phoneLandline}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
