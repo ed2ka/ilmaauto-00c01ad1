@@ -14,21 +14,26 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    alias: [
       ...(mode === "static"
-        ? {
-            "@/integrations/supabase/client": path.resolve(
-              __dirname,
-              "./src/integrations/supabase/client.static.ts"
-            ),
-            "@/integrations/lovable/index": path.resolve(
-              __dirname,
-              "./src/integrations/lovable/index.static.ts"
-            ),
-          }
-        : {}),
-    },
+        ? [
+            {
+              find: "@/integrations/supabase/client",
+              replacement: path.resolve(__dirname, "./src/integrations/supabase/client.static.ts"),
+            },
+            {
+              find: "@/integrations/lovable/index",
+              replacement: path.resolve(__dirname, "./src/integrations/lovable/index.static.ts"),
+            },
+            {
+              // Catch the relative import inside lovable/index.ts (if it still ends up bundled).
+              find: /^.*\/integrations\/supabase\/client$/,
+              replacement: path.resolve(__dirname, "./src/integrations/supabase/client.static.ts"),
+            },
+          ]
+        : []),
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+    ],
   },
   base: mode === "static" ? "./" : "/",
 }));
