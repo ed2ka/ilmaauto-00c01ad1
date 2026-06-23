@@ -19,16 +19,16 @@ export default defineConfig(({ mode }) => ({
         ? [
             {
               find: "@/integrations/supabase/client",
-              replacement: path.resolve(__dirname, "./src/integrations/supabase/client.static.ts"),
+              replacement: path.resolve(__dirname, "./src/static-mocks/supabase-client.ts"),
             },
             {
               find: "@/integrations/lovable/index",
-              replacement: path.resolve(__dirname, "./src/integrations/lovable/index.static.ts"),
+              replacement: path.resolve(__dirname, "./src/static-mocks/lovable-index.ts"),
             },
             {
               // Catch the relative import inside lovable/index.ts (if it still ends up bundled).
               find: /^.*\/integrations\/supabase\/client$/,
-              replacement: path.resolve(__dirname, "./src/integrations/supabase/client.static.ts"),
+              replacement: path.resolve(__dirname, "./src/static-mocks/supabase-client.ts"),
             },
           ]
         : []),
