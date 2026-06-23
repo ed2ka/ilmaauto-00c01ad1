@@ -14,8 +14,26 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: [
+      ...(mode === "static"
+        ? [
+            {
+              find: "@/integrations/supabase/client",
+              replacement: path.resolve(__dirname, "./src/static-mocks/supabase-client.ts"),
+            },
+            {
+              find: "@/integrations/lovable/index",
+              replacement: path.resolve(__dirname, "./src/static-mocks/lovable-index.ts"),
+            },
+            {
+              // Catch the relative import inside lovable/index.ts (if it still ends up bundled).
+              find: /^.*\/integrations\/supabase\/client$/,
+              replacement: path.resolve(__dirname, "./src/static-mocks/supabase-client.ts"),
+            },
+          ]
+        : []),
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+    ],
   },
+  base: mode === "static" ? "./" : "/",
 }));
